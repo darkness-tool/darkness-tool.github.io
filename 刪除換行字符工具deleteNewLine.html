@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>刪除換行字符工具</title>
+	  
+	  <meta charset="UTF-8">
+	  <meta name="description" content="使用此工具刪除輸入文本中的所有換行字符。">
+	  <meta name="keywords" content="刪除換行字符工具, 換行字符, 文本處理">
+	  <meta name="robots" content="index, follow">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	  
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="load_index.js"></script>
+      <link rel="stylesheet" href="styles.css">
+   </head>
+   <body>
+      <div class="container">
+         <h1>刪除換行字符工具</h1>
+         <div class="tool-description">
+            <p>使用此工具刪除輸入文本中的所有換行字符。</p>
+         </div>
+         <div class="part-container">
+            <div class="input-container">
+               <label for="text-input">輸入文字：</label>
+               <textarea id="text-input" rows="10" cols="50" placeholder="請輸入文字"></textarea>
+            </div>
+            <div class="error-message" id="error-message"></div>
+            <div class="button-section">
+               <button class="submit-button" onclick="deleteNewLines()">刪除換行字符</button>
+               <button class="copy-button" onclick="copyToClipboard()">複製到剪貼板</button>
+               <button class="delete-button" onclick="undo()">撤銷</button>
+            </div>
+         </div>
+         <div class="part-container tool-description-long">這是一個「刪除換行字符工具」，它的功能是讓使用者能夠輕鬆刪除輸入文本中的所有換行字符。
+            在網站的主要區域，你會看到一個包含輸入框和按鈕的部分。輸入框旁邊有一個標籤寫著「輸入文字」，這是用來輸入你想要處理的文本的地方。輸入框的旁邊還有一個錯誤信息的容器，用於在需要時顯示錯誤訊息。
+            下方有三個按鈕，分別是「刪除換行字符」、「複製到剪貼板」和「撤銷」。當你輸入完文本後，點擊「刪除換行字符」按鈕，這個工具會將輸入文本中的所有換行字符刪除。如果你忘記輸入文本，就會在錯誤信息容器中看到提示。
+            當你完成刪除換行字符的操作後，如果你想要將處理後的文本復制到剪貼板中，只需點擊「複製到剪貼板」按鈕。這將自動選中整個輸入框中的內容，並將其複制到剪貼板，方便你在其他地方使用。
+            如果你後悔了，想要撤銷剛剛的操作，可以點擊「撤銷」按鈕。這會將輸入框中的內容還原為最初輸入的文本。
+            總之，這個網站提供了一個簡單易用的工具，讓你能夠快速刪除文本中的換行字符。你只需要在輸入框中輸入文本，點擊「刪除換行字符」按鈕，就能夠輕鬆完成這個操作。如果需要，你還可以複製處理後的文本到剪貼板，或者撤銷剛才的操作。
+         </div>
+      </div>
+      <script>
+         var originalText="";function deleteNewLines(){var e=document.getElementById("text-input"),t=document.getElementById("error-message");if(""===e.value.trim()){t.textContent="請輸入文字";return}var n=(originalText=e.value).replace(/(\r\n|\n|\r)/gm,"");e.value=n,t.textContent=""}function copyToClipboard(){var e=document.getElementById("text-input");e.select(),e.setSelectionRange(0,99999),document.execCommand("copy")}function undo(){document.getElementById("text-input").value=originalText}
+      </script>
+   </body>
+</html>

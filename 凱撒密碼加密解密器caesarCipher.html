@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>凱撒密碼加密/解密器</title>
+	  
+	  <meta charset="UTF-8">
+	  <meta name="description" content="使用凱撒密碼加密/解密器，輕鬆加密和解密文字訊息。">
+      <meta name="keywords" content="凱撒密碼,加密,解密,密碼,文字訊息">
+	  <meta name="robots" content="index, follow">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	  
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="load_index.js"></script>
+      <link rel="stylesheet" href="styles.css">
+   </head>
+   <body>
+      <div class="container">
+         <h1>凱撒密碼(Caesar Cipher)加密/解密器</h1>
+         <div class="tool-description">
+            <p>用於加密和解密凱撒密碼文字訊息。</p>
+         </div>
+         <!-- 加密表單 -->
+         <div class="part-container">
+            <h2>加密</h2>
+            <form id="encrypt-form">
+               <div>
+                  <label for="plaintext">明文：</label>
+                  <textarea id="plaintext" placeholder="請輸入明文"></textarea>
+               </div>
+               <div>
+                  <label for="encrypt-mode">加密模式：</label>
+                  <select id="encrypt-mode">
+                     <option value="classic">使用英文字母</option>
+                     <option value="classic_plus_rot_digits">使用英文字母和數字</option>
+                     <option value="old_latin">使用凱撒時代的拉丁字母</option>
+                     <option value="ascii_alphabet">使用ASCII表</option>
+                     <!--<option value="custom_alphabet">使用自定義字母表</option>-->
+                  </select>
+               </div>
+               <div>
+                  <label for="shift">位移數：</label>
+                  <input type="number" id="shift-encrypt" value="1" placeholder="請輸入位移數">
+               </div>
+               <div>
+                  <button type="button" id="encrypt-btn" class="submit-button">加密</button>
+               </div>
+            </form>
+            <!-- 加密結果 -->
+            <div id="encrypt-result" class="encrypt-result">
+               <h2>加密結果</h2>
+               <div id="encrypt-output"></div>
+            </div>
+         </div>
+         <!-- 解密表單 -->
+         <div class="part-container">
+            <h2>解密</h2>
+            <form id="decrypt-form">
+               <div>
+                  <label for="ciphertext">密文：</label>
+                  <textarea id="ciphertext" placeholder="請輸入密文"></textarea>
+               </div>
+               <div>
+                  <label for="decrypt-mode">解密模式：</label>
+                  <select id="decrypt-mode">
+                     <option value="classic">使用英文字母</option>
+                     <option value="classic_plus_rot_digits">使用英文字母和數字</option>
+                     <option value="old_latin">使用凱撒時代的拉丁字母</option>
+                     <option value="ascii_alphabet">使用ASCII表</option>
+                     <!--<option value="custom_alphabet">使用自定義字母表</option>-->
+                  </select>
+               </div>
+               <div>
+                  <label for="shift">位移數：</label>
+                  <input type="number" id="shift-decrypt" value="1" placeholder="請輸入位移數">
+               </div>
+               <div>
+                  <button type="button" id="decrypt-btn" class="submit-button">解密</button>
+                  <button type="button" id="decrypt-bruteforce-btn" class="submit-button">解密 (暴力破解)</button>
+               </div>
+            </form>
+            <!-- 解密結果 -->
+            <div id="decrypt-result" class="decrypt-result">
+               <h2>解密結果</h2>
+               <div id="bruteforce-result"></div>
+               <div id="decrypt-output"></div>
+            </div>
+         </div>
+         <div class="part-container tool-description-long">這是一個凱撒密碼加密/解密器，讓你能夠加密和解密凱撒密碼的文字訊息。
+            網站的主要功能分為兩部分：加密和解密。
+            在加密部分，你可以輸入明文，也就是你想要加密的訊息。下方有一個選擇框，你可以選擇加密模式，分別有四個選項：使用英文字母、使用英文字母和數字、使用凱撒時代的拉丁字母，以及使用ASCII表。接著，你需要輸入一個位移數，這個位移數會決定你的訊息加密時字母的位移量。最後，你可以點擊「加密」按鈕，網站會根據你的輸入進行加密，並在加密結果區域顯示加密後的結果。
+            在解密部分，你可以輸入密文，也就是你想要解密的訊息。同樣地，下方有一個選擇框，你可以選擇解密模式，與加密部分的選項相同。然後，你需要輸入一個位移數，這個位移數應該和加密時使用的位移數相同，以正確解密訊息。你可以點擊「解密」按鈕，網站會根據你的輸入進行解密，並在解密結果區域顯示解密後的結果。此外，還有一個「解密 (暴力破解)」按鈕，當你點擊它時，網站會對所有可能的位移進行解密，並在解密結果區域顯示所有解密後的結果。
+            總結來說，這個凱撒密碼加密/解密器的功能非常簡單明瞭。它提供了加密和解密兩個功能，讓你能夠輕鬆地加密和解密凱撒密碼的文字訊息。你只需要輸入相應的訊息和設定位移數，就可以快速獲得加密或解密後的結果。
+         </div>
+      </div>
+      <script>
+         function decrypt(e,t,n){var r="",l="";"classic"===t?l="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz":"classic_plus_rot_digits"===t?l="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789":"old_latin"===t?l="ABCDEFGHIKLMNOPQRSTVXYZabcdefghiklmnopqrstvxyz":"ascii_alphabet"===t&&(l=String.fromCharCode(...Array(128).keys()));for(var d=0;d<e.length;d++){var c=e[d],a=l.indexOf(c);-1!==a?r+=l[(a-n+l.length)%l.length]:r+=c}return r}function encrypt(e,t,n){var r="",l="";"classic"===t?l="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz":"classic_plus_rot_digits"===t?l="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789":"old_latin"===t?l="ABCDEFGHIKLMNOPQRSTVXYZabcdefghiklmnopqrstvxyz":"ascii_alphabet"===t&&(l=String.fromCharCode(...Array(128).keys()));for(var d=0;d<e.length;d++){var c=e[d],a=l.indexOf(c);-1!==a?r+=l[(a+n)%l.length]:r+=c}return r}document.getElementById("decrypt-btn").addEventListener("click",function(e){e.preventDefault();var t,n=document.getElementById("ciphertext").value,r=document.getElementById("decrypt-mode").value,l=parseInt(document.getElementById("shift-decrypt").value);t=isNaN(l)?"":decrypt(n,r,l),document.getElementById("bruteforce-result").innerHTML="",document.getElementById("decrypt-output").textContent=t}),document.getElementById("decrypt-bruteforce-btn").addEventListener("click",function(e){e.preventDefault();for(var t=document.getElementById("ciphertext").value,n=document.getElementById("decrypt-mode").value,r="",l=1;l<=26;l++){var d=decrypt(t,n,l);r+="<div>位移數 "+l+": ",r+="<span>"+d+"</span></div>"}document.getElementById("decrypt-output").textContent="",document.getElementById("bruteforce-result").innerHTML=r}),document.getElementById("encrypt-btn").addEventListener("click",function(e){e.preventDefault();var t,n=document.getElementById("plaintext").value,r=document.getElementById("encrypt-mode").value,l=parseInt(document.getElementById("shift-encrypt").value);t=isNaN(l)?"":encrypt(n,r,l),document.getElementById("encrypt-output").textContent=t});
+      </script>
+   </body>
+</html>

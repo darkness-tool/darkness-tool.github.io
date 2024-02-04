@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>字數計算工具</title>
+	  
+	  <meta charset="UTF-8">
+      <meta name="description" content="這個免費在線字數計算工具可以幫助您計算文字的字數和字符數。輕鬆計算中文字數、英文字數、數字數量、行數和段落數等統計數據。">
+      <meta name="keywords" content="字數計算工具, 在線字數計算器, 字數統計, 字數計算, 字數統計工具">
+      <meta name="robots" content="index, follow">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	  
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="load_index.js"></script>
+      <link rel="stylesheet" href="styles.css">
+   </head>
+   <body>
+      <div class="container">
+         <h1>字數計算工具</h1>
+         <div class="guide">
+            <p>輸入你想要計算字數和字符數的文字。</p>
+         </div>
+         <div class="part-container">
+            <!-- 文字輸入框和計算按鈕 -->
+            <div class="input-container">
+               <label for="input-text">輸入文字：</label>
+               <textarea id="text-input" rows="10" cols="50" oninput="count()" placeholder="請輸入文字"></textarea>
+            </div>
+            <div class="button-section">
+               <button id="clear-btn">清空</button>
+            </div>
+            <!-- 計數結果區域 -->
+            <div class="result">
+               <h2>結果：</h2>
+               <div class="result-item">
+                  <span class="label">總數：</span>
+                  <span id="total"></span>
+               </div>
+               <div class="result-item">
+                  <span class="label">數字：</span>
+                  <span id="digit"></span>
+               </div>
+               <div class="result-item">
+                  <span class="label">行列（段落）數：</span>
+                  <span id="lines"></span>
+               </div>
+               <div class="result-item">
+                  <span class="label">中文字數：</span>
+                  <span id="chinese-char"></span>
+               </div>
+               <div class="result-item">
+                  <span class="label">中文標點符號數：</span>
+                  <span id="chinese-punctuation"></span>
+               </div>
+               <div class="result-item">
+                  <span class="label">英文字數：</span>
+                  <span id="english-char"></span>
+               </div>
+               <div class="result-item">
+                  <span class="label">英文標點符號數：</span>
+                  <span id="english-punctuation"></span>
+               </div>
+               <div class="result-item">
+                  <span class="label">英文單詞數：</span>
+                  <span id="english-word"></span>
+               </div>
+            </div>
+         </div>
+         <div class="part-container tool-description-long">這個網站是一個字數計算工具，它可以幫助你計算文字的字數和字符數。當你想要知道一段文字包含多少個字元時，這個工具可以提供幫助。
+            這個網站的介面非常簡單直觀。在網頁的頂部，你可以看到一個大標題「字數計算工具」，這是這個工具的名稱。在標題下方，有一個描述性的段落，提醒你在輸入文字之前，可以先閱讀這個提示。
+            在主要區域的上半部分，你會看到一個文字輸入框和一個計算按鈕。在文字輸入框中，你可以輸入你想要計算字數和字符數的文字。當你輸入文字時，它會立即計算相關的結果，並在下半部分的計數結果區域顯示出來。如果你希望清空輸入框中的文字，你可以點擊「清空」按鈕。
+            計數結果區域分為多個部分，每個部分都顯示了不同的統計結果。這些統計結果包括總字數、數字數量、行列（段落）數、中文字數、中文標點符號數、英文字數、英文標點符號數和英文單詞數。每個結果旁邊都有一個標籤，用於標識結果的類型。結果是根據你在文字輸入框中輸入的內容即時計算的。
+            總結來說，這個網站提供了一個方便的字數計算工具，可以幫助你快速計算文字的字數和字符數。無論是在寫作、編輯還是其他需要計算文字統計的場合，這個工具都能夠提供實用的功能。
+         </div>
+      </div>
+      </div>
+      <script>
+         function count(){var t=document.getElementById("text-input").value,e=t.length;document.getElementById("total").textContent=e;var n=t.match(/\d/g),l=n?n.length:0;document.getElementById("digit").textContent=l;var g=t.split(/\r\n|\r|\n/).length;document.getElementById("lines").textContent=g;var a=t.replace(/[^\u4E00-\u9FA5]/g,"").length;document.getElementById("chinese-char").textContent=a;var c=t.replace(/[^\u3000-\u303F\uFF00-\uFFEF]/g,"").length;document.getElementById("chinese-punctuation").textContent=c;var h=t.match(/[A-Za-z]/g);h=h?h.length:0,document.getElementById("english-char").textContent=h;var r=t.match(/[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/g);r=r?r.length:0,document.getElementById("english-punctuation").textContent=r;var u=t.match(/\b\w+\b/g),i=u?u.length:0;document.getElementById("english-word").textContent=i}function clearInput(){document.getElementById("text-input").value=""}document.getElementById("clear-btn").addEventListener("click",clearInput);
+      </script>
+   </body>
+</html>

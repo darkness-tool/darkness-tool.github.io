@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>刪除文字所有空白工具</title>
+	  
+	  <meta charset="UTF-8">
+      <meta name="description" content="刪除文字所有空白工具 - 一個方便的工具，讓你能夠輸入文本並刪除其中的所有空白字符。">
+      <meta name="keywords" content="刪除文字所有空白工具, 刪除空白字符, 去除空白字符, 文字處理工具">
+	  <meta name="robots" content="index, follow">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	  
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="load_index.js"></script>
+      <link rel="stylesheet" href="styles.css">
+   </head>
+   <body>
+      <div class="container">
+         <h1>刪除文字所有空白工具</h1>
+         <div class="tool-description">
+            <p>使用此工具刪除輸入文本中的所有空白字符。</p>
+         </div>
+         <div class="part-container">
+            <div class="input-container">
+               <label for="text-input">輸入文字：</label>
+               <textarea id="text-input" rows="10" cols="50" placeholder="請輸入文字"></textarea>
+            </div>
+            <div class="error-message" id="error-message"></div>
+            <div class="button-section">
+               <button class="submit-button" onclick="deleteWhitespace()">刪除空白字符</button>
+               <button class="copy-button" onclick="copyToClipboard()">複製到剪貼板</button>
+               <button class="delete-button" onclick="undo()">撤銷</button>
+            </div>
+         </div>
+         <div class="part-container tool-description-long">這是一個「刪除文字所有空白工具」，它提供一個簡單的界面，讓用戶能夠輸入文本並刪除其中的所有空白字符。
+            在網站的主要區域，你會看到一個輸入框，它是用來輸入你想要處理的文本的地方。你可以在這個輸入框中輸入任何文本，包括英文字母、數字、標點符號等。
+            在輸入框下方，有幾個按鈕供你操作。首先是「刪除空白字符」按鈕，當你點擊這個按鈕時，網站會刪除輸入文本中的所有空白字符，包括空格、制表符和換行符等。刪除後的文本會顯示在同一個輸入框中。
+            接下來是「複製到剪貼板」按鈕，點擊這個按鈕後，網站會將處理後的文本複製到你的剪貼板中，這樣你就可以在其他地方粘貼使用。
+            最後是「撤銷」按鈕，這個按鈕可以用來撤銷剛才的操作，恢復到你在輸入框中輸入的原始文本。
+            此外，在輸入框上方，還有一個空的區域，用來顯示錯誤訊息。如果你在輸入框中沒有輸入任何文本就點擊了「刪除空白字符」按鈕，網站會在這個區域顯示一條錯誤訊息，提醒你輸入文本。
+            總結來說，這個「刪除文字所有空白工具」網站提供了一個方便的方式，讓你能夠輸入文本並刪除其中的所有空白字符。它是一個簡單易用的工具，適用於各種場景，例如當你需要從一段文字中刪除空格，或者需要將一個有格式的文本轉換為無格式的純文字時，這個工具都能幫助你快速完成。
+         </div>
+      </div>
+      <script>
+         var originalText="";function deleteWhitespace(){var e=document.getElementById("text-input"),t=document.getElementById("error-message");if(""===e.value.trim()){t.textContent="請輸入文字";return}var n=(originalText=e.value).replace(/ /g,"");e.value=n,t.textContent=""}function copyToClipboard(){var e=document.getElementById("text-input");e.select(),e.setSelectionRange(0,99999),document.execCommand("copy")}function undo(){document.getElementById("text-input").value=originalText}
+      </script>
+   </body>
+</html>

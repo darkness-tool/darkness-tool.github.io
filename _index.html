@@ -1,0 +1,9 @@
+<div id="index-box">
+    <h1>小工具大全</h1>
+    <table id="data-table">
+    </table>
+  </div>
+
+  <script>
+    $(document).ready(function(){for(var e=[{name:"凱撒密碼加密/解密器",url:"凱撒密碼加密解密器caesarCipher.html"},{name:"刪除文字所有空白工具",url:"刪除文字所有空白工具deleteSpace.html"},{name:"JSON格式化/驗證工具",url:"JSON格式化驗證工具jsonFormatter.html"},{name:"文字加密解密工具",url:"文字加密解密工具textEncrytion.html"},{name:"文字轉義/反轉義工具",url:"文字轉義反轉義工具textEscape.html"},{name:"字數計算工具",url:"字數計算工具wordCount.html"},{name:"刪除換行字符工具",url:"刪除換行字符工具deleteNewLine.html"}],t=window.location.pathname,a=t.substring(t.lastIndexOf("/")+1),n=$("#data-table"),r=0;r<e.length;r++){var l,m=e[r];if(r%4==0){var h=$("<tr></tr>");n.append(h)}var p=$("<th></th>");l=encodeURI(m.url)!=a?$("<a></a>").attr("href",m.url).text(m.name):$("<span></span>").text(m.name),p.append(l),h.append(p)}});
+  </script>

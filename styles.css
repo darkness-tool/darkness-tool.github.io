@@ -1,0 +1,243 @@
+body {
+     font-family: Arial, sans-serif;
+     margin: 0;
+     padding: 0;
+}
+
+#index-box {
+    border-top: 1px solid #000000;
+	margin-top: 10px;
+}
+
+.container {
+     max-width: 600px;
+     margin: 0 auto;
+     padding: 20px;
+}
+
+h1 {
+     text-align: center;
+     margin-bottom: 20px;
+}
+
+.guide {
+     text-align: center;
+     margin-bottom: 20px;
+}
+
+.guide p {
+     margin: 0;
+}
+
+.input-container {
+     margin-bottom: 10px;
+}
+
+textarea {
+     width: 100%;
+     box-sizing: border-box;
+}
+
+.button-section {
+     text-align: center;
+     margin-top: 20px;
+	 margin-bottom: 10px;
+}
+
+button {
+     margin-top: 10px;
+}
+
+.count-button {
+     padding: 10px 20px;
+     background-color: #4CAF50;
+     color: white;
+     border: none;
+     cursor: pointer;
+}
+
+.count-button:hover {
+     background-color: #45a049;
+}
+
+.result {
+     border-top: 1px solid #ccc;
+     padding-top: 20px;
+     margin-top: 20px;
+}
+
+.result-item {
+     margin-bottom: 10px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+tr{
+	border: 1px solid white;
+}
+
+th, td {
+  padding: 10px;
+  text-align: left;
+}
+
+th:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+
+a {
+  text-decoration: none;
+  color: #000;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+table span{
+	font-weight: normal;
+    color: #ce5600;
+}
+
+/* 響應式設計 */
+@media screen and (max-width: 600px) {
+    /* 手機屏幕 */
+     .input-container {
+         margin: 10px 0;
+    }
+}
+
+.tool-description {
+     text-align: center;
+     margin-bottom: 20px;
+}
+
+.error-message {
+     color: red;
+     margin-bottom: 10px;
+}
+
+.submit-button {
+     padding: 10px 20px;
+     background-color: #4CAF50;
+     color: white;
+     border: none;
+     cursor: pointer;
+     margin-right: 10px;
+}
+
+.submit-button:hover {
+     background-color: #45a049;
+}
+
+.copy-button {
+     padding: 10px 20px;
+     background-color: #008CBA;
+     color: white;
+     border: none;
+     cursor: pointer;
+	 margin-right: 10px;
+}
+
+.copy-button:hover {
+     background-color: #007A9B;
+}
+
+.delete-button {
+     padding: 10px 20px;
+     background-color: #bb5151;
+     color: white;
+     border: none;
+     cursor: pointer;
+     margin-right: 10px;
+}
+
+.delete-button:hover {
+     background-color: #a44646;
+}
+
+.undo-link {
+     display: block;
+     text-align: center;
+     margin-top: 10px;
+     color: blue;
+     text-decoration: underline;
+     cursor: pointer;
+}
+
+.result-area {
+     border: 1px solid #ccc;
+     padding: 10px;
+     margin-bottom: 10px;
+}
+
+.message-area {
+     text-align: center;
+     margin-bottom: 10px;
+}
+
+.indentation-selector {
+     text-align: center;
+     margin-bottom: 10px;
+}
+
+/* 其他样式 */
+.success {
+     color: #008000;
+}
+
+.error {
+     color: #ff0000;
+}
+
+label {
+     font-weight: bold;
+}
+
+ input[type="text"], select {
+     margin-bottom: 10px;
+     width: 100%;
+     box-sizing: border-box;
+}
+
+/* 解密结果样式 */
+.decrypt-result {
+     margin-top: 20px;
+     border-top: 1px solid #ccc;
+}
+
+.decrypt-result h2,.decrypt-result h3 {
+     margin-top: 10px;
+}
+
+/* 加密结果样式 */
+.encrypt-result {
+     margin-top: 20px;
+     border-top: 1px solid #ccc;
+}
+
+/* 响应式设计 */
+@media screen and (max-width: 600px) {
+    /* 手机屏幕 */
+     input[type="text"], select, textarea {
+         width: 100%;
+    }
+}
+
+.part-container {
+    margin-bottom: 20px;
+    border: 1px solid #e9e9e9;
+    padding: 20px;
+}
+
+.tool-description-long {
+    white-space: pre-line;
+}

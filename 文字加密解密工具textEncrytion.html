@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>文字加密解密工具</title>
+	  
+	  <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="description" content="文字加密解密工具，提供不同的加密算法選擇和密碼保護功能。">
+      <meta name="robots" content="index, follow">
+	  <meta name="keywords" content="文字加密, 解密工具, 加密算法, 密碼保護">
+	  
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+      <script src="load_index.js"></script>
+      <link rel="stylesheet" href="styles.css">
+   </head>
+   <body>
+      <!-- 網頁標題或標題區域 -->
+      <h1>文字加密解密工具</h1>
+      <div class="tool-description">
+         <p>選擇加密算法並輸入要加密或解密的文字，並提供密碼保護功能。</p>
+      </div>
+      <div class="container">
+         <!-- 加密法則選項框 -->
+         <div class="part-container">
+            <div>
+               <label for="encryption-algorithm">加密算法：</label>
+               <select id="encryption-algorithm">
+                  <option value="AES">AES</option>
+                  <option value="DES">DES</option>
+                  <option value="RC4">RC4</option>
+                  <option value="Rabbit">Rabbit</option>
+                  <option value="TripleDes">TripleDes</option>
+               </select>
+            </div>
+            <!-- 加密工具框 -->
+            <div class="input-container">
+               <!-- 加密框（上方） -->
+               <h2>文字加密</h2>
+               <!-- 文字輸入框 -->
+               <div>
+                  <label for="encryption-input">輸入文字：</label>
+                  <textarea id="encryption-input" rows="5" cols="50" placeholder="輸入要加密的文字"></textarea>
+               </div>
+               <!-- 清除按鈕 -->
+               <div class="button-section">
+                  <button id="encrypt-btn" class="submit-button">加密</button>
+                  <button id="clear-encryption-input" class="delete-button">清除</button>
+               </div>
+               <!-- 可選的密碼保護框 -->
+               <div>
+                  <label for="encryption-password">加密密碼：</label>
+                  <input type="password" id="encryption-password" placeholder="Enter password">
+               </div>
+            </div>
+         </div>
+         <div class="part-container">
+            <!-- 解密框（下方） -->
+            <div class="input-container">
+               <h2>文字解密</h2>
+               <!-- 解密結果輸入框 -->
+               <div>
+                  <label for="decryption-input">輸入文字：</label>
+                  <textarea id="decryption-input" rows="5" cols="50" placeholder="輸入要解密文字"></textarea>
+               </div>
+               <!-- 清除按鈕 -->
+               <div class="button-section">
+                  <button id="decrypt-btn" class="submit-button">解密</button>
+                  <button id="clear-decryption-input" class="delete-button">清除</button>
+               </div>
+               <!-- 解密時密碼輸入框 -->
+               <div>
+                  <label for="decryption-password">解密密碼：</label>
+                  <input type="password" id="decryption-password" placeholder="Enter password">
+               </div>
+            </div>
+         </div>
+         <div class="part-container tool-description-long">這是一個文字加密解密工具的網站。它提供了使用不同的加密算法來加密和解密文字的功能，同時還能設定密碼保護。
+            主要分為兩個部分，分別是加密和解密。在加密框中，使用者可以輸入要加密的文字，並選擇加密算法。這裡提供了五種加密算法的選擇：AES、DES、RC4、Rabbit和TripleDes。使用者可以選擇其中一種算法，然後在文字輸入框中輸入要加密的文字。在加密框的下方，有一個清除按鈕，可以清除加密文字輸入框的內容。此外，使用者還可以選擇是否要對加密結果進行密碼保護，密碼輸入框位於加密框的底部。
+            在解密框中，使用者可以輸入要解密的文字，同樣也需要選擇加密算法。在解密框的下方，也有一個清除按鈕，可以清除解密結果輸入框的內容。同樣地，使用者需要輸入解密時使用的密碼，密碼輸入框位於解密框的底部。
+            在JavaScript代碼部分，網站使用了jQuery和CryptoJS庫來實現加密和解密的功能。點擊加密按鈕後，根據使用者選擇的加密算法和輸入的文字，網站會將輸入的文字進行加密處理，並將結果顯示在解密框中。同樣地，點擊解密按鈕後，網站會根據使用者選擇的加密算法和輸入的文字，對文字進行解密處理，並將結果顯示在加密框中。
+            總結來說，這個網站提供了一個方便的文字加密解密工具，使用者可以選擇不同的加密算法來保護他們的文字，同時也能選擇是否要對加密結果進行密碼保護。無論是在保護敏感信息還是在進行加密解密操作時，這個網站都能提供一個簡單易用的工具。
+         </div>
+      </div>
+      <script>
+         document.getElementById("clear-encryption-input").addEventListener("click",function(){document.getElementById("encryption-input").value=""}),document.getElementById("clear-decryption-input").addEventListener("click",function(){document.getElementById("decryption-input").value=""}),document.getElementById("encrypt-btn").addEventListener("click",function(){var e,t=document.getElementById("encryption-input").value,n=document.getElementById("encryption-algorithm").value,r=document.getElementById("encryption-password").value;switch(n){case"AES":e=CryptoJS.AES.encrypt(t,r).toString();break;case"DES":e=CryptoJS.DES.encrypt(t,r).toString();break;case"RC4":e=CryptoJS.RC4.encrypt(t,r).toString();break;case"Rabbit":e=CryptoJS.Rabbit.encrypt(t,r).toString();break;case"TripleDes":e=CryptoJS.TripleDES.encrypt(t,r).toString();break;default:alert("Invalid encryption algorithm");return}document.getElementById("decryption-input").value=e}),document.getElementById("decrypt-btn").addEventListener("click",function(){var e,t=document.getElementById("decryption-input").value,n=document.getElementById("encryption-algorithm").value,r=document.getElementById("decryption-password").value;switch(n){case"AES":e=CryptoJS.AES.decrypt(t,r).toString(CryptoJS.enc.Utf8);break;case"DES":e=CryptoJS.DES.decrypt(t,r).toString(CryptoJS.enc.Utf8);break;case"RC4":e=CryptoJS.RC4.decrypt(t,r).toString(CryptoJS.enc.Utf8);break;case"Rabbit":e=CryptoJS.Rabbit.decrypt(t,r).toString(CryptoJS.enc.Utf8);break;case"TripleDes":e=CryptoJS.TripleDES.decrypt(t,r).toString(CryptoJS.enc.Utf8);break;default:alert("Invalid encryption algorithm");return}document.getElementById("encryption-input").value=e});
+      </script>
+   </body>
+</html>

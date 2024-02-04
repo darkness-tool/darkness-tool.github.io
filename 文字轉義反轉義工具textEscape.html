@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>文字轉義/反轉義工具</title>
+	  
+	  <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	  <meta name="description" content="這是一個文字轉義/反轉義工具，可以幫助你將特定字符進行轉義或從轉義序列轉換回原始字符。">
+	  <meta name="keywords" content="文字轉義, 反轉義, 轉義工具">
+      <meta name="robots" content="index, follow">
+	  
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="load_index.js"></script>
+      <link rel="stylesheet" href="styles.css">
+   </head>
+   <body>
+      <div class="container">
+         <h1>文字轉義</h1>
+         <div class="tool-description">
+            <p>將輸入的字符串進行轉義或反轉義操作。</p>
+         </div>
+         <div class="part-container">
+            <!-- 輸入框 -->
+            <div class="input-container">
+               <label for="input-text">輸入要轉義或反轉義的字符串：</label>
+               <textarea id="input-text" rows="5" placeholder="請輸入字符串"></textarea>
+            </div>
+            <!-- 轉義按鈕 -->
+            <div class="button-section">
+               <button id="escape-btn" class="submit-button">轉義</button>
+               <button id="unescape-btn" class="copy-button">反轉義</button>
+            </div>
+            <!-- 結果展示區域 -->
+            <div class="result">
+               <h2>轉義結果：</h2>
+               <textarea id="escape-result" rows="5" readonly></textarea>
+            </div>
+            <div class="result">
+               <h2>反轉義結果：</h2>
+               <textarea id="unescape-result" rows="5" readonly></textarea>
+            </div>
+            <!-- 錯誤消息框 -->
+            <div class="error" id="error-msg"></div>
+         </div>
+         <div class="part-container tool-description-long">這個網站是一個文字轉義/反轉義工具，可以將輸入的字符串進行轉義或反轉義操作。它的主要功能是將特定的字符轉換為其對應的轉義序列或將轉義序列轉換回原始字符。
+            網站的主要區域分為幾個部分。首先是輸入框，你可以在這裡輸入要進行轉義或反轉義的字符串。輸入框下方有兩個按鈕，分別是「轉義」和「反轉義」。當你輸入完成後，可以點擊「轉義」按鈕將輸入的字符串進行轉義操作，或者點擊「反轉義」按鈕將輸入的字符串進行反轉義操作。
+            在按下相應的按鈕後，結果將顯示在結果展示區域。這裡有兩個結果區域，分別顯示轉義結果和反轉義結果。你可以在這裡查看轉義後的字符串或反轉義後的字符串。這些結果區域都是只讀的，無法進行編輯。
+            如果在輸入框中沒有輸入任何內容，或者輸入的內容只包含空格，則在按下相應的按鈕後，將顯示一個錯誤消息，提示你輸入要轉義或反轉義的字符串。
+            總結來說，這個網站是一個方便的文字轉義/反轉義工具，可以幫助你將特定字符進行轉義或從轉義序列轉換回原始字符。它提供了一個簡單易用的界面，讓你可以輸入字符串並立即查看轉換結果。無論是在開發網頁還是處理文本數據時，這個工具都可以提供便利。
+         </div>
+      </div>
+      <script>
+         const inputText=document.getElementById("input-text"),escapeBtn=document.getElementById("escape-btn"),unescapeBtn=document.getElementById("unescape-btn"),escapeResult=document.getElementById("escape-result"),unescapeResult=document.getElementById("unescape-result"),errorMsg=document.getElementById("error-msg");function escapeString(e){return e.replace(/[\\'"\r\n\t\b\f\v]/g,function(e){switch(e){case"\\":return"\\\\";case"'":return"\\'";case'"':return'\\"';case"\r":return"\\r";case"\n":return"\\n";case"	":return"\\t";case"\b":return"\\b";case"\f":return"\\f";case"\v":return"\\v"}})}function unescapeString(e){return e.replace(/\\[\\'"\r\n\t\b\f\v]/g,function(e){switch(e){case"\\\\":return"\\";case"\\'":return"'";case'\\"':return'"';case"\\r":return"\r";case"\\n":return"\n";case"\\t":return"	";case"\\b":return"\b";case"\\f":return"\f";case"\\v":return"\v"}})}escapeBtn.addEventListener("click",()=>{let e=inputText.value;if(""!==e.trim()){let t=escapeString(e);escapeResult.value=t,errorMsg.textContent=""}else errorMsg.textContent="請輸入要轉義的字符串"}),unescapeBtn.addEventListener("click",()=>{let e=inputText.value;if(""!==e.trim()){let t=unescapeString(e);unescapeResult.value=t,errorMsg.textContent=""}else errorMsg.textContent="請輸入要反轉義的字符串"});
+      </script>
+   </body>
+</html>
