@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>假文生成器</title>
+      <meta charset="UTF-8">
+      <meta name="description" content="使用假文生成器可以快速生成隨機的假文，用於佈局設計、模板測試等目的。">
+      <meta name="keywords" content="假文, 假文生成器, 隨機假文, Lorem Ipsum, 假文工具, 模板測試">
+      <meta name="robots" content="index, follow">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="load_index.js"></script>
+      <link rel="stylesheet" href="styles.css">
+   </head>
+   <body>
+      <div class="container">
+         <h1>假文生成器</h1>
+         <!-- 設定面板 -->
+         <div class="part-container">
+            <div class="settings-panel">
+               <label for="paragraphs">段落數量:</label>
+               <input type="number" id="paragraphs" min="1" max="10" value="3">
+               <br>
+               <label for="sentences">句子數量:</label>
+               <input type="number" id="sentences" min="1" max="10" value="5">
+               <br>
+               <label for="language">語言選擇:</label>
+               <select id="language">
+                  <option value="en">英文</option>
+                  <option value="zh">中文</option>
+                  <!-- 其他語言選項 -->
+               </select>
+               <br>
+               <button class="generate-button" onclick="generateLoremIpsum()">生成假文</button>
+            </div>
+            <!-- 假文顯示區域 -->
+            <div class="result-area">
+               <textarea id="result" rows="15" readonly></textarea>
+               <button class="copy-button" onclick="copyToClipboard()">複製假文</button>
+            </div>
+         </div>
+         <div class="part-container tool-description-long">這個網站是一個「假文生成器」，它可以用於佈局設計、模板測試等目的。該網站提供了生成隨機假文的功能。
+            網站的功能主要分為兩個部分：設定面板和假文顯示區域。
+            在設定面板中，你可以設定生成假文的參數。首先，你可以調整「段落數量」，這表示你想要生成的假文中包含的段落數量。然後，你可以設定「句子數量」，這表示每個段落中包含的句子數量。接下來，你可以選擇「語言選擇」，目前支援英文和中文兩種選擇。最後，你可以點擊「生成假文」按鈕，網站將根據你的設定生成相應數量的隨機假文。
+            在假文顯示區域中，生成的假文將顯示在一個文本區域中。你可以將假文複製到剪貼板，以便在其他應用程序中使用。
+            該網站的功能非常簡單明瞭，它提供了一個快速生成隨機假文的工具，讓你能夠在佈局設計、模板測試等情境下使用。只需要設定相關參數，點擊按鈕，你就可以輕鬆獲得生成的假文。
+         </div>
+      </div>
+      <script>
+         function generateLoremIpsum(){var e=parseInt(document.getElementById("paragraphs").value),n=parseInt(document.getElementById("sentences").value),r=generateLorem(e,n,document.getElementById("language").value);document.getElementById("result").value=r}function copyToClipboard(){document.getElementById("result").select(),document.execCommand("copy"),alert("假文已複製到剪貼板！")}function generateLorem(e,n,r){for(var t="",a=0;a<e;a++){for(var o=0;o<n;o++)t+=generateSentence(r)+" ";t+="\n\n"}return t.trim()}function generateSentence(e){for(var n="",r=getRandomInt(5,10),t=0;t<r;t++){var a=generateWord(e);"en"==e?n+=a+" ":n+=a+"，"}return n=n.trim(),n+="en"===e?".":"。"}function generateWord(e){var n,r="";if(n="en"==e?getRandomInt(4,11):getRandomInt(3,8),"en"===e)for(var t=0;t<n;t++)r+=generateLetter();else for(var t=0;t<n;t++)r+=generateCharacter(e);return r}function generateLetter(){var e="abcdefghijklmnopqrstuvwxyz";return e.charAt(getRandomInt(0,e.length-1))}function generateCharacter(e){var n="";switch(e){case"en":default:n=generateRandomUnicodeCharacterRange(32,126);break;case"zh":n=generateRandomUnicodeCharacterRange(19968,40959)}var r=getRandomInt(0,n.length-1);return n.charAt(r)}function generateRandomUnicodeCharacterRange(e,n){for(var r="",t=e;t<=n;t++)r+=String.fromCharCode(t);return r}function getRandomInt(e,n){return Math.floor(Math.random()*(n-e+1))+e}
+      </script>
+   </body>
+</html>
