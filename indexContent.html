@@ -2,6 +2,7 @@
     <h1>小工具大全</h1>
     <table id="data-table">
     </table>
+	<button id="scrollButton">↓</button>
   </div>
 
   <script>
@@ -48,3 +49,6 @@
 	  
     });
   </script>
+  <script>
+function scrollToBottom(){window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"})}var scrollButton=document.getElementById("scrollButton");scrollButton.addEventListener("click",scrollToBottom);
+</script>
