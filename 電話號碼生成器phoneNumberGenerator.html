@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>電話號碼生成器</title>
+  <meta name="description" content="這個網頁是一個電話號碼生成器，根據選擇的國家生成對應的電話號碼格式。方便快捷地生成符合各國電話號碼規則的示例號碼。">
+	<meta name="keywords" content="電話號碼生成器, 電話號碼格式, 國際電話號碼, 電話號碼規則">
+	<meta name="robots" content="index, follow">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="load_index.js"></script>
+      <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+	<div class="container">
+	  <h1>電話號碼生成器</h1>
+	  <div class="guide">
+		  <p>請選擇國家並點擊生成按鈕，生成對應國家的電話號碼格式。</p>
+		</div>
+		
+		<!-- 文字輸入框和計算按鈕 -->
+	  <div class="input-container">
+		<select id="country-select">
+		  <option value="US">美國</option>
+		  <option value="CN">中國</option>
+		  <option value="JP">日本</option>
+		</select>
+		<div class="button-section">
+		  <button id="generate-btn" class="count-button">生成</button>
+		  <button id="clear-btn" class="count-button">清空</button>
+		</div>
+	  </div>
+
+	  <!-- 計數結果區域 -->
+	  <div class="result">
+		<h2>結果：</h2>
+		<div id="result-container"></div>
+	  </div>
+	  <div class="part-container tool-description-long">這個網頁是一個電話號碼生成器，它基於您選擇的國家，可以生成對應國家的電話號碼格式。通過這個電話號碼生成器，您可以方便地生成符合特定國家格式的電話號碼，無需手動編寫或查找相應的電話號碼規則。
+頁面上方有一個標題，顯示為"電話號碼生成器"。下方的說明文本提示用戶選擇國家並點擊生成按鈕來生成電話號碼。用戶可以從下拉菜單中選擇所需的國家，目前提供了美國、中國和日本的選項。
+在選擇國家後，用戶可以點擊生成按鈕，生成對應國家的電話號碼格式。生成的電話號碼將會顯示在頁面的結果區域中。每次點擊生成按鈕，都會生成一個新的電話號碼，並在結果區域添加一個新的條目。
+如果用戶想要清空結果區域的內容，可以點擊清空按鈕，該按鈕位於生成按鈕旁邊。
+這個電話號碼生成器還具有響應式設計，適應不同屏幕尺寸的設備，包括手機屏幕。
+通過這個電話號碼生成器，您可以快速生成符合各國電話號碼格式的示例號碼，方便您在開發或測試過程中使用。您可以根據需要擴展代碼，添加更多國家的電話號碼生成規則。</div>
+  </div>
+
+  <script>
+    const generateBtn=document.getElementById("generate-btn"),clearBtn=document.getElementById("clear-btn"),resultContainer=document.getElementById("result-container");function generatePhoneNumber(e){let t="";switch(e){case"US":t=generateUSPhoneNumber();break;case"CN":t=generateCNPhoneNumber();break;case"JP":t=generateJPPhoneNumber();break;default:t="未知國家"}return t}function generateUSPhoneNumber(){let e=Math.floor(1e3*Math.random()).toString().padStart(3,"0"),t=Math.floor(1e7*Math.random()).toString().padStart(7,"0");return`+1 (${e}) ${t.substr(0,3)}-${t.substr(3)}`}function generateCNPhoneNumber(){let e=["13","15","17","18","19"],t=e[Math.floor(Math.random()*e.length)],n=Math.floor(1e8*Math.random()).toString().padStart(8,"0");return`+86 ${t} ${n.substr(0,4)} ${n.substr(4)}`}function generateJPPhoneNumber(){let e=Math.floor(1e3*Math.random()).toString().padStart(3,"0"),t=Math.floor(1e8*Math.random()).toString().padStart(8,"0");return`+81 ${e} ${t.substr(0,4)} ${t.substr(4)}`}function displayPhoneNumber(e){let t=document.createElement("div");t.classList.add("result-item"),t.textContent=e,resultContainer.appendChild(t)}generateBtn.addEventListener("click",()=>{let e=document.getElementById("country-select"),t=e.value,n=generatePhoneNumber(t);displayPhoneNumber(n)}),clearBtn.addEventListener("click",()=>{resultContainer.innerHTML=""});
+  </script>
+</body>
+</html>
