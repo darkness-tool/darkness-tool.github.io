@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>進制轉換器</title>
+  <meta name="description" content="進制轉換器是一個網頁應用程序，可以將數字在不同進制之間進行轉換。輸入進制可以是二進制、八進制、十進制或十六進制，並且可以將數字轉換成所需的輸出進制。這個進制轉換器提供了一個簡單易用的界面，用戶只需輸入數字並選擇進制，即可獲得轉換結果。">
+  <meta name="keywords" content="進制轉換器, 進制轉換, 二進制, 八進制, 十進制, 十六進制, 數字轉換">
+  <meta name="robots" content="index, follow">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="load_index.js"></script>
+      <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+	<div class="container">
+    <h1>進制轉換器</h1>
+    <div class="guide">
+      <p>選擇輸入進制、輸入數字和輸出進制，然後按下提交按鈕。</p>
+    </div>
+	
+	  <!-- 選擇輸入進制和輸出進制的下拉選單 -->
+    <div class="input-container">
+      <label for="input-base">輸入進制：</label>
+      <select id="input-base">
+        <option value="2">二進制</option>
+        <option value="8">八進制</option>
+        <option value="10">十進制</option>
+        <option value="16">十六進制</option>
+      </select>
+    </div>
+    
+    <div class="input-container">
+      <label for="input-number">輸入數字：</label>
+      <textarea id="input-number" rows="10" cols="50" placeholder="請輸入數字"></textarea>
+    </div>
+    
+    <div class="input-container">
+      <label for="output-base">輸出進制：</label>
+      <select id="output-base">
+        <option value="2">二進制</option>
+        <option value="8">八進制</option>
+        <option value="10">十進制</option>
+        <option value="16">十六進制</option>
+      </select>
+    </div>
+    
+    <div class="button-section">
+      <button id="submit-btn" onclick="convertNumber()">提交</button>
+      <button id="clear-btn" onclick="clearInput()">清空</button>
+    </div>
+	
+    <!-- 轉換結果區域 -->
+    <div class="result">
+      <h2>結果：</h2>
+      <div id="output-number"></div>
+    </div>
+	<div class="part-container tool-description-long">進制轉換器是一個網頁應用程序，可以將數字在不同進制之間進行轉換。進制是數字的表示方式，包括二進制、八進制、十進制和十六進制等。這個進制轉換器提供了一個簡單易用的界面，讓用戶能夠輸入數字，選擇輸入進制和輸出進制，然後按下提交按鈕來執行轉換。
+
+在這個網頁中，你可以首先從下拉選單中選擇輸入進制，可以是二進制、八進制、十進制或十六進制。然後，在文本框中輸入你想要轉換的數字。接下來，從輸出進制的下拉選單中選擇你希望將數字轉換成的進制類型。最後，點擊提交按鈕，網頁將根據你的選擇執行進制轉換，並在結果區域顯示轉換後的數字。
+
+這個進制轉換器還提供一個清空按鈕，當你想要重新輸入數字時，可以點擊清空按鈕將輸入框和轉換結果清空。
+
+這個網頁設計簡潔，易於使用，適用於任何需要在不同進制之間進行數字轉換的場景。無論是學術研究、計算機科學還是日常生活中的數字轉換需求，這個進制轉換器都能夠快速、準確地執行轉換操作。  </div>
+  </div>
+  
+  <script>
+      function convertNumber(){var e=parseInt(document.getElementById("input-base").value),t=parseInt(document.getElementById("output-base").value),n=parseInt(document.getElementById("input-number").value,e).toString(t);document.getElementById("output-number").innerText=n}function clearInput(){document.getElementById("input-number").value="",document.getElementById("output-number").innerText=""}
+  </script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>URL編碼/解碼工具</title>
+  <meta name="description" content="這個網頁是一個URL編碼/解碼工具，用於將URL中的特殊字符進行編碼或解碼。通過輸入要處理的URL並選擇相應的功能，您可以快速獲取轉換後的結果。">
+	<meta name="keywords" content="URL編碼, URL解碼, 編碼工具, 解碼工具">
+	<meta name="robots" content="index, follow">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="load_index.js"></script>
+      <link rel="stylesheet" href="styles.css">
+  <script>
+    function encodeURL(){var e=encodeURIComponent(document.getElementById("text-input").value);document.getElementById("result-text").innerText=e}function decodeURL(){var e=decodeURIComponent(document.getElementById("text-input").value);document.getElementById("result-text").innerText=e}function clearText(){document.getElementById("text-input").value="",document.getElementById("result-text").innerText=""}
+  </script>
+</head>
+<body>
+	<div class="container">
+	  <h1>URL編碼/解碼工具</h1>
+	  <div class="guide">
+	    <p>請輸入要編碼或解碼的URL：</p>
+	  </div>
+	
+	  <!-- 文字輸入框和計算按鈕 -->
+	  <div class="input-container">
+	    <label for="input-text">輸入文字：</label>
+	    <textarea id="text-input" rows="10" cols="50" oninput="count()" placeholder="請輸入文字"></textarea>
+	  </div>
+	  
+	  <div class="button-section">
+	    <button onclick="encodeURL()">編碼</button>
+	    <button onclick="decodeURL()">解碼</button>
+	    <button onclick="clearText()" id="clear-btn">清空</button>
+	  </div>
+	
+	  <!-- 計數結果區域 -->
+	  <div class="result">
+	    <h2>結果：</h2>
+	    <p id="result-text"></p>
+	  </div>
+	  <div class="part-container tool-description-long">這個網頁是一個URL編碼/解碼工具，用於將URL中的特殊字符進行編碼或解碼。您可以在這個工具中輸入要處理的URL，然後選擇編碼或解碼功能，最後按下提交按鈕，即可獲得轉換後的結果。
+
+這個工具提供了一個簡單易用的界面，界面中央有一個文本輸入框，您可以在這裡輸入要處理的URL。輸入框下方有三個按鈕，分別是「編碼」、「解碼」和「清空」按鈕。您可以根據需要選擇不同的功能進行操作。
+
+當您輸入完URL並選擇了編碼或解碼功能後，只需點擊相應的按鈕，工具即會立即對URL進行處理。處理結果將顯示在結果區域中，您可以輕鬆地複製轉換後的URL以供使用。
+
+這個工具還提供了清空按鈕，當您想要重新輸入URL時，只需點擊清空按鈕，輸入框和結果區域將被清空，方便您進行下一次的操作。
+
+總的來說，這個URL編碼/解碼工具是一個方便實用的工具，讓您能夠輕鬆地對URL進行編碼或解碼操作，幫助您處理URL中的特殊字符，提升工作效率。無論您是開發人員還是普通用戶，都可以從這個工具中受益。</div>
+	</div>
+</body>
+</html>
