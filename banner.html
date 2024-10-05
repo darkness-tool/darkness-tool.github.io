@@ -1,0 +1,110 @@
+<html><head><style>
+		.app-card {
+            display: flex;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            padding: 10px;
+        }
+        .app-card img {
+            width: 100px;
+            height: 100px;
+            margin-right: 10px;
+        }
+        .app-card div {
+            flex-grow: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .app-card h3 {
+            font-size: 1.2em;
+            margin: 0;
+        }
+        .app-card p {
+            color: #555;
+            margin: 5px 0;
+        }
+		.app-info{
+			flex-direction: column;
+		}
+        .button-container {
+			width: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+			padding-left: 10px;
+        }
+        .button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .button:hover {
+            background: #0056b3;
+        }
+        .qr-code {
+            display: none;
+            margin-top: 10px;
+            text-align: center;
+        }</style></head><body>
+		
+<div id="banner-box-list">
+
+</div>
+
+<script>
+    function toggleQRCode(qrId) {
+        const qrCode = document.getElementById(qrId);
+        qrCode.style.display = qrCode.style.display === 'none' || qrCode.style.display === '' ? 'block' : 'none';
+    }
+	
+</script>
+
+<script>
+    var jsonData = [
+        { 
+		"name": "50音學日文 - 學習日語五十音發音默寫假名字帖練習不用背誦", 
+		"description":"學日文50音，記憶日文五十音基礎和寫法，不用硬記口訣背誦，輕鬆透過字帖、五十音圖表、遊戲和練習，日本日語教學助手，快速完整記憶平假名、片假名、漢字、濁音、拗音", 
+		"url": "https://play.google.com/store/apps/details?id=err.ro.japaneseletterdictation",
+		"icon": "/banner/err.ro.japaneseletterdictation/icon.png",
+		"qrcode": "/banner/err.ro.japaneseletterdictation/qrcode.png"
+		}
+      ];
+	  
+	function addAppCards(data) {
+        const appContainer = document.getElementById('banner-box-list');
+
+        data.forEach((item, index) => {
+            const card = document.createElement('div');
+            card.className = 'app-card';
+            card.innerHTML = `
+                <img src="${item.icon}" alt="${item.name}">
+                <div>
+                    <div class="app-info">
+                        <h3>${item.name}</h3>
+                        <p>${item.description}</p>
+                    </div>
+                    <div class="button-container">
+                        <button class="button" onclick="window.open('${item.url}', '_blank')">Download</button>
+                        <button class="button" onclick="toggleQRCode('qr${index}')">Show QR Code</button>
+                        <div id="qr${index}" class="qr-code" style="display: none;">
+                            <img src="${item.qrcode}" alt="QR Code for ${item.name}">
+                        </div>
+                    </div>
+                </div>
+            `;
+            appContainer.appendChild(card);
+        });
+    }
+
+    // Call the function to add the app cards
+    addAppCards(jsonData);
+  </script>
+
+</body></html>
