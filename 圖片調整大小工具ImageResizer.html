@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Resizer</title>
+  <meta name="description" content="這是一個簡單易用的圖片調整大小工具，用戶可以快速上傳圖片並自定義寬度和高度，輕鬆獲得所需的圖片效果。">
+	<meta name="keywords" content="圖片調整大小, 圖片處理, 上傳圖片, 縮放圖片, 在線工具">
+	<meta name="robots" content="index, follow">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="load_index.js"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>圖片調整大小工具ImageResizer</h1>
+    <div class="guide">
+      <p>請上傳一張圖片並選擇大小進行調整。</p>
+    </div>
+    
+    <!-- 上傳圖片區域 -->
+    <div class="input-container">
+      <input type="file" id="image-input" accept="image/*">
+	  <br/>
+      <label for="width-input">輸入寬度(px):</label>
+      <input type="number" id="width-input" placeholder="例如：300">
+	  <br/>
+      <label for="height-input">輸入高度(px):</label>
+      <input type="number" id="height-input" placeholder="例如：200">
+    </div>
+    <div class="button-section">
+      <button class="submit-button" id="resize-btn">調整大小</button>
+    </div>
+    
+    <!-- 結果區域 -->
+    <div class="result" id="result">
+      <h2>結果：</h2>
+      <img id="resized-image" src="" alt="調整後的圖片">
+    </div>
+  </div>
+  
+  <div class="part-container tool-description-long">這是一個圖片調整大小的工具，旨在提供用戶簡單直觀的圖片處理功能。用戶可以輕鬆上傳圖片，然後輸入所需的寬度和高度，最後調整圖片的大小。這個工具特別適合需要快速處理圖片的用戶，無論是社交媒體分享、網站使用，還是個人項目。
+
+在使用界面中，用戶可以看到一個簡單的上傳按鈕，支持多種圖片格式。上傳後，用戶可以輸入具體的寬度和高度，這樣可以精確控制圖片的顯示效果。這種靈活性使得用戶可以根據不同的需求來調整圖片大小，無論是縮小圖片以適應小屏幕，還是增大圖片以提高可視性。
+
+當用戶完成設置並點擊調整大小的按鈕後，系統會自動處理圖片，並在結果區域顯示調整後的圖片。這個過程迅速而高效，用戶無需等待過長的時間。調整後的圖片將以清晰的格式展示，確保不失真，滿足用戶的需求。</div>
+
+  <script>
+    document.getElementById('resize-btn').addEventListener('click', function() {
+      const fileInput = document.getElementById('image-input');
+      const widthInput = document.getElementById('width-input').value;
+      const heightInput = document.getElementById('height-input').value;
+      const resultImage = document.getElementById('resized-image');
+
+      if (fileInput.files.length === 0) {
+        alert('請上傳一張圖片！');
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function(event) {
+        const img = new Image();
+        img.src = event.target.result;
+
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          
+          canvas.width = widthInput || img.width;
+          canvas.height = heightInput || img.height;
+
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          resultImage.src = canvas.toDataURL('image/png');
+        };
+      };
+
+      reader.readAsDataURL(file);
+    });
+ </script>
+</body>
+</html>
