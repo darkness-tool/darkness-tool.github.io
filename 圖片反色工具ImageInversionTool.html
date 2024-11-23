@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>圖片反色工具ImageInversionTool</title>
+  <meta name="description" content="這是一個簡單易用的圖片反色工具，允許用戶上傳圖片並立即獲得反色效果。">
+<meta name="keywords" content="圖片反色, 圖片編輯, 圖片處理, 圖像工具, 在線工具">
+<meta name="robots" content="index, follow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="load_index.js"></script>
+      <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>圖片反色工具ImageInversionTool</h1>
+    <div class="guide">
+      <p>上傳一張圖片，點擊提交後查看反色效果。</p>
+    </div>
+    
+    <!-- 圖片上傳 -->
+    <div class="input-container">
+      <input type="file" id="image-input" accept="image/*" />
+    </div>
+    <div class="button-section">
+      <button class="submit-button" id="submit-btn">提交</button>
+    </div>
+    
+    <!-- 計數結果區域 -->
+    <div class="result" id="result">
+      <h2>結果：</h2>
+      <img id="output-image" alt="反色圖片" />
+    </div>
+	
+	<div class="part-container tool-description-long">這是一個用於圖片反色的工具，旨在為用戶提供簡單而直觀的圖片處理功能。用戶只需上傳一張圖片，然後點擊提交按鈕，即可立即獲得反色效果的圖片。這項工具特別適合需要進行基本圖像編輯的用戶，無需專業技能即可輕鬆使用。
+
+網頁的設計考慮到了用戶體驗，提供了清晰的指示和友好的界面。當用戶進入頁面時，首先會看到一個簡單的說明，告訴他們如何上傳圖片並查看結果。這確保了即使是第一次使用此工具的用戶也能輕鬆理解操作流程。圖片上傳功能支持多種格式，讓用戶可以根據自己的需求選擇合適的圖片。
+
+當用戶選擇圖片後，系統會自動加載該圖片，並通過畫布進行處理。反色效果的實現依賴於對每個像素的顏色值進行計算，這樣用戶最終可以看到一個色彩鮮明且獨特的圖片。處理後的圖片以一個新的圖像顯示在頁面上，方便用戶進一步使用或下載。</div>
+	
+  </div>
+
+  <script>
+    document.getElementById("submit-btn").addEventListener("click",function(){let t=document.getElementById("image-input"),e=t.files[0];if(e){let a=new FileReader;a.onload=function(t){let e=new Image;e.src=t.target.result,e.onload=function(){let t=document.createElement("canvas"),a=t.getContext("2d");t.width=e.width,t.height=e.height,a.drawImage(e,0,0);let n=a.getImageData(0,0,t.width,t.height),i=n.data;for(let l=0;l<i.length;l+=4)i[l]=255-i[l],i[l+1]=255-i[l+1],i[l+2]=255-i[l+2];a.putImageData(n,0,0),document.getElementById("output-image").src=t.toDataURL()}},a.readAsDataURL(e)}else alert("請上傳一張圖片！")});
+  </script>
+</body>
+</html>
