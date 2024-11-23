@@ -59,9 +59,7 @@
       <canvas id="result-canvas"></canvas>
       <a id="download-link" style="display:none;">下載圖片</a>
     </div>
-  </div>
-
-<div class="part-container tool-description-long">這是一個圖片加邊框的工具，旨在為用戶提供簡單而直觀的方式來處理圖片。用戶可以輕鬆上傳他們的圖片，並根據需要自定義邊框的參數。這個工具特別適合需要在社交媒體上分享圖片或創作個性化作品的用戶。
+	<div class="part-container tool-description-long">這是一個圖片加邊框的工具，旨在為用戶提供簡單而直觀的方式來處理圖片。用戶可以輕鬆上傳他們的圖片，並根據需要自定義邊框的參數。這個工具特別適合需要在社交媒體上分享圖片或創作個性化作品的用戶。
 
 在使用這個工具時，用戶首先需要選擇一張圖片。這可以通過點擊文件選擇按鈕來完成，支持多種圖片格式。上傳後，工具會自動顯示圖片，並允許用戶進一步進行編輯。用戶可以設定邊框的厚度，這是一個重要的功能，因為它能夠讓圖片的外觀更加突出。
 
@@ -70,7 +68,7 @@
 生成帶邊框的圖片非常簡單。用戶只需點擊一個按鈕，工具就會根據設定的參數生成新的圖片。用戶可以直接查看生成的結果，並有下載的選項，便於將圖片保存到本地設備中，方便分享或使用於其他用途。
 
 此外，這個工具還設有清空按鈕，方便用戶快速重置所有輸入，重新開始編輯。整個界面設計簡潔且易於導航，確保用戶在使用過程中不會感到困惑。無論是專業設計師還是普通用戶，都能輕鬆上手，快速完成圖片的邊框添加。這使得這個工具成為任何需要進行圖片編輯的用戶的理想選擇。</div>
-
+  </div>
 
   <script>
     const imageInput=document.getElementById("image-input"),topBorderWidthInput=document.getElementById("top-border-width"),bottomBorderWidthInput=document.getElementById("bottom-border-width"),leftBorderWidthInput=document.getElementById("left-border-width"),rightBorderWidthInput=document.getElementById("right-border-width"),borderColorInput=document.getElementById("border-color"),generateBtn=document.getElementById("generate-btn"),clearBtn=document.getElementById("clear-btn"),resultCanvas=document.getElementById("result-canvas"),downloadLink=document.getElementById("download-link"),ctx=resultCanvas.getContext("2d");imageInput.addEventListener("change",handleImageUpload),generateBtn.addEventListener("click",drawImageWithBorder),clearBtn.addEventListener("click",clear);let image=new Image;function handleImageUpload(e){let t=e.target.files[0];if(t){let n=new FileReader;n.onload=function(e){image.src=e.target.result},n.readAsDataURL(t)}}function drawImageWithBorder(){let e=parseInt(topBorderWidthInput.value),t=parseInt(bottomBorderWidthInput.value),n=parseInt(leftBorderWidthInput.value),d=parseInt(rightBorderWidthInput.value),r=borderColorInput.value;if(image.src){let a=image.width+n+d,l=image.height+e+t;resultCanvas.width=a,resultCanvas.height=l,ctx.fillStyle=r,ctx.fillRect(0,0,a,l),ctx.drawImage(image,n,e),downloadLink.href=resultCanvas.toDataURL(),downloadLink.download="bordered_image.png",downloadLink.style.display="block",downloadLink.textContent="下載圖片"}}function clear(){imageInput.value="",topBorderWidthInput.value=10,bottomBorderWidthInput.value=10,leftBorderWidthInput.value=10,rightBorderWidthInput.value=10,borderColorInput.value="#000000",ctx.clearRect(0,0,resultCanvas.width,resultCanvas.height),downloadLink.style.display="none"}
