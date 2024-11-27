@@ -9,22 +9,22 @@
     $(document).ready(function() {
       // Sample data in JSON format
       var jsonData = [
-        { "name": "凱撒密碼加密/解密器", "url": "凱撒密碼加密解密器caesarCipher.html" },
-        { "name": "刪除文字所有空白工具", "url": "刪除文字所有空白工具deleteSpace.html" },
-        { "name": "JSON格式化/驗證工具", "url": "JSON格式化驗證工具jsonFormatter.html" },
-        { "name": "文字加密解密工具", "url": "文字加密解密工具textEncrytion.html" },
-        { "name": "文字轉義/反轉義工具", "url": "文字轉義反轉義工具textEscape.html" },
-        { "name": "字數計算工具", "url": "字數計算工具wordCount.html" },
-		{ "name": "刪除換行字符工具", "url": "刪除換行字符工具deleteNewLine.html" },
-		{ "name": "亂數假文產生器", "url": "亂數假文產生器loremIpsum.html" },
-		{ "name": "電話號碼生成器", "url": "電話號碼生成器phoneNumberGenerator.html" },
-		{ "name": "進制轉換器", "url": "進制轉換器hexadecimalConverter.html" },
-		{ "name": "URL編碼/解碼工具", "url": "URL編碼解碼工具URLEncodeDecode.html" },
-		{ "name": "圖片調整大小工具", "url": "圖片調整大小工具ImageResizer.html" },
-		{ "name": "圖片加邊框工具", "url": "圖片加邊框工具ImageBorderTool.html" },
-		{ "name": "圖片反色工具", "url": "圖片反色工具ImageInversionTool.html" },
-		{ "name": "圖片採色工具", "url": "圖片採色工具ColorPicker.html" }
-      ];
+		{ "name": "凱撒密碼加密/解密器", "url": "凱撒密碼加密解密器caesarCipher.html", "icon": "🔐" },
+		{ "name": "刪除文字所有空白工具", "url": "刪除文字所有空白工具deleteSpace.html", "icon": "✂️" },
+		{ "name": "JSON格式化/驗證工具", "url": "JSON格式化驗證工具jsonFormatter.html", "icon": "📄" },
+		{ "name": "文字加密解密工具", "url": "文字加密解密工具textEncrytion.html", "icon": "🔒" },
+		{ "name": "文字轉義/反轉義工具", "url": "文字轉義反轉義工具textEscape.html", "icon": "🔄" },
+		{ "name": "字數計算工具", "url": "字數計算工具wordCount.html", "icon": "📝" },
+		{ "name": "刪除換行字符工具", "url": "刪除換行字符工具deleteNewLine.html", "icon": "🚫" },
+		{ "name": "亂數假文產生器", "url": "亂數假文產生器loremIpsum.html", "icon": "📜" },
+		{ "name": "電話號碼生成器", "url": "電話號碼生成器phoneNumberGenerator.html", "icon": "📞" },
+		{ "name": "進制轉換器", "url": "進制轉換器hexadecimalConverter.html", "icon": "🔢" },
+		{ "name": "URL編碼/解碼工具", "url": "URL編碼解碼工具URLEncodeDecode.html", "icon": "🔗" },
+		{ "name": "圖片調整大小工具", "url": "圖片調整大小工具ImageResizer.html", "icon": "🖼️" },
+		{ "name": "圖片加邊框工具", "url": "圖片加邊框工具ImageBorderTool.html", "icon": "🖌️" },
+		{ "name": "圖片反色工具", "url": "圖片反色工具ImageInversionTool.html", "icon": "🎨" },
+		{ "name": "圖片採色工具", "url": "圖片採色工具ColorPicker.html", "icon": "🎨" }
+	];
 
       var url = window.location.pathname;
       var filename = url.substring(url.lastIndexOf('/') + 1);
@@ -40,10 +40,14 @@
 
         var cell = $("<th></th>");
 		var link;
+		
+		var displayname;
+		displayname = (data.icon != ''? data.icon+' ' : '') + data.name;
 		if(encodeURI(data.url) != filename){
-			link = $("<a></a>").attr("href", data.url).text(data.name);
+			
+			link = $("<a></a>").attr("href", data.url).text(displayname);
 		}else{
-			link = $("<span></span>").text(data.name);		
+			link = $("<span></span>").text(displayname);		
 		}
 		cell.append(link);        
         row.append(cell);
