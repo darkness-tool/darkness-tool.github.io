@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>時區轉換工具TimeZoneConverter</title>
+    <meta name="description" content="一個方便的時區轉換工具，幫助用戶輕鬆將日期和時間從一個時區轉換到另一個時區，避免時差混淆。">
+    <meta name="keywords" content="時區轉換, 時間工具, 時區計算, 日期和時間, 時間轉換">
+    <meta name="robots" content="index, follow">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="load_index.js"></script>
+      <link rel="stylesheet" href="styles.css">
+   
+</head>
+<body>
+<div class="container">
+    <h1>時區轉換工具</h1>
+    <div class="guide">
+        <p>請輸入時間和日期，並選擇來源和目標時區。</p>
+    </div>
+
+    <!-- 時間輸入框和計算按鈕 -->
+    <div class="input-container">
+        <label for="datetime-input">輸入時間與日期：</label>
+        <input type="datetime-local" id="datetime-input" />
+    </div>
+
+    <div class="input-container">
+        <label for="source-timezone">來源時區：</label>
+        <select id="source-timezone">
+            <option value="-5">EST (美國東部標準時間)</option>
+            <option value="-6">CST (美國中部標準時間)</option>
+            <option value="-7">MST (美國山區標準時間)</option>
+            <option value="-8">PST (美國太平洋標準時間)</option>
+            <option value="0">GMT (格林威治標準時間)</option>
+            <option value="1">CET (中歐時間)</option>
+            <option value="8">CST (中國標準時間)</option>
+        </select>
+    </div>
+
+    <div class="input-container">
+        <label for="target-timezone">目標時區：</label>
+        <select id="target-timezone">
+            <option value="-5">EST (美國東部標準時間)</option>
+            <option value="-6">CST (美國中部標準時間)</option>
+            <option value="-7">MST (美國山區標準時間)</option>
+            <option value="-8">PST (美國太平洋標準時間)</option>
+            <option value="0">GMT (格林威治標準時間)</option>
+            <option value="1">CET (中歐時間)</option>
+            <option value="8">CST (中國標準時間)</option>
+        </select>
+    </div>
+
+    <div class="button-section">
+        <button class="convert-button" id="convert-btn">轉換</button>
+    </div>
+
+    <!-- 計算結果區域 -->
+    <div class="result">
+        <h2>結果：</h2>
+        <div class="result-item" id="result-output"></div>
+    </div>
+
+    <div class="part-container tool-description-long">旨在幫助用戶輕鬆地將一個時區的日期和時間轉換為另一個時區的相應時間。無論是在國內出差，還是與國外的朋友或同事進行安排，這個工具都能為用戶提供精確的時間轉換，避免因時差而產生的混淆。
+
+        用戶只需在指定的輸入框中填寫所需轉換的日期和時間，然後選擇來源時區以及目標時區。工具內置了多種常見的時區選擇，讓用戶能夠快速找到所需的選項。整個操作過程簡單直觀，適合各種技術水平的用戶使用。
+
+        當用戶點擊轉換按鈕後，系統會自動計算出所選來源時區和目標時區之間的時差，並將輸入的時間進行相應的調整。轉換後的時間會以易於理解的格式顯示出來，讓用戶能夠立即獲取所需的信息。</div>
+</div>
+
+<script>
+    document.getElementById("convert-btn").onclick=function(){let e=new Date(document.getElementById("datetime-input").value),t=60*parseInt(document.getElementById("source-timezone").value),n=60*parseInt(document.getElementById("target-timezone").value),l=new Date(e.getTime()+6e4*(n-t));document.getElementById("result-output").innerText=l.toLocaleString()};
+</script>
+</body>
+</html>

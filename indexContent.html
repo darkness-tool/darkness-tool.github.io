@@ -23,7 +23,9 @@
 		{ "name": "圖片調整大小工具", "url": "圖片調整大小工具ImageResizer.html", "icon": "🖼️" },
 		{ "name": "圖片加邊框工具", "url": "圖片加邊框工具ImageBorderTool.html", "icon": "🖌️" },
 		{ "name": "圖片反色工具", "url": "圖片反色工具ImageInversionTool.html", "icon": "🎨" },
-		{ "name": "圖片採色工具", "url": "圖片採色工具ColorPicker.html", "icon": "🎨" }
+		{ "name": "圖片採色工具", "url": "圖片採色工具ColorPicker.html", "icon": "🎨" },
+		{ "name": "抽籤工具", "url": "抽籤工具RandomSelectionTool.html", "icon": "🎲" },
+		{ "name": "時區轉換工具", "url": "時區轉換工具TimeZoneConverter.html", "icon": "🕒" }
 	];
 
       var url = window.location.pathname;
@@ -56,9 +58,22 @@
 	  
 	  
     });
+	
+	function appendScriptIfHttp() {
+		var linkHref = window.location.href;
+		if (!linkHref.startsWith('file://')) {
+			const scriptTag = document.createElement('script');
+			scriptTag.async = true;
+			scriptTag.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1358817032535379";
+			scriptTag.crossOrigin = 'anonymous';
+			document.body.appendChild(scriptTag);
+		}
+	}
+
+	appendScriptIfHttp();
   </script>
   <script>
 function scrollToBottom(){window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"})}var scrollButton=document.getElementById("scrollButton");scrollButton.addEventListener("click",scrollToBottom);
 </script>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1358817032535379"
-     crossorigin="anonymous"></script>
+<!--<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1358817032535379"
+     crossorigin="anonymous"></script>-->
