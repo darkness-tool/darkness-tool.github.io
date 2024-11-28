@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>排列工具SortingTool</title>
+	<meta name="description" content="這是一個簡單的排列工具，幫助用戶輕鬆整理和排列輸入的文字項目。">
+	<meta name="keywords" content="排列工具, 文字整理, 順序排列, 倒序排列, 清單管理">
+	<meta name="robots" content="index, follow">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="load_index.js"></script>
+      <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>排列工具</h1>
+    <div class="guide">
+      <p>請在下方輸入框中輸入每行一個項目，選擇排列順序，然後按下提交按鈕。</p>
+    </div>
+    
+    <div class="input-container">
+      <label for="text-input">輸入文字：</label>
+      <textarea id="text-input" rows="10" placeholder="請輸入文字"></textarea>
+    </div>
+
+    <div class="input-container">
+      <label for="order">選擇排列方式：</label>
+      <select id="order">
+        <option value="asc">順序</option>
+        <option value="desc">倒序</option>
+      </select>
+    </div>
+
+    <div class="button-section">
+      <button id="submit-btn" class="count-button">提交</button>
+      <button id="clear-btn" class="count-button">清空</button>
+    </div>
+    
+    <div class="result" id="result">
+      <h2>結果：</h2>
+    </div>
+	
+	<div class="part-container tool-description-long">這是一個簡單而實用的排列工具，旨在幫助用戶輕鬆地整理和排列輸入的文字項目。用戶只需在提供的文本框中輸入每行一個項目，這些項目可以是任何類型的文字，如任務列表、購物清單或其他需要排序的內容。該工具支持用戶隨意輸入，並提供了一個直觀的界面，使操作變得簡單明了。
+
+在用戶完成輸入後，頁面提供了一個選擇框，讓用戶決定排列的順序。用戶可以選擇按字母順序排列，或者選擇倒序排列，這樣可以根據需要快速獲得所需的排列結果。這種靈活性使得工具適用於多種場景，無論是日常生活還是工作需求，都能有效提升效率。
+
+提交按鈕的功能十分直觀，點擊後，頁面會自動處理輸入的數據，並根據用戶的選擇展示排列後的結果。結果區域以清晰的格式顯示每一個項目，便於用戶快速檢視和使用。此外，頁面還設有清空按鈕，方便用戶隨時重置輸入內容，從而開始新的排列操作。</div>
+  </div>
+
+  <script>
+    document.getElementById("submit-btn").addEventListener("click",function(){let e=document.getElementById("text-input").value.trim(),t=document.getElementById("order").value,n=document.getElementById("result");if(e){let i=e.split("\n").filter(e=>""!==e.trim());"asc"===t?i.sort():i.sort().reverse(),n.innerHTML="<h2>結果：</h2>"+i.map(e=>`<div class="result-item">${e}</div>`).join("")}else n.innerHTML="<h2>結果：</h2><div>請輸入項目。</div>"}),document.getElementById("clear-btn").addEventListener("click",function(){document.getElementById("text-input").value="",document.getElementById("result").innerHTML="<h2>結果：</h2>"});
+  </script>
+</body>
+</html>
