@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>鍵盤檢測工具</title>
+  <meta name="description" content="這是一個簡單易用的鍵盤檢測工具，幫助用戶測試鍵盤的功能，並提供即時反饋。">
+<meta name="keywords" content="鍵盤檢測, 鍵盤功能測試, 鍵盤工具, 即時反饋, 輸入測試">
+<meta name="robots" content="index, follow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="load_index.js"></script>
+      <link rel="stylesheet" href="styles.css">
+  <style>
+    .keyboard {
+      display: grid;
+      grid-template-columns: repeat(14, 1fr);
+      gap: 5px;
+      margin-top: 20px;
+    }
+
+    .key {
+      padding: 10px;
+      background-color: #f0f0f0;
+      border: 1px solid #ccc;
+      text-align: center;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .key.active {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    /* 響應式設計 */
+    @media screen and (max-width: 600px) {
+      .keyboard {
+        grid-template-columns: repeat(7, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>鍵盤檢測工具</h1>
+    <div class="guide">
+      <p>按下鍵盤上的任意按鍵以檢測。</p>
+    </div>
+
+    <div class="input-container">
+      <label for="text-input">輸入文字：</label>
+      <textarea id="text-input" rows="10" cols="50" oninput="count()" placeholder="請輸入文字"></textarea>
+    </div>
+    
+    <div class="button-section">
+      <button id="clear-btn" class="count-button">清空</button>
+    </div>
+
+    <div class="result">
+      <h2>結果：</h2>
+      <div id="result-display"></div>
+    </div>
+
+    <div class="keyboard" id="keyboard">
+      <!-- 鍵盤按鍵 -->
+      <div class="key" data-key="192">`</div>
+      <div class="key" data-key="49">1</div>
+      <div class="key" data-key="50">2</div>
+      <div class="key" data-key="51">3</div>
+      <div class="key" data-key="52">4</div>
+      <div class="key" data-key="53">5</div>
+      <div class="key" data-key="54">6</div>
+      <div class="key" data-key="55">7</div>
+      <div class="key" data-key="56">8</div>
+      <div class="key" data-key="57">9</div>
+      <div class="key" data-key="48">0</div>
+      <div class="key" data-key="189">-</div>
+      <div class="key" data-key="187">+</div>
+      <div class="key" data-key="8">Backspace</div>
+      <div class="key" data-key="9">Tab</div>
+      <div class="key" data-key="81">Q</div>
+      <div class="key" data-key="87">W</div>
+      <div class="key" data-key="69">E</div>
+      <div class="key" data-key="82">R</div>
+      <div class="key" data-key="84">T</div>
+      <div class="key" data-key="89">Y</div>
+      <div class="key" data-key="85">U</div>
+      <div class="key" data-key="73">I</div>
+      <div class="key" data-key="79">O</div>
+      <div class="key" data-key="80">P</div>
+      <div class="key" data-key="219">[</div>
+      <div class="key" data-key="221">]</div>
+      <div class="key" data-key="220">\</div>
+      <div class="key" data-key="20">Caps Lock</div>
+      <div class="key" data-key="65">A</div>
+      <div class="key" data-key="83">S</div>
+      <div class="key" data-key="68">D</div>
+      <div class="key" data-key="70">F</div>
+      <div class="key" data-key="71">G</div>
+      <div class="key" data-key="72">H</div>
+      <div class="key" data-key="74">J</div>
+      <div class="key" data-key="75">K</div>
+      <div class="key" data-key="76">L</div>
+      <div class="key" data-key="186">;</div>
+      <div class="key" data-key="222">'</div>
+      <div class="key" data-key="13">Enter</div>
+      <div class="key" data-key="16">Shift</div>
+      <div class="key" data-key="90">Z</div>
+      <div class="key" data-key="88">X</div>
+      <div class="key" data-key="67">C</div>
+      <div class="key" data-key="86">V</div>
+      <div class="key" data-key="66">B</div>
+      <div class="key" data-key="78">N</div>
+      <div class="key" data-key="77">M</div>
+      <div class="key" data-key="188">,</div>
+      <div class="key" data-key="190">.</div>
+      <div class="key" data-key="191">/</div>
+      <div class="key" data-key="16">Shift</div>
+      <div class="key" data-key="17">Ctrl</div>
+      <div class="key" data-key="91">Win</div>
+      <div class="key" data-key="32">Space</div>
+      <div class="key" data-key="17">Ctrl</div>
+    </div>
+	
+	<div class="part-container tool-description-long">鍵盤檢測工具旨在幫助用戶測試和檢查他們的鍵盤功能。用戶只需在文本框中輸入文字，或直接按下鍵盤上的任意按鍵，工具便會即時顯示相應的按鍵反饋。這對於那些需要確認鍵盤是否正常工作的使用者來說，無疑是一個便捷的選擇。
+
+網頁的設計直觀易用，提供了一個整齊的鍵盤模擬界面。當用戶按下某個按鍵時，對應的按鍵會變色，以此顯示該按鍵的激活狀態。這不僅能夠讓用戶清晰地看到哪些按鍵被觸發，還能增強互動體驗。用戶可以通過這個工具輕鬆檢查特定按鍵是否正常工作，適合於鍵盤維護、故障排查和學習鍵盤布局。
+
+此外，這個工具還提供了一個清空按鈕，讓用戶可以隨時重置檢測結果。這樣的功能設計使得用戶在進行多次測試時，可以隨時清除先前的輸入，保持界面的整潔。整體而言，這個鍵盤檢測工具不僅功能完善，還具備良好的用戶體驗。</div>
+  </div>
+
+  <script>
+    const keys=document.querySelectorAll(".key"),resultDisplay=document.getElementById("result-display"),clearBtn=document.getElementById("clear-btn");window.addEventListener("keydown",e=>{let t=document.querySelector(`.key[data-key="${e.keyCode}"]`);t&&(t.classList.add("active"),resultDisplay.innerHTML+=e.key+" ")}),window.addEventListener("keyup",e=>{let t=document.querySelector(`.key[data-key="${e.keyCode}"]`);t&&t.classList.remove("active")}),clearBtn.addEventListener("click",()=>{resultDisplay.innerHTML="",keys.forEach(e=>e.classList.remove("active"))});
+  </script>
+</body>
+</html>

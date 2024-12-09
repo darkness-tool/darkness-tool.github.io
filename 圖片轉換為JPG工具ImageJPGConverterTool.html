@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>圖片轉換為JPG工具</title>
+  <meta name="description" content="使用這個簡單的工具將您的圖片轉換為 JPG 格式。輕鬆上傳圖片並下載轉換後的文件。">
+	<meta name="keywords" content="圖片轉換, JPG, 圖片工具, 圖片格式轉換, 在線轉換工具">
+	<meta name="robots" content="index, follow">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="load_index.js"></script>
+      <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>圖片轉換為 JPG 工具</h1>
+    <div class="guide">
+      <p>上傳圖片，然後點擊提交以轉換為 JPG 格式。</p>
+    </div>
+
+    <!-- 圖片上傳框 -->
+    <div class="input-container">
+      <label for="image-input">選擇圖片：</label>
+      <input type="file" id="image-input" accept="image/*">
+    </div>
+
+    <div class="button-section">
+      <button class="convert-button" id="convert-btn">提交</button>
+    </div>
+
+    <!-- 結果區域 -->
+    <div class="result" id="result">
+      <h2>結果：</h2>
+      <a id="download-link" class="result-item" href="#" download>下載轉換後的 JPG</a>
+    </div>
+	
+	<div class="part-container tool-description-long">用於將圖片轉換為 JPG 格式。使用者只需簡單地上傳他們想要轉換的圖片，然後點擊提交按鈕，即可完成轉換。這項功能對於需要將圖片格式轉換為 JPG 的人來說，非常實用，因為 JPG 格式在圖像壓縮和顯示方面有著廣泛的應用。
+
+當使用者選擇一個圖片文件並提交後，系統會自動加載該圖片，並使用畫布技術進行轉換。這種技術不僅能夠保留圖片的質量，還能確保轉換過程快速而高效。轉換完成後，網頁會生成一個下載鏈接，使用者可以輕鬆地將轉換後的 JPG 圖片保存到自己的設備上。
+
+此工具的設計注重使用者體驗。網頁的界面友好且直觀，即使是初學者也能輕鬆上手。使用者無需進行繁瑣的設置或選項，只需專注於上傳圖片和獲取最終結果。此外，這個工具充分考慮了響應式設計，確保在各種設備上均能流暢運行，無論是桌面電腦還是手機，都能提供一致的使用體驗。</div>
+  </div>
+
+  <script>
+    document.getElementById("convert-btn").addEventListener("click",function(){let e=document.getElementById("image-input"),t=e.files[0];if(!t){alert("請選擇一個圖片文件");return}let n=new FileReader;n.onload=function(e){let t=new Image;t.src=e.target.result,t.onload=function(){let e=document.createElement("canvas");e.width=t.width,e.height=t.height;let n=e.getContext("2d");n.drawImage(t,0,0),e.toBlob(function(e){let t=URL.createObjectURL(e),n=document.getElementById("download-link");n.href=t,n.download="converted_image.jpg",document.getElementById("result").style.display="block"},"image/jpeg")}},n.readAsDataURL(t)});
+  </script>
+</body>
+</html>
