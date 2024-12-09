@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>時間計算工具</title>
+  <meta name="description" content="一個實用的時間計算工具，幫助用戶輕鬆計算目標時間與加減時間之間的差異。">
+	<meta name="keywords" content="時間計算, 時間工具, 目標時間, 加減時間, 效率工具">
+	<meta name="robots" content="index, follow">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="load_index.js"></script>
+      <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>時間計算工具</h1>
+    <div class="guide">
+      <p>輸入目標時間和要加的時間，然後點擊計算。</p>
+    </div>
+
+    <div class="input-container">
+      <label for="target-time">目標時間：</label>
+      <input type="datetime-local" id="target-time" required>
+    </div>
+    <div class="input-container">
+      <label for="days">天數：</label>
+      <input type="number" id="days" placeholder="輸入天數">
+    </div>
+    <div class="input-container">
+      <label for="hours">小時：</label>
+      <input type="number" id="hours" placeholder="輸入小時">
+    </div>
+    <div class="input-container">
+      <label for="minutes">分鐘：</label>
+      <input type="number" id="minutes" placeholder="輸入分鐘">
+    </div>
+    <div class="input-container">
+      <label for="seconds">秒數：</label>
+      <input type="number" id="seconds" placeholder="輸入秒數">
+    </div>
+
+    <div class="button-section">
+      <button onclick="calculateTime()">計算</button>
+      <button onclick="clearFields()">清空</button>
+    </div>
+
+    <div class="result">
+      <h2>結果：</h2>
+      <div id="result" class="result-item"></div>
+    </div>
+	
+	<div class="part-container tool-description-long">時間計算工具旨在幫助用戶輕鬆地計算目標時間與加減時間之間的差異。用戶可以輸入一個特定的目標時間，並指定想要加上的時間，這些時間可以是天、時、分或秒。該工具的界面簡潔明了，適合各類使用者，即使是對技術不太熟悉的人也能輕鬆使用。
+
+在使用這個工具時，用戶只需選擇目標時間，然後填寫要加的時間數量。每個時間單位都有專門的輸入框，方便用戶逐一輸入。工具會自動將所有輸入的時間進行計算，並在點擊計算按鈕後，顯示新的時間結果。這樣的設計不僅提高了計算的效率，還能確保用戶獲得準確的結果。
+
+除了計算功能，這個網頁還提供了清空按鈕，用戶可以快速重置所有輸入，方便重新開始計算。此外，網頁的響應式設計確保了在各種設備上都能良好顯示，無論是桌面電腦還是移動設備，使用體驗始終如一。</div>
+  </div>
+  
+  
+  <script>
+    function calculateTime(){let e=new Date(document.getElementById("target-time").value),t=parseInt(document.getElementById("days").value)||0,l=parseInt(document.getElementById("hours").value)||0,n=parseInt(document.getElementById("minutes").value)||0,$=parseInt(document.getElementById("seconds").value)||0,u=new Date(e.getTime()+(864e5*t+36e5*l+6e4*n+1e3*$));document.getElementById("result").innerHTML=`新的時間是：${u.toLocaleString()}`}function clearFields(){document.getElementById("target-time").value="",document.getElementById("days").value="",document.getElementById("hours").value="",document.getElementById("minutes").value="",document.getElementById("seconds").value="",document.getElementById("result").innerHTML=""}
+  </script>
+</body>
+</html>
