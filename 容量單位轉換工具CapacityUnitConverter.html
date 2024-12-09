@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>容量單位轉換工具</title>
+  <meta name="description" content="這是一個容量單位轉換工具，幫助用戶輕鬆將TB、GB、MB、KB和Byte等存儲容量單位之間進行轉換。">
+	<meta name="keywords" content="容量轉換, TB, GB, MB, KB, Byte, 存儲, 工具">
+	<meta name="robots" content="index, follow">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="load_index.js"></script>
+      <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>容量單位轉換工具</h1>
+    <div class="guide">
+      <p>請輸入容量大小及其單位(TB, GB, MB, KB, Byte)</p>
+    </div>
+
+    <!-- 容量輸入框 -->
+    <div class="input-container">
+      <label for="capacity-input">容量：</label>
+      <input type="number" id="capacity-input" placeholder="數值">
+      <select id="unit-select">
+        <option value="TB">TB</option>
+        <option value="GB">GB</option>
+        <option value="MB">MB</option>
+        <option value="KB">KB</option>
+        <option value="Byte">Byte</option>
+      </select>
+    </div>
+
+    <div class="button-section">
+      <button class="count-button" id="convert-btn">轉換</button>
+      <button id="clear-btn">清空</button>
+    </div>
+
+    <!-- 計算結果區域 -->
+    <div class="result" id="result">
+      <h2>結果：</h2>
+    </div>
+	
+	<div class="part-container tool-description-long">容量單位轉換工具旨在幫助用戶輕鬆地將不同存儲容量單位之間進行轉換。用戶只需輸入所需轉換的數值，並選擇相應的單位，如TB、GB、MB、KB或Byte，然後點擊轉換按鈕，即可獲得所有其他單位的對應容量值。
+
+該工具的界面設計簡潔明了，讓用戶能夠迅速理解如何使用。容量輸入框和單位下拉選單清晰可見，並且還提供了清空按鈕，方便用戶重置輸入。每當進行轉換操作時，計算結果會即時顯示在結果區域中，無需重新加載頁面，提升了用戶體驗。
+
+轉換的邏輯基於常見的存儲容量換算，將用戶輸入的數值轉換為所有其他單位的容量。這樣，用戶不僅能看到所輸入容量在其他單位下的具體數值，還能更好地理解各單位之間的關係。無論是技術專業人士還是普通用戶，都能受益於這個簡便的工具。</div>
+  </div>
+
+  <script>
+    function convertCapacity(e,t){let n={TB:1099511627776,GB:1073741824,MB:1048576,KB:1024,Byte:1},i=e*n[t];return{TB:i/n.TB,GB:i/n.GB,MB:i/n.MB,KB:i/n.KB,Byte:i/n.Byte}}document.getElementById("convert-btn").addEventListener("click",function(){let e=parseFloat(document.getElementById("capacity-input").value),t=document.getElementById("unit-select").value,n=document.getElementById("result");if(n.innerHTML="<h2>結果：</h2>",!isNaN(e)&&e>=0){let i=convertCapacity(e,t);for(let[l,B]of Object.entries(i))n.innerHTML+=`<div class="result-item">${B.toFixed(2)} ${l}</div>`}else n.innerHTML+=`<div class="result-item">請輸入有效的數值</div>`}),document.getElementById("clear-btn").addEventListener("click",function(){document.getElementById("capacity-input").value="",document.getElementById("unit-select").value="TB",document.getElementById("result").innerHTML="<h2>結果：</h2>"});
+  </script>
+</body>
+</html>

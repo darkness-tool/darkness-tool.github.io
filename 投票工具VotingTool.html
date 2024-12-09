@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>投票工具</title>
+  <meta name="description" content="簡單易用的投票工具，讓您輕鬆創建和管理投票選項，支持即時投票、減少投票及刪除選項功能。">
+	<meta name="keywords" content="投票工具, 投票系統, 在線投票, 管理選項, 互動工具">
+	<meta name="robots" content="index, follow">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="load_index.js"></script>
+      <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>投票工具</h1>
+    <div class="input-container">
+      <label for="option-input">新增選項：</label>
+      <input type="text" id="option-input" placeholder="請輸入選項文字">
+    </div>
+    <div class="button-section">
+      <button class="count-button" id="add-option-btn">新增選項</button>
+      <button class="count-button" id="reset-btn">重置所有選項</button>
+    </div>
+    
+    <!-- 計數結果區域 -->
+    <div class="result" id="result-area">
+      <h2>結果：</h2>
+    </div>
+	<div class="part-container tool-description-long">這個投票工具旨在讓使用者輕鬆地創建和管理投票選項。用戶可以在文本框中輸入選項的內容，並透過點擊“新增選項”按鈕，將其添加到投票列表中。這樣的設計使得無論是用於小型聚會、活動還是更正式的場合，所有參與者都能輕鬆參與投票。
+
+每個選項旁邊都會顯示當前的投票數量，並提供投票的按鈕。用戶可以隨時對感興趣的選項進行投票，這樣可以即時更新投票數。除了投票功能，工具還允許用戶減少某個選項的投票數量，這在某些情況下非常有用，例如當用戶改變主意時。
+
+此外，每個選項還配有刪除按鈕，讓用戶可以直接移除不再需要的選項。這樣的靈活性確保了每次投票的準確性和有效性。為了便於管理，使用者還可以選擇重置所有選項，這樣可以快速清空投票內容，重新開始新的投票。</div>
+  </div>
+
+  <script>
+    const addOptionBtn=document.getElementById("add-option-btn"),resetBtn=document.getElementById("reset-btn"),optionInput=document.getElementById("option-input"),resultArea=document.getElementById("result-area");let options=[];function renderOptions(){resultArea.innerHTML="<h2>結果：</h2>",options.forEach((t,e)=>{let n=document.createElement("div");n.className="result-item",n.innerHTML=`
+          ${t.text} - 投票數: <span id="vote-count-${e}">${t.votes}</span>
+          <button class="count-button" onclick="vote(${e})">投票</button>
+          <button class="count-button" onclick="decreaseVote(${e})">-</button>
+          <button class="count-button" onclick="removeOption(${e})">刪除</button>
+        `,resultArea.appendChild(n)})}function vote(t){options[t].votes++,renderOptions()}function decreaseVote(t){options[t].votes>0&&options[t].votes--,renderOptions()}function removeOption(t){options.splice(t,1),renderOptions()}addOptionBtn.addEventListener("click",()=>{let t=optionInput.value.trim();t&&(options.push({text:t,votes:0}),optionInput.value="",renderOptions())}),resetBtn.addEventListener("click",()=>{options=[],renderOptions()});
+  </script>
+</body>
+</html>
