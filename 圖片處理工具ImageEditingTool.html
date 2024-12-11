@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <title>圖片處理工具</title>
+  <meta name="description" content="這是一個簡單易用的圖片處理工具，允許用戶上傳圖片並進行旋轉或鏡像處理。">
+	<meta name="keywords" content="圖片處理, 上傳圖片, 旋轉圖片, 鏡像, 圖片編輯">
+	<meta name="robots" content="index, follow">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>圖片處理工具</h1>
+    <div class="guide">
+      <p>上傳圖片並選擇處理方式</p>
+    </div>
+    
+    <!-- 圖片上傳和處理選項 -->
+    <div class="input-container">
+      <label for="image-upload">上傳圖片：</label>
+      <input type="file" id="image-upload" accept="image/*">
+    </div>
+    
+    <div class="input-container">
+      <label>處理方式：</label><br>
+      <input type="radio" name="action" value="rotate" id="rotate" checked> 旋轉<br>
+      <div id="rotate-options" style="margin-left: 20px;">
+        <input type="radio" name="rotation-degree" value="90" id="rotate-90"> <label for="rotate-90">90°</label><br>
+        <input type="radio" name="rotation-degree" value="180" id="rotate-180"> <label for="rotate-180">180°</label><br>
+        <input type="radio" name="rotation-degree" value="270" id="rotate-270"> <label for="rotate-270">270°</label><br>
+      </div>
+      <input type="radio" name="action" value="mirror" id="mirror"> 鏡像
+    </div>
+
+    <div class="button-section">
+      <button class="process-button" id="submit-btn">提交</button>
+    </div>
+    
+    <!-- 處理結果區域 -->
+    <div class="result" id="result-container" style="display: none;">
+      <h2>結果：</h2>
+      <img id="result-image" src="" alt="">
+    </div>
+	
+	<div class="part-container tool-description-long">圖片處理工具是一個簡單易用的網頁應用，旨在幫助用戶輕鬆上傳和編輯圖片。用戶可以通過簡單的步驟進行圖片的旋轉或鏡像處理，無需下載額外的軟體，完全在瀏覽器中完成。
+
+首先，用戶只需點擊上傳按鈕，選擇想要處理的圖片。此工具支持多種圖片格式，確保用戶能夠輕鬆上傳所需的文件。上傳後，系統會即時顯示該圖片，便於用戶確認所選的圖片是否正確。
+
+在處理選項中，用戶可以選擇旋轉圖片或進行鏡像處理。如果選擇旋轉，則可以進一步選擇旋轉的角度，包括 90 度、180 度和 270 度。這些選項使得用戶能夠根據需求靈活調整圖片的方向。若選擇鏡像，則圖片會在水平方向上翻轉，呈現出鏡像效果。
+
+處理完成後，結果會顯示在同一頁面上，用戶可以直接查看編輯後的圖片。這一過程不僅直觀，而且高效，讓用戶能在短時間內獲得所需的效果。用戶還可以輕鬆重複這一過程，以便進行多次編輯。</div>
+  </div>
+
+  <script>
+    document.getElementById("submit-btn").addEventListener("click",function(){let e=document.getElementById("image-upload"),t=document.querySelector('input[name="action"]:checked').value,i=document.getElementById("result-image"),h=document.getElementById("result-container");if(e.files&&e.files[0]){let a=new FileReader;a.onload=function(e){let a=new Image;a.src=e.target.result,a.onload=function(){let e=document.createElement("canvas"),d=e.getContext("2d");if("rotate"===t){let l=document.querySelector('input[name="rotation-degree"]:checked').value;"90"===l?(e.width=a.height,e.height=a.width,d.translate(e.width/2,e.height/2),d.rotate(Math.PI/2),d.drawImage(a,-a.width/2,-a.height/2)):"180"===l?(e.width=a.width,e.height=a.height,d.translate(e.width/2,e.height/2),d.rotate(Math.PI),d.drawImage(a,-a.width/2,-a.height/2)):"270"===l&&(e.width=a.height,e.height=a.width,d.translate(e.width/2,e.height/2),d.rotate(-Math.PI/2),d.drawImage(a,-a.width/2,-a.height/2))}else"mirror"===t&&(e.width=a.width,e.height=a.height,d.scale(-1,1),d.drawImage(a,-a.width,0));i.src=e.toDataURL(),h.style.display="block"}},a.readAsDataURL(e.files[0])}else alert("請上傳一張圖片")});
+  </script>
+</body>
+</html>

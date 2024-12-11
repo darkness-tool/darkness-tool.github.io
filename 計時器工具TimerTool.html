@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <title>計時器工具</title>
+  <meta name="description" content="一個簡單易用的計時器工具，幫助用戶管理時間，支持開始、暫停和停止計時功能。">
+<meta name="keywords" content="計時器, 時間管理, 健身計時, 工作計時, 簡易工具">
+<meta name="robots" content="index, follow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    .timer-container {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .timer-display {
+      font-size: 2em;
+      margin: 10px 0;
+    }
+
+    .button-section {
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>計時器工具</h1>
+    <div class="guide">
+      <p>點擊開始計時，您可以暫停或停止計時。</p>
+    </div>
+    
+    <!-- 計時器區域 -->
+    <div class="timer-container">
+      <div class="timer-display" id="timer">00:00:00</div>
+      <div class="button-section">
+        <button id="start-btn">開始</button>
+        <button id="pause-btn" disabled>暫停</button>
+        <button id="resume-btn" disabled>繼續</button>
+        <button id="stop-btn" disabled>停止</button>
+      </div>
+    </div>
+
+    <!-- 計數結果區域 -->
+    <div class="result">
+      <h2>結果：</h2>
+      <p id="result-text"></p>
+    </div>
+	
+	<div class="part-container tool-description-long">一個簡單易用的計時器工具，旨在提供用戶一個方便的方式來計時。網頁的設計清晰簡潔，使用者可以輕鬆地找到所有功能按鈕。用戶只需按下開始按鈕，即可開始計時，並且計時的時間會即時顯示在界面上，以小時、分鐘和秒的格式呈現。
+
+當用戶啟動計時器後，計時器將每秒自動更新，顯示出流逝的時間。用戶可以隨時按下暫停按鈕來暫停計時，這對於需要短暫中斷計時的情況非常有用。當用戶準備好繼續計時時，他們可以按下繼續按鈕，計時將從暫停的地方繼續進行。
+
+若用戶希望結束計時，只需按下停止按鈕。此時，計時器將停止運行，並顯示計時結束的總時間。結果將顯示在固定區域，方便用戶查看他們的計時記錄。整體而言，這個網頁的計時器功能非常實用，適合各種需求，例如健身、工作或任何需要時間管理的活動。
+
+此網頁還考慮到響應式設計，確保在各種設備上都能良好顯示，無論是在桌面還是手機上，用戶都能獲得一致的體驗。這種靈活性使得計時器工具能夠適應不同使用場景，方便用戶隨時隨地使用。</div>
+  </div>
+
+  <script>
+    let timerInterval,elapsedTime=0;function formatTime(e){let t=String(Math.floor(e/3600)).padStart(2,"0"),d=String(Math.floor(e%3600/60)).padStart(2,"0"),n=String(e%60).padStart(2,"0");return`${t}:${d}:${n}`}document.getElementById("start-btn").addEventListener("click",()=>{timerInterval=setInterval(()=>{elapsedTime++,document.getElementById("timer").textContent=formatTime(elapsedTime)},1e3),document.getElementById("start-btn").disabled=!0,document.getElementById("pause-btn").disabled=!1,document.getElementById("stop-btn").disabled=!1,document.getElementById("resume-btn").disabled=!0}),document.getElementById("pause-btn").addEventListener("click",()=>{clearInterval(timerInterval),document.getElementById("pause-btn").disabled=!0,document.getElementById("resume-btn").disabled=!1}),document.getElementById("resume-btn").addEventListener("click",()=>{timerInterval=setInterval(()=>{elapsedTime++,document.getElementById("timer").textContent=formatTime(elapsedTime)},1e3),document.getElementById("pause-btn").disabled=!1,document.getElementById("resume-btn").disabled=!0}),document.getElementById("stop-btn").addEventListener("click",()=>{clearInterval(timerInterval),document.getElementById("result-text").textContent=`計時結束: ${formatTime(elapsedTime)}`,elapsedTime=0,document.getElementById("timer").textContent=formatTime(elapsedTime),document.getElementById("start-btn").disabled=!1,document.getElementById("pause-btn").disabled=!0,document.getElementById("resume-btn").disabled=!0,document.getElementById("stop-btn").disabled=!0});
+  </script>
+</body>
+</html>
