@@ -45,6 +45,9 @@ header div{
 .main-content h3{
 	color: #e7a43b;
 }
+.keyword {
+	color: #e7a43b;
+}
 .sidebar {
 	flex: 1;
 	padding: 20px;
@@ -152,5 +155,37 @@ footer {
 	.two-column-images img {
 		width: 70%; /* Full width for single column */
 		margin-bottom: 10px; /* Space between images */
+	}
+}
+
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 20px 0;
+}
+th, td {
+	border: 1px solid #ddd;
+	padding: 10px;
+	text-align: center;
+}
+td:first-child{
+	background-color: #ffebf1;
+}
+th {
+	background-color: #d0839a;
+	color: white;
+}
+@media (max-width: 768px) {
+	.container {
+		flex-direction: column;
+	}
+	.sidebar {
+		border-left: none;
+		border-top: 1px solid #ddd;
+	}
+	th, td {
+		font-size: 12px;
+		padding: 5px;
 	}
 }
