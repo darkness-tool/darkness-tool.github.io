@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <title>文字間插入字符工具</title>
+	  <meta charset="UTF-8">
+	  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	  <meta name="description" content="這是一個文字插入工具，幫助用戶在輸入的文字之間插入指定的字符，操作簡單直觀。">
+	<meta name="keywords" content="文字插入, 文本處理, 字符插入, 工具, 網頁應用">
+	<meta name="robots" content="index, follow">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="load_index.js"></script>
+	<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>文字插入工具</h1>
+    <div class="guide">
+      <p>在文字間插入指定字符。</p>
+    </div>
+    
+    <!-- 文字輸入框和字符輸入框 -->
+    <div class="input-container">
+      <label for="text-input">輸入文字：</label>
+      <textarea id="text-input" rows="5" placeholder="請輸入文字"></textarea>
+    </div>
+    <div class="input-container">
+      <label for="char-input">插入字符：</label>
+      <input type="text" id="char-input" maxlength="1" placeholder="請輸入單個字符">
+    </div>
+    <div class="button-section">
+      <button id="submit-btn" class="count-button">提交</button>
+      <button id="clear-btn" class="count-button">清空</button>
+    </div>
+    
+    <!-- 計數結果區域 -->
+    <div class="result">
+      <h2>結果：</h2>
+      <div id="result-output" class="result-item"></div>
+    </div>
+	
+	<div class="part-container tool-description-long">文字插入工具，旨在幫助用戶在輸入的文字之間插入指定的字符。使用者只需在提供的輸入框中填寫他們想要處理的文字，並在另一個框中輸入要插入的字符。這種簡單的操作使得文本的格式化變得靈活且方便。
+
+在界面上，用戶可以輕鬆找到文字輸入框和字符輸入框，並有明確的標籤指示。頁面設計簡潔明了，便於所有年齡層的用戶使用。用戶只需按下提交按鈕，系統便會自動處理輸入的內容，並在每個字之間插入用戶指定的字符，結果將顯示在頁面的結果區域。
+
+此外，頁面還提供了一個清空按鈕，方便用戶快速重置所有輸入框，隨時開始新的操作。這項功能對於需要反覆編輯和測試不同格式的用戶來說非常實用。整體而言，這個網頁工具以其直觀的設計和實用的功能，為文字處理提供了極大的便利。</div>
+  </div>
+
+  <script>
+    document.getElementById('submit-btn').addEventListener('click', function() {
+      const text = document.getElementById('text-input').value;
+      const char = document.getElementById('char-input').value;
+
+      if (char.length > 0) {
+        const result = text.split('').join(char);
+        document.getElementById('result-output').innerText = result;
+      } else {
+        document.getElementById('result-output').innerText = '請輸入插入字符。';
+      }
+    });
+
+    document.getElementById('clear-btn').addEventListener('click', function() {
+      document.getElementById('text-input').value = '';
+      document.getElementById('char-input').value = '';
+      document.getElementById('result-output').innerText = '';
+    });
+  </script>
+</body>
+</html>

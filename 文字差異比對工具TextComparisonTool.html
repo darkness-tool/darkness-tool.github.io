@@ -1,0 +1,129 @@
+<!DOCTYPE html><html lang="zh-Hant"><head>
+    <meta name="description" content="一個簡單易用的文字差異比對工具，幫助用戶比較原始文字和更新後的文字，並清晰顯示文字的變化。">
+    <meta name="keywords" content="文字比對, 差異檢測, 最長公共子序列, 文檔編輯, 文本比較工具">
+    <meta name="robots" content="index, follow">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="load_index.js"></script>
+	<link rel="stylesheet" href="styles.css">
+    <title>文字差異比對工具Text Comparison Tool</title>
+    <style>
+        .added {
+            color: green;
+        }
+
+        .removed {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>文字差異比對工具</h1>
+        <div class="guide">
+            <p>請在下方輸入框中輸入原始文字和更新後的文字，然後點擊“提交”以查看差異。</p>
+        </div>
+
+        <!-- 文字輸入框 -->
+        <div class="input-container">
+            <label for="original-text">原始文字：</label>
+            <textarea id="original-text" rows="10" placeholder="請輸入原始文字"></textarea>
+        </div>
+        <div class="input-container">
+            <label for="updated-text">更新後的文字：</label>
+            <textarea id="updated-text" rows="10" placeholder="請輸入更新後的文字"></textarea>
+        </div>
+        <div class="button-section">
+            <button class="count-button" onclick="compareText()">提交</button>
+            <button id="clear-btn" onclick="clearText()">清空</button>
+        </div>
+
+        <!-- 計數結果區域 -->
+        <div class="result">
+            <h2>結果：</h2>
+            <div id="result-output"></div>
+        </div>
+
+        <div class="part-container tool-description-long">這個網頁是一個文字差異比對工具，旨在幫助用戶輕鬆地比較兩段文字之間的差異。用戶可以在兩個文本框中輸入原始文字和更新後的文字，然後通過點擊提交按鈕，系統會自動分析並顯示出兩者之間的不同之處。
+
+            在這個工具中，核心功能是基於最長公共子序列算法來識別文字差異。該算法能夠準確地找出哪些字符在更新的文本中被添加，哪些字符則是從原始文本中刪除。這樣的功能對於需要追蹤文本修改的用戶來說非常有用，例如編輯、作家或任何需要檢視文本變更的人。
+
+            當用戶提交文本後，結果將在頁面的下方顯示。添加的字符將以綠色標示，而被刪除的字符則以紅色顯示。這種視覺效果的設計不僅使得差異一目了然，還能幫助用戶快速了解文本的變化。
+
+            此外，網頁還提供了一個清空按鈕，方便用戶在需要時快速重置輸入框和結果顯示。這樣的設計使得整個使用過程更加流暢且直觀，無論是對於新手還是有經驗的用戶，都能輕鬆上手。
+
+            整體而言，這個文字差異比對工具不僅功能強大，還具備簡潔的用戶界面，提供了一個高效的方式來處理文字比較的需求。無論是進行學術寫作、文檔編輯，還是個人項目的文本管理，這個工具都能提供實用的支持。</div>
+    </div>
+
+    <script>
+        function longestCommonSubsequence(str1, str2) {
+            const dp = Array.from({ length: str1.length + 1 }, () => Array(str2.length + 1).fill(0));
+
+            for (let i = 1; i <= str1.length; i++) {
+                for (let j = 1; j <= str2.length; j++) {
+                    if (str1[i - 1] === str2[j - 1]) {
+                        dp[i][j] = dp[i - 1][j - 1] + 1;
+                    } else {
+                        dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                    }
+                }
+            }
+
+            let i = str1.length, j = str2.length;
+            const lcs = [];
+
+            while (i > 0 && j > 0) {
+                if (str1[i - 1] === str2[j - 1]) {
+                    lcs.unshift(str1[i - 1]);
+                    i--;
+                    j--;
+                } else if (dp[i - 1][j] > dp[i][j - 1]) {
+                    lcs.unshift({ char: str1[i - 1], status: 'removed' });
+                    i--;
+                } else {
+                    lcs.unshift({ char: str2[j - 1], status: 'added' });
+                    j--;
+                }
+            }
+
+            while (i > 0) {
+                lcs.unshift({ char: str1[i - 1], status: 'removed' });
+                i--;
+            }
+
+            while (j > 0) {
+                lcs.unshift({ char: str2[j - 1], status: 'added' });
+                j--;
+            }
+
+            return lcs;
+        }
+
+        function compareText() {
+            const original = document.getElementById('original-text').value;
+            const updated = document.getElementById('updated-text').value;
+            const differences = longestCommonSubsequence(original, updated);
+            const resultOutput = document.getElementById('result-output');
+            resultOutput.innerHTML = '';
+
+            differences.forEach(item => {
+                if (typeof item === 'string') {
+                    resultOutput.innerHTML += item; // Common characters
+                } else if (item.status === 'added') {
+                    resultOutput.innerHTML += `<span class="added">${item.char}</span>`;
+                } else if (item.status === 'removed') {
+                    resultOutput.innerHTML += `<span class="removed">${item.char}</span>`;
+                }
+            });
+        }
+
+        function clearText() {
+            document.getElementById('original-text').value = '';
+            document.getElementById('updated-text').value = '';
+            document.getElementById('result-output').innerHTML = '';
+        }
+    </script>
+
+
+</body></html>
