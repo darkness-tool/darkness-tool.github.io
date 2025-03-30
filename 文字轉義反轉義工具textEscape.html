@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
    <head>
-      <title>文字轉義/反轉義工具</title>
+      <title>文字轉義/反轉義工具text Escape</title>
 	  
 	  <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -48,6 +48,13 @@
             如果在輸入框中沒有輸入任何內容，或者輸入的內容只包含空格，則在按下相應的按鈕後，將顯示一個錯誤消息，提示你輸入要轉義或反轉義的字符串。
             總結來說，這個網站是一個方便的文字轉義/反轉義工具，可以幫助你將特定字符進行轉義或從轉義序列轉換回原始字符。它提供了一個簡單易用的界面，讓你可以輸入字符串並立即查看轉換結果。無論是在開發網頁還是處理文本數據時，這個工具都可以提供便利。
          </div>
+		 <div class="part-container tool-description-long">
+			This website is a text escape/unescape tool that can perform escape or unescape operations on the input string. Its main function is to convert specific characters into their corresponding escape sequences or to convert escape sequences back to the original characters.
+The main area of the website is divided into several parts. First, there is an input box where you can enter the string you wish to escape or unescape. Below the input box, there are two buttons: "Escape" and "Unescape." Once you finish entering text, you can click the "Escape" button to perform the escape operation on the input string, or click the "Unescape" button to perform the unescape operation.
+After pressing the corresponding button, the result will be displayed in the results area. There are two result areas that show the escape result and the unescape result, respectively. You can view the escaped string or the unescaped string here. These result areas are read-only and cannot be edited.
+If no content is entered in the input box, or if the entered content only contains spaces, an error message will be displayed after pressing the respective button, prompting you to enter a string to escape or unescape.
+In summary, this website is a convenient text escape/unescape tool that helps you escape specific characters or convert escape sequences back to the original characters. It provides a simple and user-friendly interface, allowing you to input strings and immediately see the conversion results. Whether developing web pages or handling text data, this tool offers convenience.
+		 </div>
       </div>
       <script>
          const inputText=document.getElementById("input-text"),escapeBtn=document.getElementById("escape-btn"),unescapeBtn=document.getElementById("unescape-btn"),escapeResult=document.getElementById("escape-result"),unescapeResult=document.getElementById("unescape-result"),errorMsg=document.getElementById("error-msg");function escapeString(e){return e.replace(/[\\'"\r\n\t\b\f\v]/g,function(e){switch(e){case"\\":return"\\\\";case"'":return"\\'";case'"':return'\\"';case"\r":return"\\r";case"\n":return"\\n";case"	":return"\\t";case"\b":return"\\b";case"\f":return"\\f";case"\v":return"\\v"}})}function unescapeString(e){return e.replace(/\\[\\'"\r\n\t\b\f\v]/g,function(e){switch(e){case"\\\\":return"\\";case"\\'":return"'";case'\\"':return'"';case"\\r":return"\r";case"\\n":return"\n";case"\\t":return"	";case"\\b":return"\b";case"\\f":return"\f";case"\\v":return"\v"}})}escapeBtn.addEventListener("click",()=>{let e=inputText.value;if(""!==e.trim()){let t=escapeString(e);escapeResult.value=t,errorMsg.textContent=""}else errorMsg.textContent="請輸入要轉義的字符串"}),unescapeBtn.addEventListener("click",()=>{let e=inputText.value;if(""!==e.trim()){let t=unescapeString(e);unescapeResult.value=t,errorMsg.textContent=""}else errorMsg.textContent="請輸入要反轉義的字符串"});

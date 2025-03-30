@@ -46,15 +46,17 @@
         </div>
 
         <div class="part-container tool-description-long">這個網頁是一個文字差異比對工具，旨在幫助用戶輕鬆地比較兩段文字之間的差異。用戶可以在兩個文本框中輸入原始文字和更新後的文字，然後通過點擊提交按鈕，系統會自動分析並顯示出兩者之間的不同之處。
-
             在這個工具中，核心功能是基於最長公共子序列算法來識別文字差異。該算法能夠準確地找出哪些字符在更新的文本中被添加，哪些字符則是從原始文本中刪除。這樣的功能對於需要追蹤文本修改的用戶來說非常有用，例如編輯、作家或任何需要檢視文本變更的人。
-
             當用戶提交文本後，結果將在頁面的下方顯示。添加的字符將以綠色標示，而被刪除的字符則以紅色顯示。這種視覺效果的設計不僅使得差異一目了然，還能幫助用戶快速了解文本的變化。
-
             此外，網頁還提供了一個清空按鈕，方便用戶在需要時快速重置輸入框和結果顯示。這樣的設計使得整個使用過程更加流暢且直觀，無論是對於新手還是有經驗的用戶，都能輕鬆上手。
-
             整體而言，這個文字差異比對工具不僅功能強大，還具備簡潔的用戶界面，提供了一個高效的方式來處理文字比較的需求。無論是進行學術寫作、文檔編輯，還是個人項目的文本管理，這個工具都能提供實用的支持。</div>
-    </div>
+    <div class="part-container tool-description-long">This webpage is a text difference comparison tool designed to help users easily compare the differences between two pieces of text. Users can input the original text and the updated text in two text boxes, and by clicking the submit button, the system will automatically analyze and display the differences between the two.
+            In this tool, the core functionality is based on the longest common subsequence algorithm to identify text differences. This algorithm accurately identifies which characters have been added in the updated text and which characters have been deleted from the original text. Such functionality is very useful for users who need to track text modifications, such as editors, writers, or anyone needing to review text changes.
+            After the user submits the text, the results will be displayed at the bottom of the page. Added characters will be highlighted in green, while deleted characters will be shown in red. This visual design not only makes the differences immediately clear but also helps users quickly understand changes in the text.
+            Additionally, the webpage provides a clear button, allowing users to quickly reset the input boxes and results display when needed. This design makes the entire usage process smoother and more intuitive, making it easy for both beginners and experienced users to get started.
+            Overall, this text difference comparison tool is not only powerful but also features a clean user interface, providing an efficient way to handle text comparison needs. Whether for academic writing, document editing, or personal project text management, this tool offers practical support.</div>
+			
+	</div>
 
     <script>
         function longestCommonSubsequence(e,t){let n=Array.from({length:e.length+1},()=>Array(t.length+1).fill(0));for(let a=1;a<=e.length;a++)for(let l=1;l<=t.length;l++)e[a-1]===t[l-1]?n[a][l]=n[a-1][l-1]+1:n[a][l]=Math.max(n[a-1][l],n[a][l-1]);let s=e.length,r=t.length,u=[];for(;s>0&&r>0;)e[s-1]===t[r-1]?(u.unshift(e[s-1]),s--,r--):n[s-1][r]>n[s][r-1]?(u.unshift({char:e[s-1],status:"removed"}),s--):(u.unshift({char:t[r-1],status:"added"}),r--);for(;s>0;)u.unshift({char:e[s-1],status:"removed"}),s--;for(;r>0;)u.unshift({char:t[r-1],status:"added"}),r--;return u}function compareText(){let e=document.getElementById("original-text").value,t=document.getElementById("updated-text").value,n=longestCommonSubsequence(e,t),a=document.getElementById("result-output");a.innerHTML="",n.forEach(e=>{"string"==typeof e?a.innerHTML+=e:"added"===e.status?a.innerHTML+=`<span class="added">${e.char}</span>`:"removed"===e.status&&(a.innerHTML+=`<span class="removed">${e.char}</span>`)})}function clearText(){document.getElementById("original-text").value="",document.getElementById("updated-text").value="",document.getElementById("result-output").innerHTML=""}

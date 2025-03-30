@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
    <head>
-      <title>刪除文字所有空白工具</title>
+      <title>刪除文字所有空白工具Delete Space</title>
 	  
 	  <meta charset="UTF-8">
       <meta name="description" content="刪除文字所有空白工具 - 一個方便的工具，讓你能夠輸入文本並刪除其中的所有空白字符。">
@@ -44,6 +44,19 @@
 無論你是一位學生、作家、程序員還是專業人士，這個「刪除文字所有空白工具」都是你寫作過程中的得力助手。它提供了一個直觀且易於使用的界面，讓你輸入文本並快速清除其中的空白字符。不再煩惱手動刪除空格，只需幾個簡單的步驟，你的文檔就會變得整潔有序。
 使用這個工具，你可以將注意力集中在內容的創作和修改上，而不必花費大量時間處理格式和空白字符。讓這個「刪除文字所有空白工具」成為你寫作過程中的得力助手，讓你的文檔變得更加專業、易於閱讀和引人注目！
          </div>
+		 <div class="part-container tool-description-long">This is a "Remove All Whitespace Tool" that provides a simple interface for users to input text and remove all whitespace characters from it. This tool is especially useful when handling files, modifying documents, or articles. Whether you are typing, writing a thesis, or editing content, this tool can help you eliminate whitespace in your text, making your content neater.
+In the main area of this tool, you will see a convenient input box where you can enter the text you want to process. You can type any text in this input box, including letters, numbers, punctuation, and more. If you have formatted text but need to convert it to plain text, this tool can also come in handy.
+Below the input box, there are several buttons for you to operate. The first is the "Remove Whitespace Characters" button; when you click this button, the website will batch remove all whitespace characters from the input text, including spaces, tabs, and line breaks. This is very useful for cleaning up spaces and blank keys, making your articles or documents look more organized.
+Next is the "Copy to Clipboard" button. After clicking this button, the website will copy the processed text to your clipboard, allowing you to paste it elsewhere. This makes it easy for you to share modified text across different applications.
+Finally, there is the "Undo" button, which can be used to revert the last operation and restore the original text you entered in the input box. This feature is especially useful if you want to check the content of the text before clearing whitespace.
+Additionally, above the input box, there is an empty area to display error messages. If you click the "Remove Whitespace Characters" button without entering any text in the input box, the website will display an error message in this area, reminding you to input text. This check mechanism ensures that you do not accidentally delete content from the document.
+In summary, this "Remove All Whitespace Tool" website provides a convenient way for you to input text and remove all whitespace characters. It is a simple and easy-to-use tool suitable for various scenarios, whether in editing files, modifying articles, or cleaning up thesis content, it can help you complete tasks quickly. Whether you need to clear spaces, blank spaces, or blank keys, this tool is your ideal choice. Start using this tool to make your documents neater and more readable! Whether you are writing academic papers, editing technical documents, or handling everyday articles, this tool can help you improve efficiency. It can batch remove all whitespace characters from your text at once, making your content more professional and easier to read.
+Moreover, this tool also offers features to check and modify text. You can carefully review the content of the document before clearing whitespace to ensure there are no errors or unnecessary spaces. If you find any issues, you can use the undo button to return to the original text and make necessary modifications.
+Using this whitespace removal tool, you can easily clear spaces, blank spaces, and blank keys in the text, making documents more organized and compliant with formatting requirements. Not only that, this tool also saves you valuable time and effort, allowing you to focus on content editing and creation.
+Whether you are dealing with web content, editing emails, or writing social media posts, this tool can help you enhance efficiency and make your writing more professional. With this tool, you can effortlessly remove whitespace characters from your text, making your content clearer and more understandable.
+Whether you are a student, writer, programmer, or professional, this "Remove All Whitespace Tool" is a reliable assistant in your writing process. It provides an intuitive and easy-to-use interface, allowing you to input text and quickly clear whitespace characters. No more worries about manually deleting spaces; with just a few simple steps, your documents will be neat and orderly.
+By using this tool, you can focus your attention on content creation and modification without spending a lot of time handling formatting and whitespace characters. Let this "Remove All Whitespace Tool" be your helpful assistant in the writing process, making your documents more professional, easy to read, and eye-catching!
+</div>
       </div>
       <script>
          var originalText="";function deleteWhitespace(){var e=document.getElementById("text-input"),t=document.getElementById("error-message");if(""===e.value.trim()){t.textContent="請輸入文字";return}var n=(originalText=e.value).replace(/ /g,"");e.value=n,t.textContent=""}function copyToClipboard(){var e=document.getElementById("text-input");e.select(),e.setSelectionRange(0,99999),document.execCommand("copy")}function undo(){document.getElementById("text-input").value=originalText}

@@ -9,7 +9,7 @@
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script src="load_index.js"></script>
 	<link rel="stylesheet" href="styles.css">
-    <title>訊息工具MessagingTool</title>
+    <title>訊息工具Messaging Tool</title>
     <style>
         .count-button {
             padding: 10px 20px;
@@ -110,13 +110,15 @@
         </div>
 
         <div class="part-container tool-description-long">這個網頁是一個用於發送和接收訊息的工具，旨在提供用戶一個簡單而直觀的界面來進行交流。用戶可以輸入他們的訊息，選擇角色，並選擇個性化的顏色設置，以使每個角色的訊息更具辨識度。這種設計不僅方便了用戶的使用，還使得訊息的可視化效果更加生動。
-
             在界面上，用戶可以看到一個顯示區域，該區域用於展示所有已提交的訊息。用戶可以選擇作為「使用者」或「回應者」來發送訊息。這種角色的劃分使得交流過程中的溝通更加明確。用戶發送的訊息會在右側顯示，而回應者的訊息則會在左側顯示，這樣的佈局讓人一目了然。
-
             此外，網頁還提供了自定義顏色的選項。用戶可以為自己的訊息選擇一種顏色，並為回應者的訊息選擇另一種顏色。這種自定義設置使得訊息在視覺上的區分更加明顯，增強了用戶的互動體驗。當用戶輸入訊息並提交後，所有訊息都會以氣泡的形式顯示，並根據角色的不同自動調整顏色和對齊方式。
-
             為了提高用戶體驗，網頁還設置了清空功能，方便用戶在需要時快捷地清除當前輸入的訊息和已顯示的內容。整體而言，這個網頁工具不僅支持實時的訊息交流，還提供了靈活的設置選項，旨在增強用戶的互動性和參與感。這是一個非常適合用於社交和交流的簡單工具，無論是在學習、工作還是日常溝通中都能發揮重要作用。</div>
-    </div>
+    <div class="part-container tool-description-long">This webpage is a tool for sending and receiving messages, designed to provide users with a simple and intuitive interface for communication. Users can input their messages, choose roles, and select personalized color settings to enhance the recognition of each character's messages. This design not only facilitates user interaction but also makes the visualization of messages more vivid.
+            On the interface, users can see a display area that showcases all submitted messages. Users can choose to send messages as either a "User" or a "Responder." This division of roles clarifies communication during the exchange process. Messages sent by the user will display on the right side, while the responder's messages will appear on the left, making the layout clear and straightforward.
+            Additionally, the webpage offers options for customizing colors. Users can select one color for their messages and another for the responder's messages. This customization makes visual differentiation of messages more apparent, enhancing the user interaction experience. When users input and submit messages, all messages will display in a bubble format, automatically adjusting colors and alignments based on the role.
+            To improve user experience, the webpage also features a clear function, allowing users to quickly clear current input messages and displayed content as needed. Overall, this web tool not only supports real-time message exchange but also provides flexible setting options aimed at enhancing user interactivity and engagement. It is a very suitable simple tool for socializing and communication, playing an important role in learning, work, or daily conversations.</div>
+	
+	</div>
 
     <script>
         document.getElementById("submit-btn").addEventListener("click",function(){let e=document.getElementById("responder-icon").value,t=document.getElementById("user-color").value,l=document.getElementById("responder-color").value,n=document.getElementById("text-input").value,s=document.getElementById("role-select").value;if(n){let a=document.getElementById("message-list"),d=document.createElement("div");if(d.className="result-item","responder"===s&&e){let i=document.createElement("img");i.src=e,i.className="icon",d.appendChild(i)}let r=document.createElement("div");r.className="message-bubble",r.style.backgroundColor="user"===s?t:l,r.textContent=n,d.appendChild(r),"user"===s?r.classList.add("user-message"):r.classList.add("responder-message"),a.appendChild(d),document.getElementById("text-input").value=""}}),document.getElementById("clear-btn").addEventListener("click",function(){document.getElementById("text-input").value="",document.getElementById("message-list").innerHTML=""});
