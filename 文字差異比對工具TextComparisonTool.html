@@ -57,72 +57,7 @@
     </div>
 
     <script>
-        function longestCommonSubsequence(str1, str2) {
-            const dp = Array.from({ length: str1.length + 1 }, () => Array(str2.length + 1).fill(0));
-
-            for (let i = 1; i <= str1.length; i++) {
-                for (let j = 1; j <= str2.length; j++) {
-                    if (str1[i - 1] === str2[j - 1]) {
-                        dp[i][j] = dp[i - 1][j - 1] + 1;
-                    } else {
-                        dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
-                    }
-                }
-            }
-
-            let i = str1.length, j = str2.length;
-            const lcs = [];
-
-            while (i > 0 && j > 0) {
-                if (str1[i - 1] === str2[j - 1]) {
-                    lcs.unshift(str1[i - 1]);
-                    i--;
-                    j--;
-                } else if (dp[i - 1][j] > dp[i][j - 1]) {
-                    lcs.unshift({ char: str1[i - 1], status: 'removed' });
-                    i--;
-                } else {
-                    lcs.unshift({ char: str2[j - 1], status: 'added' });
-                    j--;
-                }
-            }
-
-            while (i > 0) {
-                lcs.unshift({ char: str1[i - 1], status: 'removed' });
-                i--;
-            }
-
-            while (j > 0) {
-                lcs.unshift({ char: str2[j - 1], status: 'added' });
-                j--;
-            }
-
-            return lcs;
-        }
-
-        function compareText() {
-            const original = document.getElementById('original-text').value;
-            const updated = document.getElementById('updated-text').value;
-            const differences = longestCommonSubsequence(original, updated);
-            const resultOutput = document.getElementById('result-output');
-            resultOutput.innerHTML = '';
-
-            differences.forEach(item => {
-                if (typeof item === 'string') {
-                    resultOutput.innerHTML += item; // Common characters
-                } else if (item.status === 'added') {
-                    resultOutput.innerHTML += `<span class="added">${item.char}</span>`;
-                } else if (item.status === 'removed') {
-                    resultOutput.innerHTML += `<span class="removed">${item.char}</span>`;
-                }
-            });
-        }
-
-        function clearText() {
-            document.getElementById('original-text').value = '';
-            document.getElementById('updated-text').value = '';
-            document.getElementById('result-output').innerHTML = '';
-        }
+        function longestCommonSubsequence(e,t){let n=Array.from({length:e.length+1},()=>Array(t.length+1).fill(0));for(let a=1;a<=e.length;a++)for(let l=1;l<=t.length;l++)e[a-1]===t[l-1]?n[a][l]=n[a-1][l-1]+1:n[a][l]=Math.max(n[a-1][l],n[a][l-1]);let s=e.length,r=t.length,u=[];for(;s>0&&r>0;)e[s-1]===t[r-1]?(u.unshift(e[s-1]),s--,r--):n[s-1][r]>n[s][r-1]?(u.unshift({char:e[s-1],status:"removed"}),s--):(u.unshift({char:t[r-1],status:"added"}),r--);for(;s>0;)u.unshift({char:e[s-1],status:"removed"}),s--;for(;r>0;)u.unshift({char:t[r-1],status:"added"}),r--;return u}function compareText(){let e=document.getElementById("original-text").value,t=document.getElementById("updated-text").value,n=longestCommonSubsequence(e,t),a=document.getElementById("result-output");a.innerHTML="",n.forEach(e=>{"string"==typeof e?a.innerHTML+=e:"added"===e.status?a.innerHTML+=`<span class="added">${e.char}</span>`:"removed"===e.status&&(a.innerHTML+=`<span class="removed">${e.char}</span>`)})}function clearText(){document.getElementById("original-text").value="",document.getElementById("updated-text").value="",document.getElementById("result-output").innerHTML=""}
     </script>
 
 

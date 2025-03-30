@@ -52,69 +52,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script>
-    document.getElementById('add-page-numbers').addEventListener('click', async () => {
-      const fileInput = document.getElementById('pdf-upload');
-      const customText = document.getElementById('custom-text').value;
-      const downloadLinksContainer = document.getElementById('download-links');
-      downloadLinksContainer.innerHTML = ''; // 清空之前的下載鏈接
-
-      if (fileInput.files.length === 0) {
-        alert('請上傳至少一個PDF文件！');
-        return;
-      }
-
-      if (!customText.includes('{{page}}')) {
-        alert('自定義文本必須包含 {{page}} 作為佔位符。');
-        return;
-      }
-
-      const files = fileInput.files;
-      const zip = new JSZip();
-
-      for (let i = 0; i < files.length; i++) {
-        const pdfBytes = await files[i].arrayBuffer();
-        const pdfDoc = await PDFLib.PDFDocument.load(pdfBytes);
-        const totalPages = pdfDoc.getPageCount();
-
-        for (let j = 0; j < totalPages; j++) {
-          const page = pdfDoc.getPage(j);
-          const { width } = page.getSize();
-          const pageText = customText.replace('{{page}}', (j + 1).toString());
-          page.drawText(pageText, {
-            x: width / 2 - 50,
-            y: 20,
-            size: 12,
-            color: PDFLib.rgb(0, 0, 0),
-            opacity: 0.5,
-            font: await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica),
-          });
-        }
-
-        const pdfData = await pdfDoc.save();
-        zip.file(`pdf_with_page_numbers_${i + 1}.pdf`, pdfData);
-
-        const pdfDataUri = await pdfDoc.saveAsBase64({ dataUri: true });
-        const downloadLink = document.createElement('a');
-        downloadLink.href = pdfDataUri;
-        downloadLink.download = `pdf_with_page_numbers_${i + 1}.pdf`;
-        downloadLink.textContent = `下載添加頁碼的PDF ${i + 1}`;
-        downloadLinksContainer.appendChild(downloadLink);
-        downloadLinksContainer.appendChild(document.createElement('br'));
-      }
-
-      // ZIP打包下載
-      zip.generateAsync({ type: 'blob' }).then((content) => {
-        const zipUrl = URL.createObjectURL(content);
-        const zipButton = document.getElementById('download-zip');
-        zipButton.style.display = 'inline-block';
-        zipButton.onclick = () => {
-          const downloadLink = document.createElement('a');
-          downloadLink.href = zipUrl;
-          downloadLink.download = 'pdf_with_page_numbers.zip';
-          downloadLink.click();
-        };
-      });
-    });
+    document.getElementById("add-page-numbers").addEventListener("click",async()=>{let e=document.getElementById("pdf-upload"),t=document.getElementById("custom-text").value,a=document.getElementById("download-links");if(a.innerHTML="",0===e.files.length){alert("請上傳至少一個PDF文件！");return}if(!t.includes("{{page}}")){alert("自定義文本必須包含 {{page}} 作為佔位符。");return}let l=e.files,n=new JSZip;for(let d=0;d<l.length;d++){let i=await l[d].arrayBuffer(),r=await PDFLib.PDFDocument.load(i),o=r.getPageCount();for(let p=0;p<o;p++){let g=r.getPage(p),{width:c}=g.getSize(),s=t.replace("{{page}}",(p+1).toString());g.drawText(s,{x:c/2-50,y:20,size:12,color:PDFLib.rgb(0,0,0),opacity:.5,font:await r.embedFont(PDFLib.StandardFonts.Helvetica)})}let f=await r.save();n.file(`pdf_with_page_numbers_${d+1}.pdf`,f);let m=await r.saveAsBase64({dataUri:!0}),w=document.createElement("a");w.href=m,w.download=`pdf_with_page_numbers_${d+1}.pdf`,w.textContent=`下載添加頁碼的PDF ${d+1}`,a.appendChild(w),a.appendChild(document.createElement("br"))}n.generateAsync({type:"blob"}).then(e=>{let t=URL.createObjectURL(e),a=document.getElementById("download-zip");a.style.display="inline-block",a.onclick=()=>{let e=document.createElement("a");e.href=t,e.download="pdf_with_page_numbers.zip",e.click()}})});
   </script>
 
 

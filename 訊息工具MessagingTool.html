@@ -119,50 +119,7 @@
     </div>
 
     <script>
-        document.getElementById('submit-btn').addEventListener('click', function() {
-            const responderIcon = document.getElementById('responder-icon').value; // Get responder icon URL
-            const userColor = document.getElementById('user-color').value; // Get user color
-            const responderColor = document.getElementById('responder-color').value; // Get responder color
-            const messageText = document.getElementById('text-input').value;
-            const role = document.getElementById('role-select').value;
-
-            if (messageText) {
-                const messageList = document.getElementById('message-list');
-                const messageItem = document.createElement('div');
-                messageItem.className = 'result-item';
-
-                // Add icon only if URL is provided and the role is responder
-                if (role === 'responder' && responderIcon) {
-                    const icon = document.createElement('img');
-                    icon.src = responderIcon;
-                    icon.className = 'icon';
-                    messageItem.appendChild(icon);
-                }
-
-                const messageBubble = document.createElement('div');
-                messageBubble.className = 'message-bubble';
-                messageBubble.style.backgroundColor = role === 'user' ? userColor : responderColor; // Set custom bubble color
-                messageBubble.textContent = messageText;
-
-                messageItem.appendChild(messageBubble);
-
-                // Align message bubbles based on role
-                if (role === 'user') {
-                    messageBubble.classList.add('user-message');
-                } else {
-                    messageBubble.classList.add('responder-message');
-                }
-
-                messageList.appendChild(messageItem);
-
-                document.getElementById('text-input').value = '';
-            }
-        });
-
-        document.getElementById('clear-btn').addEventListener('click', function() {
-            document.getElementById('text-input').value = '';
-            document.getElementById('message-list').innerHTML = '';
-        });
+        document.getElementById("submit-btn").addEventListener("click",function(){let e=document.getElementById("responder-icon").value,t=document.getElementById("user-color").value,l=document.getElementById("responder-color").value,n=document.getElementById("text-input").value,s=document.getElementById("role-select").value;if(n){let a=document.getElementById("message-list"),d=document.createElement("div");if(d.className="result-item","responder"===s&&e){let i=document.createElement("img");i.src=e,i.className="icon",d.appendChild(i)}let r=document.createElement("div");r.className="message-bubble",r.style.backgroundColor="user"===s?t:l,r.textContent=n,d.appendChild(r),"user"===s?r.classList.add("user-message"):r.classList.add("responder-message"),a.appendChild(d),document.getElementById("text-input").value=""}}),document.getElementById("clear-btn").addEventListener("click",function(){document.getElementById("text-input").value="",document.getElementById("message-list").innerHTML=""});
     </script>
 
 

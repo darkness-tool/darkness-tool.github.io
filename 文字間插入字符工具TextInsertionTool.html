@@ -48,23 +48,7 @@
   </div>
 
   <script>
-    document.getElementById('submit-btn').addEventListener('click', function() {
-      const text = document.getElementById('text-input').value;
-      const char = document.getElementById('char-input').value;
-
-      if (char.length > 0) {
-        const result = text.split('').join(char);
-        document.getElementById('result-output').innerText = result;
-      } else {
-        document.getElementById('result-output').innerText = '請輸入插入字符。';
-      }
-    });
-
-    document.getElementById('clear-btn').addEventListener('click', function() {
-      document.getElementById('text-input').value = '';
-      document.getElementById('char-input').value = '';
-      document.getElementById('result-output').innerText = '';
-    });
+    document.getElementById("submit-btn").addEventListener("click",function(){let e=document.getElementById("text-input").value,t=document.getElementById("char-input").value;if(t.length>0){let n=e.split("").join(t);document.getElementById("result-output").innerText=n}else document.getElementById("result-output").innerText="請輸入插入字符。"}),document.getElementById("clear-btn").addEventListener("click",function(){document.getElementById("text-input").value="",document.getElementById("char-input").value="",document.getElementById("result-output").innerText=""});
   </script>
 </body>
 </html>
