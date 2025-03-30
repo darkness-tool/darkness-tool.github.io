@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>有軌電車難題遊戲Trolley Problem Game</title>
+	<meta name="description" content="有軌電車難題遊戲，讓玩家面對道德困境，選擇拯救不同角色的電車遊戲。">
+	<meta name="keywords" content="Trolley Problem, 電車難題, 電車問題道德遊戲, 互動遊戲, 電車困境, 決策遊戲">
+	<meta name="robots" content="index, follow">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+      <script src="load_index.js"></script>
+      <link rel="stylesheet" href="styles.css">
+    <style>
+        /* CSS樣式 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative; /* Allow absolute positioning inside */
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .guide {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .guide p {
+            margin: 0;
+        }
+
+        #track {
+            display: flex;
+            justify-content: center;
+            position: relative;
+            height: 100px;
+            width: 100%;
+            margin: 20px 0;
+        }
+        .track {
+            width: 40%;
+            height: 10px;
+            background-color: #aaa;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        #trackA {
+            left: 10%;
+            transform: rotate(30deg);
+			text-align: center;
+        }
+        #trackB {
+            right: 10%;
+            transform: rotate(-30deg);
+			text-align: center;
+        }
+        #trolley {
+            font-size: 48px;
+            position: absolute;
+            left: calc(50% - 30px);
+            bottom: -30px; /* Position trolley above the tracks */
+            transform: translateX(-50%);
+            transition: transform 1s ease;
+        }
+        #result {
+            margin: 20px 0;
+            font-size: 24px;
+            display: none;
+        }
+        button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .hidden {
+            display: none;
+        }
+        .track-label {
+            position: absolute;
+            top: -30px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        #labelA {
+            left: 10%;
+        }
+        #labelB {
+            right: 10%;
+        }
+
+        /* 響應式設計 */
+        @media screen and (max-width: 600px) {
+            /* 手機屏幕 */
+            .input-container {
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Trolley Problem Game</h1>
+        <div class="guide">
+            <p>Choose which track to steer!</p>
+        </div>
+
+		<div style="padding-bottom: 20px">
+			<div id="track">
+				<div class="track" id="trackA"></div>
+				<div class="track" id="trackB"></div>
+				<div class="track-label" id="labelA">Track A</div>
+				<div class="track-label" id="labelB">Track B</div>
+				<div id="trolley">🚋</div>
+			</div>
+			
+			
+			<div style="justify-self: center;">
+				<button id="pullBtn">Steer to Track A</button>
+				<button id="notPullBtn">Steer to Track B</button>
+				<button id="nextTurnBtn" class="hidden">Next Turn</button>
+			</div>
+			<div id="result" class="hidden"></div>
+		</div>
+		
+		<div class="part-container tool-description-long">
+		這個網頁是一個名為「Trolley Problem Game」的互動遊戲，旨在讓玩家面對一個道德困境。遊戲的界面設計簡單而直觀，使用者可以輕鬆選擇他們的選擇，並觀察結果。
+		在遊戲中，玩家需要在兩條不同的軌道上做出決策，每條軌道上都有不同的角色（以表情符號表示）。這些角色的隨機生成讓每次遊戲都充滿新鮮感。玩家被要求選擇將電車駛向哪一條軌道，這一選擇將影響遊戲的結果，並引發有趣的思考。
+		在頁面上，玩家將看到一個電車的圖示以及兩條軌道。每當玩家做出選擇後，電車會在視覺上做出移動，並顯示出所拯救的角色。結果會以文字形式顯示，讓玩家了解他們的選擇帶來的影響。此外，玩家也可以進行下一輪的決策，讓整個遊戲變得持續互動。
+		整體而言，這個遊戲不僅僅是一個娛樂的工具，還鼓勵玩家思考道德選擇的複雜性，並反思他們的決策過程。透過有趣的互動，這個網頁成功地將倫理問題呈現給廣大的使用者。
+
+		</div>
+				<div class="part-container tool-description-long">This webpage is an interactive game called the "Trolley Problem Game," designed to present players with a moral dilemma. The interface is simple and intuitive, allowing users to easily make their choices and observe the outcomes.
+In the game, players must decide between two different tracks, each with various characters represented by emojis. The random generation of these characters adds freshness to each playthrough. Players are asked to choose which track to steer the trolley toward, and this decision will affect the game's outcome, provoking interesting thoughts.
+On the page, players will see a trolley icon and two tracks. Once a player makes a choice, the trolley visually moves, displaying the characters that are saved. The result is shown in text form, helping players understand the impact of their decisions. Additionally, players can proceed to the next round, making the entire game continuously interactive.
+Overall, this game is not just a tool for entertainment; it encourages players to think about the complexities of moral choices and to reflect on their decision-making process. Through engaging interaction, this webpage successfully presents ethical dilemmas to a broad audience.
+		</div>
+    </div>
+
+    <script>
+        const emojis=["\uD83D\uDEB6","\uD83D\uDC68","\uD83D\uDC69","\uD83D\uDC66","\uD83D\uDC67","\uD83D\uDC75","\uD83D\uDC74","\uD83D\uDC76","\uD83E\uDDD1‍\uD83E\uDD1D‍\uD83E\uDDD1","\uD83D\uDC6E","\uD83D\uDC77","\uD83C\uDF85","\uD83D\uDC68‍\uD83C\uDF73","\uD83D\uDC68‍\uD83E\uDDAF","\uD83D\uDE3A","\uD83D\uDC36","\uD83D\uDC37","\uD83D\uDC39","\uD83E\uDD86","\uD83D\uDC38","\uD83D\uDC24","\uD83D\uDC25","\uD83D\uDC35","\uD83E\uDD8A","\uD83D\uDC31","\uD83D\uDC3B","\uD83D\uDC3C","\uD83D\uDC27","\uD83D\uDC18"];function getRandomEmojis(){let e=Array.from({length:Math.floor(5*Math.random())+1},()=>emojis[Math.floor(Math.random()*emojis.length)]).join(" "),t=Array.from({length:Math.floor(5*Math.random())+1},()=>emojis[Math.floor(Math.random()*emojis.length)]).join(" ");return{emojisA:e,emojisB:t}}function displayTurn(){let{emojisA:e,emojisB:t}=getRandomEmojis();document.getElementById("trolley").style.transform="translateX(0)",document.getElementById("trackA").innerText=e,document.getElementById("trackB").innerText=t,document.getElementById("result").classList.add("hidden"),document.getElementById("nextTurnBtn").classList.add("hidden"),document.getElementById("pullBtn").style.display="inline-block",document.getElementById("notPullBtn").style.display="inline-block",document.getElementById("trackA").style.visibility="visible",document.getElementById("trackB").style.visibility="visible"}function showResult(e){let t=document.getElementById("result");t.innerText=e?"You saved Track A! \uD83D\uDE8B → Track A":"You saved Track B! \uD83D\uDE8B → Track B",t.classList.remove("hidden"),document.getElementById("nextTurnBtn").classList.remove("hidden"),document.getElementById("pullBtn").style.display="none",document.getElementById("notPullBtn").style.display="none",e?document.getElementById("trackB").style.visibility="hidden":document.getElementById("trackA").style.visibility="hidden"}function moveTrolley(e){let t=document.getElementById("trolley");t.style.transition="transform 1s ease",t.style.transform=e?"translate(150px, -30px)":"translate(-150px, -30px)"}document.getElementById("pullBtn").addEventListener("click",()=>{showResult(!1),moveTrolley(!1)}),document.getElementById("notPullBtn").addEventListener("click",()=>{showResult(!0),moveTrolley(!0)}),document.getElementById("nextTurnBtn").addEventListener("click",displayTurn),displayTurn();
+    </script>
+</body>
+</html>
