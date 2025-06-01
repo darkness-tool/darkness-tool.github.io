@@ -80,6 +80,7 @@ nav.breadcrumbs a:hover {
 }
 .article-content p {
 	margin-bottom: 1.5em;
+	white-space: pre-line;
 }
 .article-content img {
 	max-width: 100%;
