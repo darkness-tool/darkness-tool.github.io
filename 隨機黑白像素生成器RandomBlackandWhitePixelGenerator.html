@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>隨機黑白像素生成器 Random Black and White Pixel Generator</title>
+  <meta name="description" content="隨機黑白像素生成器，讓用戶創建獨特的黑白像素畫布，支持自定義大小。">
+	<meta name="keywords" content="黑白像素, 生成器, 繪圖工具, 隨機藝術">
+	<meta name="robots" content="index, follow">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+      <script src="load_index.js"></script>
+      <link rel="stylesheet" href="styles.css">
+  <style>
+    canvas {
+      display: block;
+      margin: 0 auto;
+      border: 1px solid #000;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>隨機黑白像素生成器</h1>
+    <div class="guide">
+      <p>請輸入畫布的寬度和高度，然後按生成按鈕。</p>
+    </div>
+
+    <!-- 文字輸入框和計算按鈕 -->
+    <div class="input-container">
+      <label for="width">寬度：</label>
+      <input type="number" id="width" value="400" min="1" />
+    </div>
+    <div class="input-container">
+      <label for="height">高度：</label>
+      <input type="number" id="height" value="400" min="1" />
+    </div>
+    <div class="button-section">
+      <button id="generateButton">生成</button>
+    </div>
+
+    <!-- 計數結果區域 -->
+    <div class="result">
+      <canvas id="pixelCanvas" width="400" height="400"></canvas>
+    </div>
+	
+	<div class="part-container tool-description-long">
+	這個網頁是一個隨機黑白像素生成器，旨在讓用戶創建一個由隨機黑白像素組成的畫布。用戶可以根據自己的需求自定義畫布的寬度和高度，並通過簡單的按鈕操作生成圖片。這個工具不僅有趣，還可以用於測試視覺效果或作為藝術創作的靈感來源。
+	在畫布的上方，用戶可以看到輸入框，這裡提供了寬度和高度的選項。用戶可以根據自己的需求輸入數字，這些數字將決定生成畫布的大小。輸入完畢後，按下生成按鈕，畫布上就會顯示出隨機生成的黑白像素。每一個像素都是隨機選擇的，這使得每次生成的畫面都獨一無二。
+	整個網頁的設計簡約而直觀，易於使用。畫布的邊框清晰可見，並且有足夠的空間來顯示生成的像素圖案。這個工具的靈活性使得用戶可以進行多次嘗試，隨時調整畫布的大小，探索不同的視覺效果。
+	此外，網頁的響應式設計確保了在各種設備上都能良好顯示，無論是在桌面電腦還是移動設備上，用戶都能輕鬆操作。這種便利性使得隨機黑白像素生成器成為一個理想的工具，適合任何想要創造視覺藝術或學習隨機性原理的用戶。
+	</div>
+	<div class="part-container tool-description-long">
+	This webpage is a random black and white pixel generator designed to allow users to create a canvas composed of randomly generated black and white pixels. Users can customize the width and height of the canvas according to their needs, and with a simple button click, they can generate the image. This tool is not only fun but can also be used to test visual effects or serve as inspiration for artistic creations.
+	At the top of the canvas, users will find input fields that provide options for width and height. They can enter numbers based on their requirements, which will determine the size of the generated canvas. Once the input is complete, clicking the generate button will display the randomly generated black and white pixels on the canvas. Each pixel is chosen at random, making every generated image unique.
+	The overall design of the webpage is simple and intuitive, making it easy to use. The canvas has a clear border and provides ample space to showcase the generated pixel patterns. The flexibility of this tool allows users to experiment multiple times, adjusting the size of the canvas and exploring different visual effects.
+	Moreover, the responsive design of the webpage ensures that it displays well on various devices. Whether on a desktop computer or a mobile device, users can easily operate the tool. This convenience makes the random black and white pixel generator an ideal tool for anyone looking to create visual art or learn about the principles of randomness.
+	</div>
+  </div>
+
+  <script>
+    const canvas=document.getElementById("pixelCanvas"),ctx=canvas.getContext("2d");function generatePixels(e,t){canvas.width=e,canvas.height=t;for(let n=0;n<t;n++)for(let l=0;l<e;l++)ctx.fillStyle=.5>Math.random()?"black":"white",ctx.fillRect(l,n,1,1)}document.getElementById("generateButton").addEventListener("click",()=>{let e=parseInt(document.getElementById("width").value),t=parseInt(document.getElementById("height").value);generatePixels(e,t)}),generatePixels(400,400);
+  </script>
+</body>
+</html>
