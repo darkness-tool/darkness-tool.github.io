@@ -37,24 +37,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // Create the menu content area
   const content = document.createElement('div');
   content.id = 'menu-content';
-  content.style.padding = '20px';
   content.style.overflowY = 'auto';
-  content.style.maxHeight = 'calc(50vh - 100px)'; // Adjust for footer
+  content.style.maxHeight = 'calc(50vh - 50px)'; // Adjust for footer
   content.style.flex = '1'; // Take remaining space
 
   // Create the menu footer area
   const footer = document.createElement('div');
-  footer.id = 'menu-footer';
-  footer.style.padding = '10px';
-  footer.style.background = '#f8f9fa'; // Light gray background for distinction
-  footer.style.borderTop = '1px solid #dee2e6';
-  footer.style.height = '50px'; // Fixed height for footer
-  footer.style.overflow = 'hidden';
 
   // Append elements
   container.appendChild(button);
   container.appendChild(content);
-  container.appendChild(footer);
+  content.appendChild(footer);
   document.body.appendChild(container);
 
   // Toggle state
