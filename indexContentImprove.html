@@ -1,16 +1,66 @@
+<div id="menu-box">
 <div id="index-box">
-    <h1>小工具大全</h1>
-    <table id="data-table">
-    </table>
-	<h1>趣味工具</h1>
-	<table id="funny-table">
-	</table>
-	<button id="scrollButton">↓</button>
-  </div>
 
+    <div class="section">
+      <h1 onclick="toggleSection(this)">趣味工具</h1>
+      <div class="content" style="display: block;">
+        <table id="funny-table">
+        </table>
+      </div>
+    </div>
+    <div class="section">
+      <h1 onclick="toggleSection(this)">小工具大全</h1>
+      <div class="content" style="display: block;">
+        <table id="data-table">
+        </table>
+      </div>
+    </div>
+  </div>
+<div>
+<style>
+#menu-box {
+     max-width: 1000px;
+     margin: 0 auto;
+     padding: 20px;
+}
+#index-box h1 {
+     text-align: center;
+     margin-bottom: 20px;
+}
+#index-box {
+    border-top: 1px solid #000000;
+	margin-top: 10px;
+	padding-bottom: 50px;
+}
+table#data-table , table#funny-table  {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#data-table tr, #funny-table tr {
+	border: 1px solid white;
+}
+
+#data-table th, td, #funny-table th, td {
+  padding: 10px;
+  text-align: left;
+}
+
+#data-table th:nth-child(even), #funny-table th:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+#data-table th, #funny-table th {
+  background-color: #f2f2f2;
+}
+table#data-table  span, table#funny-table span{
+	font-weight: normal;
+    color: #ce5600;
+}
+</style>
   <script>
     $(document).ready(function() {
-      // Sample data in JSON format
+      // Sample data in JSON format for useful tools
       var jsonData = [
 		{ "name": "凱撒密碼加密/解密器", "url": "凱撒密碼加密解密器caesarCipher.html", "icon": "🔐" },
 		{ "name": "刪除文字所有空白工具", "url": "刪除文字所有空白工具deleteSpace.html", "icon": "✂️" },
@@ -81,8 +131,8 @@
 		cell.append(link);        
         row.append(cell);
       }
-	  
-	  var funnyTable = $("#funny-table");
+
+      var funnyTable = $("#funny-table");
 
       for (var i = 0; i < jsonDataFunny.length; i++) {
         var data = jsonDataFunny[i];
@@ -106,8 +156,6 @@
         row.append(cell);
       }
 	  
-	  
-	  
     });
 	
 	function appendScriptIfHttp() {
@@ -122,7 +170,15 @@
 	}
 
 	appendScriptIfHttp();
+	
   </script>
   <script>
-function scrollToBottom(){window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"})}var scrollButton=document.getElementById("scrollButton");scrollButton.addEventListener("click",scrollToBottom);
+function toggleSection(header) {
+  var content = header.nextElementSibling;
+  if (content.style.display === "none") {
+    content.style.display = "block";
+  } else {
+    content.style.display = "none";
+  }
+}
 </script>

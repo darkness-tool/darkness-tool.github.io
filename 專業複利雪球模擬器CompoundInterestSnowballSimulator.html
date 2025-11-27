@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="專業複利雪球模擬器。計算長期投資的最終資產總值、複利收益，支援初始本金與年度投入，提供圖表與數據明細，助您規劃退休金和長期儲蓄目標。">
+    <meta name="keywords" content="複利計算, 投資模擬, 定期定額, 財務規劃, 複利, 雪球, 年報酬率, TWD, Compound Interest, Investment Simulator">
+    <meta name="robots" content="index, follow">
+
+    <title>專業複利雪球模擬器 Compound Interest Snowball Simulator</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+      <script src="load_index_common.js"></script>
+    <style>
+        /* 設定Inter字體和基本樣式 */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        /* 自定義滑塊樣式 */
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #10b981; /* emerald-500 */
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #10b981;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto bg-white shadow-2xl rounded-xl p-6 md:p-10 border-t-8 border-emerald-500">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-gray-800 mb-2">複利雪球模擬器</h1>
+            <p class="text-xl text-emerald-600 font-semibold">讓時間成為你最強大的資產</p>
+        </header>
+
+        <div id="input-area" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="input-group bg-gray-50 p-4 rounded-lg shadow-inner">
+                <label for="principal" class="block text-sm font-medium text-gray-700 mb-1">初始投資本金 (TWD)</label>
+                <input type="number" id="principal" value="100000" min="0" step="1000" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-lg font-bold">
+                <input type="range" id="principal_range" min="0" max="1000000" step="10000" value="100000" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer mt-2">
+            </div>
+            
+            <div class="input-group bg-gray-50 p-4 rounded-lg shadow-inner">
+                <label for="contribution" class="block text-sm font-medium text-gray-700 mb-1">每年投入金額 (TWD)</label>
+                <input type="number" id="contribution" value="50000" min="0" step="1000" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-lg font-bold">
+                <input type="range" id="contribution_range" min="0" max="500000" step="10000" value="50000" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer mt-2">
+            </div>
+
+            <div class="input-group bg-gray-50 p-4 rounded-lg shadow-inner">
+                <label for="rate" class="block text-sm font-medium text-gray-700 mb-1">年化報酬率 (%)</label>
+                <div class="flex items-center">
+                    <input type="number" id="rate" value="7" min="0" max="50" step="0.1" class="w-2/3 p-2 border border-gray-300 rounded-l-lg focus:ring-emerald-500 focus:border-emerald-500 text-lg font-bold">
+                    <span class="inline-flex items-center px-3 rounded-r-lg border border-l-0 border-gray-300 bg-gray-200 text-gray-500 text-lg">%</span>
+                </div>
+                <input type="range" id="rate_range" min="0" max="20" step="0.1" value="7" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer mt-2">
+            </div>
+
+            <div class="input-group bg-gray-50 p-4 rounded-lg shadow-inner">
+                <label for="years" class="block text-sm font-medium text-gray-700 mb-1">投資年限 (年)</label>
+                <div class="flex items-center">
+                    <input type="number" id="years" value="20" min="1" max="60" step="1" class="w-2/3 p-2 border border-gray-300 rounded-l-lg focus:ring-emerald-500 focus:border-emerald-500 text-lg font-bold">
+                    <span class="inline-flex items-center px-3 rounded-r-lg border border-l-0 border-gray-300 bg-gray-200 text-gray-500 text-lg">年</span>
+                </div>
+                <input type="range" id="years_range" min="1" max="50" step="1" value="20" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer mt-2">
+            </div>
+        </div>
+
+        <div id="summary" class="bg-emerald-100 border-l-4 border-emerald-500 text-emerald-900 p-4 mb-8 rounded-lg">
+            <h2 class="text-xl font-bold mb-2">模擬結果總結 (第 <span id="final-year">0</span> 年)</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+                <div>
+                    <p class="text-sm font-medium">總投入本金</p>
+                    <p id="total-investment" class="text-2xl font-extrabold text-emerald-700">TWD 0</p>
+                </div>
+                <div>
+                    <p class="text-sm font-medium">複利總收益</p>
+                    <p id="total-interest" class="text-2xl font-extrabold text-emerald-700">TWD 0</p>
+                </div>
+                <div>
+                    <p class="text-sm font-medium">最終資產總值</p>
+                    <p id="final-amount" class="text-3xl font-extrabold text-emerald-800">TWD 0</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-lg shadow-lg">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">複利增長趨勢圖</h2>
+            <canvas id="compoundChart" class="w-full"></canvas>
+        </div>
+        
+        <div class="bg-white p-4 rounded-xl shadow-lg mt-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">年度數據明細</h2>
+            <div class="overflow-x-auto">
+                <table id="results-table" class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">年度</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">期初餘額</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">年度投入</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">複利收益</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">期末總值</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body" class="bg-white divide-y divide-gray-200">
+                        <!-- Table rows will be inserted here by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+    
+    <div class="max-w-4xl mx-auto mt-12 p-6 md:p-8 bg-gray-50 rounded-xl shadow-inner border border-gray-200">
+        <h2 class="text-2xl font-bold text-gray-700 mb-4 border-b pb-2">複利雪球模擬器：計算你的長期投資增長潛力</h2>
+        <p class="text-gray-600 text-sm leading-relaxed">
+            歡迎使用我們專業的複利雪球模擬器！無論您是理財新手還是經驗豐富的投資人，本工具都能幫助您輕鬆預估長期投資的潛在回報。透過輸入您的初始投資 (TWD)、年度追加投入、預期年報酬率 (%) 和投資總年限，您將獲得即時的最終資產總值和複利收益報告。
+        </p>
+        <p class="text-gray-600 text-sm leading-relaxed mt-3">
+            我們的模擬器採用每年複利的計算模型，讓您清楚了解初始本金和每年投入金額（如定期定額投資）如何在年化報酬率與投資年限的共同作用下，實現資產的指數級增長。圖表區塊會以視覺化的方式展示資產累積路徑，而詳細的年度數據明細表格則提供了每年的期初餘額、複利收益和期末總值，讓您的理財規劃透明可視。
+        </p>
+        <p class="text-gray-600 text-sm leading-relaxed mt-3">
+            現在就開始使用此工具進行複利計算與投資模擬，規劃您的退休金、教育基金或長期儲蓄目標，感受複利的強大魔力，讓您的錢為您工作！本模擬器適用於任何以 TWD（台幣）計價的長期投資計畫，是您進行財務分析、制定投資策略不可或缺的幫手。
+        </p>
+    </div>
+
+    <script>
+        const principalEl=document.getElementById("principal"),contributionEl=document.getElementById("contribution"),rateEl=document.getElementById("rate"),yearsEl=document.getElementById("years"),principalRangeEl=document.getElementById("principal_range"),contributionRangeEl=document.getElementById("contribution_range"),rateRangeEl=document.getElementById("rate_range"),yearsRangeEl=document.getElementById("years_range"),totalInvestmentEl=document.getElementById("total-investment"),totalInterestEl=document.getElementById("total-interest"),finalAmountEl=document.getElementById("final-amount"),finalYearEl=document.getElementById("final-year"),chartCanvas=document.getElementById("compoundChart");let compoundChart;const formatCurrency=t=>new Intl.NumberFormat("zh-TW",{style:"currency",currency:"TWD",minimumFractionDigits:0,maximumFractionDigits:0}).format(Math.round(t));function calculateCompoundInterest(t,e,a,n){let r=t,l=t,o=[];o.push({year:0,startAmount:t,annualInterest:0,annualContribution:0,endAmount:t,cumulativePrincipal:t});for(let i=1;i<=n;i++){let u=r,d=u*a,s=u+d,p=e;s+=p,r=s,l+=e,o.push({year:i,startAmount:u,annualInterest:d,annualContribution:p,endAmount:r,cumulativePrincipal:l})}return o}function updateSimulation(){let t=parseFloat(principalEl.value)||0,e=parseFloat(contributionEl.value)||0,a=parseFloat(rateEl.value)/100||0,n=parseInt(yearsEl.value)||0;if(n<=0){updateSummary(0,0,0,0),updateChart([]),updateResultsTable([]);return}let r=calculateCompoundInterest(t,e,a,n),l=r[r.length-1],o=l.endAmount,i=l.cumulativePrincipal;updateSummary(n,i,o-i,o),updateChart(r),updateResultsTable(r)}function updateSummary(t,e,a,n){finalYearEl.textContent=t,totalInvestmentEl.textContent=formatCurrency(e),totalInterestEl.textContent=formatCurrency(a),finalAmountEl.textContent=formatCurrency(n)}function updateChart(t){let e=t.map(t=>t.year),a=t.map(t=>Math.round(t.endAmount)),n=t.map(t=>Math.round(t.cumulativePrincipal)),r=t.map(t=>Math.round(t.endAmount-t.cumulativePrincipal));compoundChart?(compoundChart.data.labels=e,compoundChart.data.datasets[0].data=a,compoundChart.data.datasets[1].data=n,compoundChart.data.datasets[2].data=r,compoundChart.update()):compoundChart=new Chart(chartCanvas,{type:"line",data:{labels:e,datasets:[{label:"最終資產總值",data:a,borderColor:"rgb(16, 185, 129)",backgroundColor:"rgba(16, 185, 129, 0.2)",fill:!0,tension:.3,pointRadius:3},{label:"總投入本金",data:n,borderColor:"rgb(59, 130, 246)",backgroundColor:"rgba(59, 130, 246, 0.0)",fill:!1,tension:.3,pointRadius:0,borderWidth:1},{label:"複利總收益",data:r,borderColor:"rgb(245, 158, 11)",backgroundColor:"rgba(245, 158, 11, 0.0)",fill:!1,tension:.3,pointRadius:0,borderWidth:1}]},options:{responsive:!0,maintainAspectRatio:!0,plugins:{legend:{position:"top"},title:{display:!0,text:"資產隨時間的增長（年度複利）"},tooltip:{callbacks:{label:function(t){let e=t.dataset.label||"";return e&&(e+=": "),null!==t.parsed.y&&(e+=formatCurrency(t.parsed.y)),e}}}},scales:{x:{title:{display:!0,text:"投資年限 (年)"}},y:{title:{display:!0,text:"金額 (TWD)"},beginAtZero:!0,ticks:{callback:function(t,e,a){return t>=1e6?(t/1e6).toFixed(1)+"M":t>=1e3?(t/1e3).toFixed(0)+"K":t}}}}}})}function updateResultsTable(t){let e=document.getElementById("table-body");e.innerHTML="";for(let a=1;a<t.length;a++){let n=t[a],r=document.createElement("tr");n.year%5==0?r.className="bg-emerald-50 hover:bg-emerald-100 transition-colors border-t-2 border-emerald-300":r.className="hover:bg-gray-50 transition-colors",r.innerHTML=`
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">${n.year}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${formatCurrency(n.startAmount)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600">${formatCurrency(n.annualContribution)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-emerald-600 font-semibold">${formatCurrency(n.annualInterest)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-extrabold">${formatCurrency(n.endAmount)}</td>
+                `,e.appendChild(r)}}const setupBindings=()=>{let t=(t,e)=>{t.addEventListener("input",()=>{e.value=t.value,updateSimulation()}),e.addEventListener("input",()=>{t.value=e.value,updateSimulation()}),t.addEventListener("blur",updateSimulation)};t(principalEl,principalRangeEl),t(contributionEl,contributionRangeEl),t(rateEl,rateRangeEl),t(yearsEl,yearsRangeEl)};window.onload=function(){setupBindings(),updateSimulation()};
+    </script>
+
+</body>
+</html>

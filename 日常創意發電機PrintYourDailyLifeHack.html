@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>日常創意發電機 Print Your Daily Life Hack</title>
+  <meta name="description" content="日常創意發電機 (Everyday Idea Printer) 是一個模擬熱感應收據機的線上工具，為您生成關於生產力、健康、理財、家居等領域的實用創意和生活駭客。點擊PRINT獲取每日靈感收據！">
+	<meta name="keywords" content="日常創意發電機, Everyday Idea Printer, 創意產生器, 每日靈感, 生活駭客, 隨機點子, Productivity, Health, Finance, Daily Inspiration, Creative Generator">
+	<meta name="robots" content="index, follow">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Courier+Prime:wght@400;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+      <script src="load_index_common.js"></script>
+      <link rel="stylesheet" href="styles.css">
+  <style>
+    :root {
+      --btn-main: #3498db;
+      --btn-main-dark: #2980b9;
+      --led-on: #2ecc71;
+      --paper-white: #fcfcfc;
+      --ink-color: #2b2b2b;
+      --screen-bg: #444;
+      --screen-text: #2ecc71;
+    }
+    
+    .printer-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 15px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        background-color: #eee;
+    }
+    .top-bar {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    .display-screen {
+        width: 80px; height: 20px; background-color: var(--screen-bg); border-radius: 3px;
+        display: flex; justify-content: center; align-items: center;
+        font-family: 'Courier Prime', monospace; font-size: 0.8rem; color: var(--screen-text);
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.3); letter-spacing: 1px;
+    }
+    .power-led {
+        width: 8px; height: 8px; background-color: var(--led-on); border-radius: 50%;
+        box-shadow: 0 0 5px var(--led-on); margin-right: 5px;
+    }
+    .print-btn {
+        width: 120px; height: 45px; border-radius: 5px; background-color: var(--btn-main);
+        border: none; box-shadow: 0 3px 0 var(--btn-main-dark); cursor: pointer;
+        display: flex; justify-content: center; align-items: center;
+        font-family: 'Roboto', sans-serif; font-weight: 700; color: #fff; font-size: 0.9rem;
+        transition: all 0.1s ease; position: relative; top: 0; text-transform: uppercase;
+    }
+    .print-btn:active { top: 3px; box-shadow: 0 0 0 var(--btn-main-dark); }
+    .print-btn:disabled { filter: grayscale(0.5) brightness(0.8); cursor: not-allowed; top: 3px; box-shadow: 0 0 0 var(--btn-main-dark); }
+    
+    /* Receipt Styles */
+    .paper-output-area {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        min-height: 300px; 
+        overflow: hidden;
+    }
+    .receipt {
+        position: absolute;
+        width: 220px;
+        min-height: 280px;
+        background-color: var(--paper-white);
+        color: var(--ink-color);
+        padding: 20px 15px 30px 15px;
+        font-family: 'Courier Prime', monospace;
+        font-size: 0.8rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        transform-origin: top center;
+        transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s;
+    }
+    .receipt::after { 
+        content: ""; position: absolute; bottom: -10px; left: 0; width: 100%; height: 10px;
+        background: var(--paper-white);
+        -webkit-mask-image: linear-gradient(45deg, transparent 33%, #000 33%, #000 66%, transparent 66%), linear-gradient(-45deg, transparent 33%, #000 33%, #000 66%, transparent 66%);
+        -webkit-mask-size: 10px 20px;
+        mask-image: linear-gradient(45deg, transparent 33%, #000 33%, #000 66%, transparent 66%), linear-gradient(-45deg, transparent 33%, #000 33%, #000 66%, transparent 66%);
+        mask-size: 10px 20px;
+    }
+    .receipt-header { text-align: center; border-bottom: 2px dashed #ddd; padding-bottom: 10px; margin-bottom: 15px; }
+    .receipt-title { font-weight: 700; font-size: 1rem; margin-bottom: 5px; text-transform: uppercase; }
+    .meta-row { display: flex; justify-content: space-between; font-size: 0.65rem; color: #888; }
+    .category-tag { display: inline-block; background: #eee; padding: 2px 6px; font-size: 0.6rem; text-transform: uppercase; border-radius: 2px; margin-bottom: 10px; font-weight: bold; border: 1px solid #ddd; }
+    .idea-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; line-height: 1.2; color: #000; }
+    .idea-desc { font-size: 0.8rem; line-height: 1.4; color: #444; margin-bottom: 20px; }
+    .barcode { height: 30px; width: 100%; background-color: black; opacity: 0.7; margin-bottom: 5px; } 
+    .keep-receipt { text-align: center; font-size: 0.6rem; text-transform: uppercase; color: #999; letter-spacing: 2px; }
+    
+    /* Animation */
+    @keyframes printSlide { 0% { transform: translateY(-100px) scale(0.9); opacity: 0; } 100% { transform: translateY(0px) scale(1); opacity: 1; } }
+    .printing { animation: printSlide 0.8s ease-out forwards; }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>日常創意發電機 / Everyday Idea Printer</h1>
+    <div class="guide"><p>按下 **PRINT** 按鈕，打印出一張新的日常創意收據。</p></div>
+
+    <div class="printer-container" id="printerContainer">
+        <div class="top-bar">
+            <div class="display-screen" id="displayScreen">READY</div>
+            <div class="power-led on"></div>
+        </div>
+        <div style="width: 90%; height: 5px; background-color: #aaa; border-radius: 3px; margin-bottom: 15px;"></div>
+        <div class="button-panel" style="background: none; box-shadow: none; padding: 0;">
+            <button class="print-btn" id="printBtn">
+                <span class="material-symbols-outlined">print</span> PRINT
+            </button>
+        </div>
+    </div>
+
+    <div class="paper-output-area" id="paperOutputArea">
+      </div>
+	  
+	  <div class="part-container tool-description-long">
+	歡迎來到「日常創意發電機」（Everyday Idea Printer），這是一個獨特且引人入勝的線上工具，專為需要日常靈感和實用生活解決方案的你而設計。厭倦了日復一日的單調生活或需要一個簡單的方法來啟動一個新習慣嗎？只需點擊虛擬的「PRINT」按鈕，我們的創意發電機就會模擬一台熱感應收據打印機，為你輸出一個嶄新的、實用且有時異想天開的日常生活點子。
+
+這款創新的創意產生器提供的點子涵蓋了廣泛的日常主題和類別，包括：Productivity 提升效率（如「5 分鐘衝刺」計時器）、Health 健康生活（如「補水教練」）、Finance 財務管理（如「無支出日」追蹤器）、Home 居家管理、Education 學習成長、Wellness 幸福感、Shopping 購物，甚至還有關於Meal Prep 膳食準備的實用小訣竅。每個想法都會以一份精美的、帶有時間戳和收據編號的數位收據形式呈現，使其成為一個令人愉快的、可收藏的每日靈感來源。
+
+無論你是尋找簡單的生活駭客來提高工作效率，還是需要一個實用的工具來克服日常生活中的小障礙，「日常創意發電機」都能為你的數字生活注入一點復古的實體魅力。立即體驗這款獨特想法生成器，開始列印你的下一個好主意，用新穎的方式來組織和豐富你的生活。我們的目標是為用戶提供易於執行、能帶來實際改變的隨機想法和實用建議，讓每一天都充滿創意與驚喜。
+	</div>
+  </div>
+
+  <script>
+    // --- JAVASCRIPT LOGIC FROM a (2).html ---
+    const ideas = [
+        { tag: "PRODUCTIVITY", title: "「5 分鐘衝刺」計時器", title_en: "Micro-task Sprint Timer", desc: "一個永遠在線的 5 分鐘計時器，專門設計用於在感到不知所措時處理最小、最不愉快的任務。", desc_en: "An always-on 5-minute timer designed specifically for tackling the smallest, most unpleasant tasks when feeling overwhelmed." },
+        { tag: "EDUCATION", title: "學習交換計算器", title_en: "Skill Swap Calculator", desc: "一個工具，可以建議非對稱的時間交換（例如：15 分鐘的西班牙語練習換 45 分鐘的數學輔導）。", desc_en: "A tool that suggests non-symmetrical time swaps (e.g., 15 minutes of Spanish practice for 45 minutes of Python for 30 minutes of bread baking)." },
+        { tag: "CALENDAR", title: "日曆「緩衝時間」", title_en: "Event Travel Pacing", desc: "自動為每個預定的會議或活動前後阻擋 15 分鐘，以防止背靠背倦怠。", desc_en: "Automatically blocks 15 minutes before and after every scheduled meeting or event to prevent back-to-back burnout." },
+        { tag: "UTILITY", title: "遺失鑰匙定位器", title_en: "A Simple Bluetooth Tracker", desc: "一種便宜、廣泛分佈的藍牙標籤，僅在 10 米半徑內有效，專門用於尋找家裡放錯位置的物品。", desc_en: "A cheap, widely distributed Bluetooth tag that only works within a 10-meter radius, designed purely for finding misplaced items in the house." },
+        { tag: "HEALTH", title: "補水教練", title_en: "Water Intake Tracker", desc: "一個簡單的小部件，顯示當前城市天氣並根據溫度和濕度調整您每日建議的飲水量。", desc_en: "A simple widget that displays current city weather and adjusts your daily recommended water intake based on temperature and humidity." },
+        { tag: "SHOPPING", title: "價格下降觀察者", title_en: "Historical Price Compare", desc: "一個擴展程式，在零售網站上的當前價格旁邊顯示歷史平均價格，標記微小的促銷。", desc_en: "An extension that shows the historical average price next to the current price on retail websites, flagging marginal sales." },
+        { tag: "HOME", title: "食品儲藏室 FIFO 管理", title_en: "Food Rotation Labeler", desc: "食品儲藏室物品的智能標籤，根據儲存時間長短改變顏色，以促進先進先出（FIFO）的消耗。", desc_en: "Smart labels for pantry items that change color based on how long..." },
+        { tag: "FINANCE", title: "「無支出日」追蹤器", title_en: "No-Spend Day Tracker", desc: "一個小部件，跟踪您連續度過「無支出日」（沒有購買或交易）的次數，以激勵節約。", desc_en: "A widget that tracks your consecutive streak of 'no-spend days' (no purchases or transactions) to incentivize saving." },
+        { tag: "TRANSPORT", title: "停車位定位器", title_en: "Real-Time Free Space Map", desc: "一個地圖，根據社區提交的數據和架空圖像分析，顯示人口稠密地區的公共、免費和可用停車位。", desc_en: "A map showing public, free, and available parking spots in densely populated areas based on community-submitted data and overhead imagery analysis." },
+        { tag: "ENTERTAINMENT", title: "聯合觀看清單", title_en: "Streaming Cross-Platform", desc: "一個共享清單，跟踪電影/節目，並為家庭中的所有成員指定每個項目在哪個流媒體服務上可用。", desc: "A shared list that tracks movies/shows, specifying which streaming service each is available on for all members of the household." },
+        { tag: "MEAL PREP", title: "剩菜管理", title_en: "Date-Stamped Containers", desc: "食物容器上的智能貼紙，可以掃描以顯示食物烹飪的確切日期並建議「食用期限」。", desc: "Smart stickers on food containers that can be scanned to show the exact date the food was cooked and suggest the 'use by' date." },
+        { tag: "SOCIAL", title: "安靜區域尋找器", title_en: "Low Noise Locator", desc: "一個眾包地圖，根據環境噪音水平對咖啡館、公園和圖書館進行評分，適用於需要安靜空間的人。", desc: "A crowdsourced map that rates cafes, parks, and libraries based on ambient noise levels for people who need quiet space." },
+        { tag: "COMMUNITY", title: "本地免費物品交換", title_en: "Neighborhood Giveaway", desc: "一個嚴格用於免費贈送物品給附近鄰居的論壇（例如：多餘的蔬菜、家具、未使用的用品）。", desc: "A forum strictly for giving away items for free to nearby neighbors (e.g., extra vegetables, furniture, unused supplies)." },
+        { tag: "HEALTH", title: "電子藥丸識別器", title_en: "Pill Identifier App", desc: "一個應用程式，允許用戶拍攝未知藥丸的照片（例如：在舊瓶中發現），並快速識別藥物、劑量和警告。", desc: "An app that allows a user to take a photo of an unknown pill (e.g., found in an old bottle) and quickly identify the medication, dosage, and warnings." },
+        { tag: "HYGIENE", title: "牙齒健康提醒", title_en: "Toothbrush Replacement Alert", desc: "在上次購買牙刷或替換刷頭後剛好 3 個月發送一個自動日曆提醒。", desc: "Sends an automatic calendar reminder exactly 3 months after a toothbrush or replacement head was last purchased." },
+        { tag: "WEATHER", title: "超本地警報", title_en: "Street-Level Rain Radar", desc: "提供極其精確的、分鐘級的天氣警報，僅針對您的特定地址或步行路線。", desc: "Provides extremely precise, minute-by-minute weather alerts focused only on your specific address or walking route." },
+        { tag: "GAMES", title: "本地遊戲之夜匹配", title_en: "Board Game Meetup", desc: "根據遊戲偏好和時間表可用性，將個人與附近的棋盤遊戲之夜主辦團體匹配。", desc: "Matches individuals with nearby groups hosting board game nights based on game preferences and scheduling availability." },
+        { tag: "FOOD", title: "食譜替代品", title_en: "Ingredient Swapper", desc: "允許用戶輸入食譜並立即為缺少的成分提供常見、合適的替代品（例如：酪乳替代牛奶和醋）。", desc: "Allows users to input a recipe and instantly provides common, suitable substitutions for missing ingredients (e.g., buttermilk for milk and vinegar)." },
+        { tag: "KITCHEN", title: "過期日期管理器", title_en: "Visual Pantry Date Tracker", desc: "一個庫存系統，顯示按最近過期日期組織的食品清單，優先考慮您應該先吃的東西。", desc: "An inventory system that shows a list of food items organized by the nearest expiration date, prioritizing what you should eat next." },
+        { tag: "DRINKS", title: "最佳咖啡比例", title_en: "Brewing Calculator", desc: "根據咖啡豆類型和沖泡設備（例如：Chemex vs. French Press），計算所需咖啡粉、水和悶蒸時間的精確量。", desc_en: "Calculates the precise amount of coffee grounds, water, and bloom time needed based on the type of beans and..." },
+        { tag: "GARDENING", title: "智能澆水時間表", title_en: "Precision Watering Schedule", desc: "使用當地天氣數據、植物類型和土壤讀數生成精確的澆水時間表，防止澆水過度或不足。", desc_en: "Uses local weather data, plant type, and soil readings to generate a precise watering schedule, preventing over- or under-watering." },
+        { tag: "FOOD", title: "食譜來源管理器", title_en: "Web Recipe Clipper", desc: "一個瀏覽器擴展程式，將食譜從任何網站提取到標準化、乾淨的格式，並將其存儲在個人數位食譜中。", desc_en: "A browser extension that pulls recipes from any website into a standardized, clean format and stores them in a personal digital cookbook." },
+        { tag: "HEALTH", title: "運動提醒", title_en: "Desk Break Prompt", desc: "一個微妙的桌面通知，跟踪連續坐著的時間，並提示您進行一個快速的、兩分鐘的伸展運動（提供影片）。", desc: "A subtle desktop notification that tracks continuous sitting time and prompts you with a quick, two-minute stretch routine (video provided)." },
+        { tag: "WELLNESS", title: "感恩日記提示", title_en: "Daily Positivity Starter", desc: "一個簡單的應用程式，每天早上提供一個單一、周到的提示，指導感恩練習或正念反思。", desc: "A simple app that provides a single, thoughtful prompt each morning to guide a gratitude practice or mindfulness reflection." },
+        { tag: "SLEEP", title: "午睡持續時間跟踪器", title_en: "Optimal Rest Calculator", desc: "跟踪短暫的午睡，並在最佳時間（例如：20 分鐘用於小憩或 9...", desc_en: "Tracks brief naps and wakes the user up at the optimal time (e.g., 20 minutes for a power nap or 9..." }
+    ];
+    let receiptCount=93,isPrinting=!1,zIndexCounter=10;const NEW_PAPER_START_Y=0,printBtn=document.getElementById("printBtn"),displayScreen=document.getElementById("displayScreen"),outputArea=document.getElementById("paperOutputArea");function printIdea(){if(isPrinting)return;isPrinting=!0,printBtn.disabled=!0,displayScreen.textContent="PRINTING...",displayScreen.style.color="#f00";let e=Math.floor(Math.random()*ideas.length),t=ideas[e];receiptCount++;let n=new Date,i=n.toLocaleDateString("zh-TW",{year:"numeric",month:"numeric",day:"numeric"}).replace(/\//g,"-"),r=n.toLocaleTimeString("zh-TW",{hour:"2-digit",minute:"2-digit",hour12:!1}),a=20*Math.random()-10,s=6*Math.random()-3,p=document.createElement("div");p.classList.add("receipt"),p.style.transform="translateY(0px) rotate(0deg)",p.innerHTML=`
+            <div class="receipt-header">
+                <div class="receipt-title">日常創意發電機</div>
+                <div class="meta-row">
+                    <span>${r}</span>
+                    <span>${i}</span>
+                    <span>NO.0${receiptCount}</span>
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <span class="category-tag">${t.tag}</span>
+                <div class="idea-title">${t.title}</div>
+                <div class="idea-desc" style="font-size: 0.7rem; color: #666; margin-bottom: 5px;">${t.title_en}</div>
+                <div class="idea-desc">${t.desc}</div>
+            </div>
+            <div class="barcode" style="
+                background-image: linear-gradient(90deg, 
+                    #000 2px, transparent 2px, transparent 4px, #000 4px,
+                    #000 6px, transparent 6px, transparent 9px, #000 9px,
+                    #000 13px, transparent 13px, transparent 14px, #000 14px, 
+                    #000 18px, transparent 18px, transparent 22px, #000 22px
+                );
+                background-size: 24px 100%;
+            "></div>
+            <div class="keep-receipt">KEEP THIS IDEA</div>
+        `,outputArea.appendChild(p),zIndexCounter++,p.style.zIndex=zIndexCounter,setTimeout(()=>{p.classList.add("printing"),setTimeout(()=>{isPrinting=!1,printBtn.disabled=!1,displayScreen.textContent="READY",displayScreen.style.color="#2ecc71",p.classList.remove("printing"),p.style.transform=`translate(${a}px, 0px) rotate(${s}deg)`},800)},50)}printBtn&&printBtn.addEventListener("click",printIdea);
+  </script>
+</body>
+</html>
