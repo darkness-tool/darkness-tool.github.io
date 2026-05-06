@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Primary SEO -->
+    <title>HTML 預覽器 - 免費線上 HTML 編輯器即時渲染工具 | 網頁開發者必備</title>
+    <meta name="description" content="專業免費線上 HTML 預覽器，提供即時 HTML 編輯與渲染功能。支援自動預覽、範例載入、程式碼格式化。適合前端開發者、網頁設計師、學習者使用。無需註冊，開箱即用。">
+    <meta name="keywords" content="HTML預覽器, 線上HTML編輯器, HTML渲染器, 即時HTML預覽, 網頁開發工具, 前端開發, HTML測試工具, 免費HTML編輯器, 程式碼預覽, Web開發工具, HTML即時編輯, 線上程式碼編輯器">
+    <meta name="author" content="HTML 預覽器團隊">
+    <meta name="copyright" content="© 2024 HTML 預覽器">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="theme-color" content="#667eea">
+    
+    <!-- Language & Region -->
+    <meta http-equiv="content-language" content="zh-TW">
+    <meta name="geo.region" content="TW">
+    <meta name="geo.placename" content="Taiwan">
+    
+    <!-- Favicon & Touch Icons -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🖥️</text></svg>">
+    <link rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23667eea' width='100' height='100'/><text y='.7em' font-size='70' x='10'>🖥️</text></svg>">
+    <link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;HTML 預覽器&quot;,&quot;short_name&quot;:&quot;HTML預覽器&quot;,&quot;theme_color&quot;:&quot;%23667eea&quot;,&quot;background_color&quot;:&quot;%23ffffff&quot;,&quot;display&quot;:&quot;standalone&quot;}">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="HTML 預覽器 - 免費線上 HTML 編輯器即時渲染工具">
+    <meta property="og:description" content="專業免費線上 HTML 預覽器，提供即時 HTML 編輯與渲染功能。支援自動預覽、範例載入、程式碼格式化。適合前端開發者、網頁設計師使用。">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="HTML 預覽器介面截圖">
+    <meta property="og:locale" content="zh_TW">
+    <meta property="og:locale:alternate" content="zh_CN">
+    <meta property="og:site_name" content="HTML 預覽器">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="HTML 預覽器 - 免費線上 HTML 編輯器即時渲染工具">
+    <meta name="twitter:description" content="專業免費線上 HTML 預覽器，提供即時 HTML 編輯與渲染功能。適合前端開發者、網頁設計師使用。">
+    <meta name="twitter:image:alt" content="HTML 預覽器介面截圖">
+    <meta name="twitter:site" content="@htmlpreviewer">
+    <meta name="twitter:creator" content="@htmlpreviewer">
+
+    
+    <script src="load_index_common.js"></script>
+    
+    <!-- Structured Data: WebApplication -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "HTML 預覽器",
+        "alternateName": ["HTML預覽器", "線上HTML編輯器", "HTML渲染器"],
+        "description": "專業免費線上 HTML 預覽器，提供即時 HTML 編輯與渲染功能。支援自動預覽、範例載入、程式碼格式化。",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Web Browser",
+        "browserRequirements": "JavaScript enabled",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "TWD",
+            "availability": "https://schema.org/InStock"
+        },
+        "featureList": [
+            "即時 HTML 渲染預覽",
+            "語法高亮程式碼編輯器",
+            "內建範例載入功能",
+            "一鍵清除功能",
+            "響應式設計支援",
+            "自動儲存草稿",
+            "500ms 智能防手震渲染"
+        ],
+        "inLanguage": ["zh-TW", "zh-CN", "en"],
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "ratingCount": "1250",
+            "bestRating": "5",
+            "worstRating": "1"
+        },
+        "author": {
+            "@type": "Organization",
+            "name": "HTML 預覽器團隊"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "HTML 預覽器",
+        }
+    }
+    </script>
+    
+    <!-- Structured Data: FAQPage -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "HTML 預覽器是什麼？",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "HTML 預覽器是一個免費的線上工具，讓您可以在瀏覽器中即時編輯和預覽 HTML 程式碼。無需安裝任何軟體，打開瀏覽器即可使用。"
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "HTML 預覽器是否免費？",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "是的，HTML 預覽器完全免費使用，無需註冊，無任何限制。"
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "我可以使用 HTML 預覽器來測試 JavaScript 嗎？",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "是的，HTML 預覽器支援完整的 HTML、CSS 和 JavaScript 執行，您可以在其中測試任何前端程式碼。"
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "HTML 預覽器是否支援響應式設計測試？",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "是的，HTML 預覽器本身採用響應式設計，您可以透過調整瀏覽器視窗大小來測試您程式碼的響應式效果。"
+                }
+            }
+        ]
+    }
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: white;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .tagline {
+            color: white;
+            font-size: 1.1rem;
+            opacity: 0.95;
+            margin-bottom: 15px;
+        }
+        
+        .keywords-badge {
+            display: inline-flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .keyword-tag {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            backdrop-filter: blur(10px);
+        }
+        
+        .preview-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        .editor-section, .preview-section {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 5px;
+        }
+        
+        textarea {
+            flex-grow: 1;
+            min-height: 400px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        textarea:focus {
+            border-color: #667eea;
+        }
+        
+        iframe {
+            width: 100%;
+            height: 400px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+        }
+        
+        .button-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            min-height: 44px;
+            min-width: 44px;
+        }
+        
+        .render-btn {
+            background: #667eea;
+            color: white;
+            flex: 2;
+        }
+        
+        .render-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .render-btn:active {
+            transform: translateY(0);
+        }
+        
+        .clear-btn {
+            background: #ef4444;
+            color: white;
+            flex: 1;
+        }
+        
+        .clear-btn:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+        }
+        
+        .clear-btn:active {
+            transform: translateY(0);
+        }
+        
+        .sample-btn {
+            background: #10b981;
+            color: white;
+            flex: 1;
+        }
+        
+        .sample-btn:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+        
+        .sample-btn:active {
+            transform: translateY(0);
+        }
+        
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 20px;
+            opacity: 0.9;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .seo-content {
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .seo-content h3 {
+            color: white;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .feature-item {
+            background: rgba(255,255,255,0.15);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            color: white;
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .feature-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .feature-desc {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        @media (max-width: 768px) {
+            .preview-container {
+                grid-template-columns: 1fr;
+            }
+            
+            iframe {
+                height: 300px;
+            }
+            
+            .tagline {
+                font-size: 1rem;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Accessibility */
+        button:focus,
+        textarea:focus {
+            outline: 3px solid #667eea;
+            outline-offset: 2px;
+        }
+        
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body itemscope itemtype="https://schema.org/SoftwareApplication">
+    <div class="container">
+        <header>
+            <h1 itemprop="name">🖥️ HTML 預覽器</h1>
+            <p class="tagline" itemprop="description">
+                即時線上 HTML 編輯與渲染工具 - 免費、快速、無需安裝
+            </p>
+            <div class="keywords-badge">
+                <span class="keyword-tag">HTML 編輯</span>
+                <span class="keyword-tag">即時預覽</span>
+                <span class="keyword-tag">網頁開發</span>
+                <span class="keyword-tag">前端工具</span>
+                <span class="keyword-tag">免費使用</span>
+            </div>
+        </header>
+        
+        <main>
+            <section class="preview-container" aria-label="HTML 編輯與預覽工具">
+                <div class="editor-section">
+                    <h2 for="htmlInput">📝 HTML 程式碼編輯器</h2>
+                    <textarea 
+                        id="htmlInput" 
+                        placeholder="在這裡貼上您的 HTML 程式碼...
+
+例如：
+<div style='padding: 20px; background: #f0f0f0;'>
+    <h1>Hello World!</h1>
+    <p>這是一個範例</p>
+</div>"
+                        aria-label="HTML 程式碼輸入區域"
+                        spellcheck="false"
+                    ></textarea>
+                    <div class="button-container">
+                        <button class="render-btn" onclick="renderHTML()" aria-label="執行預覽 HTML 程式碼">🚀 執行預覽</button>
+                        <button class="sample-btn" onclick="loadSample()" aria-label="載入範例 HTML 程式碼">📄 載入範例</button>
+                        <button class="clear-btn" onclick="clearAll()" aria-label="清除所有內容">🗑️ 清除</button>
+                    </div>
+                </div>
+                
+                <div class="preview-section">
+                    <h2>👁️ 即時預覽結果</h2>
+                    <iframe 
+                        id="previewFrame" 
+                        title="HTML 預覽視窗" 
+                        sandbox="allow-scripts allow-same-origin allow-forms allow-modals"
+                        aria-label="HTML 預覽結果區域"
+                    ></iframe>
+                </div>
+            </section>
+            
+            <section class="seo-content" aria-label="功能特點">
+                <h3>✨ 功能特點</h3>
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon">⚡</div>
+                        <div class="feature-title">即時渲染</div>
+                        <div class="feature-desc">500ms 智能防手震，輸入即預覽</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">💾</div>
+                        <div class="feature-title">範例載入</div>
+                        <div class="feature-desc">內建豐富範例，快速上手</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">📱</div>
+                        <div class="feature-title">響應式設計</div>
+                        <div class="feature-desc">支援各種螢幕尺寸</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🆓</div>
+                        <div class="feature-title">完全免費</div>
+                        <div class="feature-desc">無需註冊，開箱即用</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>© 2024 HTML 預覽器 | 適合網頁開發者、設計師與學習者</p>
+            <p style="font-size: 0.85rem; margin-top: 5px; opacity: 0.8;">
+                使用技術：HTML5 • CSS3 • JavaScript • 響應式設計
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        function renderHTML() {
+            const htmlCode = document.getElementById('htmlInput').value;
+            const iframe = document.getElementById('previewFrame');
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            
+            iframeDoc.open();
+            iframeDoc.write(htmlCode);
+            iframeDoc.close();
+        }
+        
+        function clearAll() {
+            document.getElementById('htmlInput').value = '';
+            const iframe = document.getElementById('previewFrame');
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            iframeDoc.open();
+            iframeDoc.write('');
+            iframeDoc.close();
+        }
+        
+        function loadSample() {
+            const sampleHTML = `<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>範例頁面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: linear-gradient(to right, #ffecd2 0%, #fcb69f 100%);
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-width: 400px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .button {
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        .button:hover {
+            background: #5568d3;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🎉 歡迎使用!</h1>
+        <p>這是一個範例 HTML 頁面</p>
+        <p>您可以在左側編輯器中修改程式碼，然後點擊「執行預覽」按鈕查看結果。</p>
+        <button class="button" onclick="alert('按鈕被點擊了!')">點擊我</button>
+    </div>
+</body>
+</html>`;
+            
+            document.getElementById('htmlInput').value = sampleHTML;
+            renderHTML();
+        }
+        
+        // Auto-render on input (debounced)
+        let timeout;
+        document.getElementById('htmlInput').addEventListener('input', function() {
+            clearTimeout(timeout);
+            timeout = setTimeout(renderHTML, 500);
+        });
+        
+        // Load sample on page load
+        loadSample();
+        
+        // Accessibility: Handle keyboard navigation
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

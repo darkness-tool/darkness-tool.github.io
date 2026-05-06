@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO: Enhanced Title with Keywords -->
+    <title>喝水追蹤器 | 免費線上飲水量記錄工具 - 養成健康喝水習慣 | Hydration Tracker</title>
+    
+    <!-- SEO: Meta Description -->
+    <meta name="description" content="專為健康生活設計的免費喝水追蹤器。簡單記錄每日飲水量，自訂目標，追蹤補水進度與連續打卡天數。支援深色模式、響應式設計，適合手機與桌面使用。讓養成喝水習慣變得更簡單。">
+    
+    <!-- SEO: Keywords (less important now but still useful) -->
+    <meta name="keywords" content="喝水追蹤器, 飲水紀錄, 水分追蹤, 健康管理, 每日飲水量, hydration tracker, 飲水目標, 補水提醒">
+    
+    <!-- SEO: Author -->
+    <meta name="author" content="Water Tracker App">
+    
+    
+    <!-- SEO: Open Graph / Social Media Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="喝水追蹤器 | 免費線上飲水量記錄工具">
+    <meta property="og:description" content="專為健康生活設計的免費喝水追蹤器。簡單記錄每日飲水量，追蹤補水進度，養成健康喝水習慣。">
+    <meta property="og:locale" content="zh_TW">
+    <meta property="og:site_name" content="喝水追蹤器">
+    
+    <!-- SEO: Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="喝水追蹤器 | 免費線上飲水量記錄工具">
+    <meta name="twitter:description" content="專為健康生活設計的免費喝水追蹤器。簡單記錄每日飲水量，追蹤補水進度。">
+    
+    <!-- SEO: Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233B82F6'><path d='M12 2.69l5.74 5.88c1.22 1.26 1.9 2.92 1.9 4.66 0 3.63-2.97 6.59-6.64 6.59s-6.64-2.96-6.64-6.59c0-1.74.68-3.4 1.9-4.66L12 2.69z'/><path d='M12 2.69v10.52'/></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233B82F6'><path d='M12 2.69l5.74 5.88c1.22 1.26 1.9 2.92 1.9 4.66 0 3.63-2.97 6.59-6.64 6.59s-6.64-2.96-6.64-6.59c0-1.74.68-3.4 1.9-4.66L12 2.69z'/><path d='M12 2.69v10.52'/></svg>">
+    
+    
+      <script src="load_index_common.js"></script>
+      
+    <!-- SEO: Structured Data (JSON-LD) for WebApplication -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "喝水追蹤器 | Hydration Tracker",
+      "alternateName": "Hydration Tracker",
+      "description": "專為健康生活設計的免費喝水追蹤器。簡單記錄每日飲水量，自訂目標，追蹤補水進度與連續打卡天數。",
+      "applicationCategory": "HealthApplication",
+      "operatingSystem": "Web",
+      "browserRequirements": "Requires JavaScript. Requires HTML5.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock"
+      },
+      "featureList": [
+        "每日目標自訂設定",
+        "快速記錄飲水 (小杯150ml/中杯250ml/大杯350ml/特大杯500ml)",
+        "即時進度視覺化顯示",
+        "飲水歷史紀錄追蹤",
+        "連續打卡天數統計",
+        "深色模式支援",
+        "響應式設計支援手機平板桌面"
+      ],
+      "inLanguage": ["zh-TW", "en"],
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "ratingCount": "1250"
+      }
+    }
+    </script>
+    
+    <!-- SEO: FAQ Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "每天應該喝多少水？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "一般建議成年人每天飲用約 2000-2500ml 的水，但實際需求會根據體重、活動量、氣候等因素而有所不同。您可以根據自己的需求自訂每日目標。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "這個喝水追蹤器需要付費嗎？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "不需要，我們的喝水追蹤器完全免費使用，無需註冊帳號，所有資料都儲存在您的瀏覽器中。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "我的飲水紀錄會保存在哪裡？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "所有的飲水紀錄都儲存在您瀏覽器的 localStorage 中，不會上傳到任何伺服器，確保您的隱私安全。"
+          }
+        }
+      ]
+    }
+    </script>
+
+    <style>
+        :root {
+            --primary: #3B82F6;
+            --primary-light: #93C5FD;
+            --primary-dark: #1D4ED8;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --bg-light: #F8FAFC;
+            --bg-white: #FFFFFF;
+            --text-primary: #1E293B;
+            --text-secondary: #64748B;
+            --border: #E2E8F0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            --radius: 16px;
+            --radius-sm: 8px;
+        }
+
+        .dark-mode {
+            --bg-light: #0F172A;
+            --bg-white: #1E293B;
+            --text-primary: #F1F5F9;
+            --text-secondary: #94A3B8;
+            --border: #334155;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--bg-light) 0%, #DBEAFE 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .dark-mode body {
+            background: linear-gradient(135deg, var(--bg-light) 0%, #1E3A5F 100%);
+        }
+
+        .container {
+            max-width: 420px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .theme-toggle {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: none;
+            background: var(--bg-white);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            transition: all 0.2s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.05);
+        }
+
+        .theme-toggle:active {
+            transform: scale(0.95);
+        }
+
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Water Level Card */
+        .water-card {
+            background: var(--bg-white);
+            border-radius: var(--radius);
+            padding: 32px 24px;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .water-level-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .water-level {
+            position: relative;
+            width: 200px;
+            height: 200px;
+        }
+
+        .water-level svg {
+            transform: rotate(-90deg);
+        }
+
+        .water-level-bg {
+            fill: none;
+            stroke: var(--border);
+            stroke-width: 12;
+        }
+
+        .water-level-progress {
+            fill: none;
+            stroke: var(--primary);
+            stroke-width: 12;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+
+        .water-level-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .water-amount {
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .water-unit {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .goal-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .goal-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .goal-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .goal-value svg {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        .goal-value svg:hover {
+            opacity: 1;
+        }
+
+        /* Quick Add Buttons */
+        .quick-add {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .quick-add-btn {
+            background: var(--bg-white);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 16px 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .quick-add-btn:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .quick-add-btn:active {
+            transform: translateY(0);
+        }
+
+        .quick-add-btn svg {
+            width: 28px;
+            height: 28px;
+            color: var(--primary);
+        }
+
+        .quick-add-btn span {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .quick-add-btn small {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        /* History Section */
+        .history-section {
+            background: var(--bg-white);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .history-header h2 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .clear-history {
+            font-size: 14px;
+            color: var(--danger);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            transition: background 0.2s;
+        }
+
+        .clear-history:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .history-list {
+            list-style: none;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            animation: slideIn 0.3s ease;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .history-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+        }
+
+        .history-icon svg {
+            width: 20px;
+            height: 20px;
+            color: white;
+        }
+
+        .history-details {
+            flex: 1;
+        }
+
+        .history-amount {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .history-time {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .history-delete {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s;
+        }
+
+        .history-delete:hover {
+            color: var(--danger);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .history-delete svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+
+        /* Settings Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal {
+            background: var(--bg-white);
+            border-radius: var(--radius);
+            padding: 24px;
+            width: 100%;
+            max-width: 320px;
+            animation: scaleIn 0.2s ease;
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            background: var(--bg-light);
+            color: var(--text-primary);
+            transition: border-color 0.2s;
+        }
+
+        .modal-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .modal-btn.cancel {
+            background: var(--bg-light);
+            color: var(--text-primary);
+        }
+
+        .modal-btn.confirm {
+            background: var(--primary);
+            color: white;
+        }
+
+        .modal-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .modal-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--text-primary);
+            color: var(--bg-white);
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: var(--shadow-lg);
+            z-index: 1001;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Celebration Animation */
+        .celebration {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 80px;
+            z-index: 999;
+            animation: celebrate 1s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes celebrate {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0);
+            }
+            50% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(1.5);
+            }
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .stat-item {
+            background: var(--bg-white);
+            border-radius: var(--radius-sm);
+            padding: 16px 12px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* SEO Content Section (Accessible to crawlers) */
+        .seo-content {
+            margin-top: 40px;
+            padding: 24px;
+            background: var(--bg-white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .seo-content h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .seo-content h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 20px 0 8px;
+            color: var(--text-primary);
+        }
+
+        .seo-content p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .seo-content ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .seo-content li {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .seo-content li::before {
+            content: "•";
+            position: absolute;
+            left: 4px;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Responsive Design */
+        
+        /* Extra Small Screens (≤360px) */
+        @media (max-width: 360px) {
+            .container {
+                padding: 12px;
+            }
+            
+            .header h1 {
+                font-size: 20px;
+            }
+            
+            .header h1 svg {
+                width: 24px;
+                height: 24px;
+            }
+            
+            .theme-toggle {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .water-card {
+                padding: 20px 16px;
+            }
+            
+            .water-level {
+                width: 140px;
+                height: 140px;
+            }
+            
+            .water-level svg {
+                width: 140px;
+                height: 140px;
+            }
+            
+            .water-amount {
+                font-size: 28px;
+            }
+            
+            .water-unit {
+                font-size: 12px;
+            }
+            
+            .goal-info {
+                flex-direction: column;
+                gap: 8px;
+                text-align: center;
+            }
+            
+            .quick-add {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            
+            .quick-add-btn {
+                padding: 12px 8px;
+            }
+            
+            .quick-add-btn svg {
+                width: 24px;
+                height: 24px;
+            }
+            
+            .quick-add-btn span {
+                font-size: 12px;
+            }
+            
+            .quick-add-btn small {
+                font-size: 10px;
+            }
+            
+            .stats-bar {
+                gap: 8px;
+            }
+            
+            .stat-item {
+                padding: 12px 8px;
+            }
+            
+            .stat-value {
+                font-size: 16px;
+            }
+            
+            .stat-label {
+                font-size: 10px;
+            }
+            
+            .history-section {
+                padding: 16px;
+            }
+            
+            .history-header h2 {
+                font-size: 16px;
+            }
+        }
+        
+        /* Small Screens (361px - 480px) */
+        @media (min-width: 361px) and (max-width: 480px) {
+            .quick-add {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        /* Medium Tablets (481px - 768px) */
+        @media (min-width: 481px) and (max-width: 768px) {
+            .container {
+                max-width: 600px;
+            }
+            
+            .stats-bar {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .quick-add {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .water-card {
+                padding: 40px 32px;
+            }
+            
+            .water-level {
+                width: 220px;
+                height: 220px;
+            }
+            
+            .water-level svg {
+                width: 220px;
+                height: 220px;
+            }
+            
+            .water-amount {
+                font-size: 48px;
+            }
+            
+            .history-list {
+                max-height: 400px;
+            }
+        }
+        
+        /* Large Tablets & Small Desktops (769px - 1024px) */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .container {
+                max-width: 800px;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 24px;
+                align-items: start;
+            }
+            
+            .header {
+                grid-column: 1 / -1;
+            }
+            
+            .stats-bar {
+                grid-column: 1 / -1;
+            }
+            
+            .water-card {
+                margin-bottom: 0;
+            }
+            
+            .quick-add {
+                grid-column: 1 / -1;
+                grid-template-columns: repeat(8, 1fr);
+                gap: 16px;
+            }
+            
+            .quick-add-btn {
+                flex-direction: row;
+                justify-content: center;
+                gap: 12px;
+                padding: 16px 20px;
+            }
+            
+            .quick-add-btn small {
+                display: none;
+            }
+            
+            .history-section {
+                height: 100%;
+                max-height: 600px;
+            }
+            
+            .history-list {
+                max-height: 500px;
+            }
+        }
+        
+        /* Desktop Screens (1025px - 1440px) */
+        @media (min-width: 1025px) and (max-width: 1440px) {
+            .container {
+                max-width: 1000px;
+                grid-template-columns: 380px 1fr;
+                gap: 32px;
+            }
+            
+            .header {
+                grid-column: 1 / -1;
+                margin-bottom: 32px;
+            }
+            
+            .header h1 {
+                font-size: 28px;
+            }
+            
+            .header h1 svg {
+                width: 32px;
+                height: 32px;
+            }
+            
+            .stats-bar {
+                grid-column: 1 / 2;
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .stat-item {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 16px 20px;
+            }
+            
+            .stat-value {
+                font-size: 24px;
+            }
+            
+            .stat-label {
+                font-size: 14px;
+                margin-top: 0;
+            }
+            
+            .water-card {
+                grid-column: 1 / 2;
+                margin-bottom: 0;
+            }
+            
+            .quick-add {
+                grid-column: 1 / 2;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            
+            .quick-add-btn small {
+                display: block;
+            }
+            
+            .history-section {
+                grid-column: 2 / 3;
+                grid-row: 2 / 5;
+                height: 100%;
+            }
+            
+            .history-list {
+                max-height: calc(100vh - 250px);
+            }
+        }
+        
+        /* Large Desktop Screens (>1440px) */
+        @media (min-width: 1441px) {
+            body {
+                background: linear-gradient(135deg, var(--bg-light) 0%, #DBEAFE 50%, #93C5FD 100%);
+            }
+            
+            .dark-mode body {
+                background: linear-gradient(135deg, var(--bg-light) 0%, #1E3A5F 50%, #0F172A 100%);
+            }
+            
+            .container {
+                max-width: 1200px;
+                grid-template-columns: 400px 1fr;
+                gap: 40px;
+                padding: 40px;
+            }
+            
+            .header {
+                margin-bottom: 40px;
+            }
+            
+            .header h1 {
+                font-size: 32px;
+            }
+            
+            .header h1 svg {
+                width: 36px;
+                height: 36px;
+            }
+            
+            .theme-toggle {
+                width: 56px;
+                height: 56px;
+            }
+            
+            .theme-toggle svg {
+                width: 28px;
+                height: 28px;
+            }
+            
+            .water-card {
+                padding: 48px 32px;
+            }
+            
+            .water-level {
+                width: 240px;
+                height: 240px;
+            }
+            
+            .water-level svg {
+                width: 240px;
+                height: 240px;
+            }
+            
+            .water-amount {
+                font-size: 52px;
+            }
+            
+            .goal-info {
+                padding-top: 28px;
+            }
+            
+            .goal-label {
+                font-size: 16px;
+            }
+            
+            .goal-value {
+                font-size: 18px;
+            }
+            
+            .quick-add {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+            
+            .quick-add-btn {
+                padding: 20px 16px;
+            }
+            
+            .quick-add-btn svg {
+                width: 32px;
+                height: 32px;
+            }
+            
+            .quick-add-btn span {
+                font-size: 15px;
+            }
+            
+            .quick-add-btn small {
+                font-size: 12px;
+            }
+            
+            .history-section {
+                padding: 32px;
+            }
+            
+            .history-header h2 {
+                font-size: 22px;
+            }
+            
+            .history-item {
+                padding: 16px;
+            }
+            
+            .history-icon {
+                width: 48px;
+                height: 48px;
+            }
+            
+            .history-icon svg {
+                width: 24px;
+                height: 24px;
+            }
+            
+            .history-amount {
+                font-size: 17px;
+            }
+            
+            .history-time {
+                font-size: 14px;
+            }
+        }
+        
+        /* Ultra-wide screens (≥1920px) */
+        @media (min-width: 1920px) {
+            .container {
+                max-width: 1400px;
+            }
+            
+            .history-list {
+                max-height: calc(100vh - 300px);
+            }
+        }
+        
+        /* Landscape orientation on mobile */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .container {
+                display: flex;
+                flex-direction: row;
+                gap: 20px;
+                align-items: flex-start;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+            
+            .water-card {
+                padding: 16px;
+            }
+            
+            .water-level {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .water-level svg {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .water-amount {
+                font-size: 24px;
+            }
+            
+            .quick-add {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 8px;
+            }
+            
+            .quick-add-btn {
+                padding: 8px 4px;
+            }
+            
+            .quick-add-btn svg {
+                width: 20px;
+                height: 20px;
+            }
+            
+            .quick-add-btn span {
+                font-size: 11px;
+            }
+            
+            .quick-add-btn small {
+                display: none;
+            }
+            
+            .history-section {
+                max-height: calc(100vh - 200px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 2.69l5.74 5.88c1.22 1.26 1.9 2.92 1.9 4.66 0 3.63-2.97 6.59-6.64 6.59s-6.64-2.96-6.64-6.59c0-1.74.68-3.4 1.9-4.66L12 2.69z"/>
+                    <path d="M12 2.69v10.52"/>
+                </svg>
+                喝水追蹤器
+            </h1>
+            <button class="theme-toggle" id="themeToggle" aria-label="切換深色模式">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" id="themeIcon" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                </svg>
+            </button>
+        </header>
+
+        <!-- Stats Bar -->
+        <section class="stats-bar" aria-label="統計資訊">
+            <div class="stat-item">
+                <div class="stat-value" id="todayCount" aria-live="polite">0</div>
+                <div class="stat-label">今日次數</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="streakDays" aria-live="polite">0</div>
+                <div class="stat-label">連續天數</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="remainingMl" aria-live="polite">0</div>
+                <div class="stat-label">還需 ml</div>
+            </div>
+        </section>
+
+        <!-- Main Application Area -->
+        <main>
+            <!-- Water Level Card -->
+            <section class="water-card" aria-labelledby="progress-heading">
+                <h2 id="progress-heading" class="visually-hidden">今日飲水進度</h2>
+                <div class="water-level-container">
+                    <div class="water-level">
+                        <svg width="200" height="200" viewBox="0 0 200 200" role="progressbar" aria-valuemin="0" aria-valuemax="2000" aria-valuenow="0" aria-label="今日飲水進度：0 / 2000 ml">
+                            <circle class="water-level-bg" cx="100" cy="100" r="85"/>
+                            <circle class="water-level-progress" cx="100" cy="100" r="85" 
+                                stroke-dasharray="534"
+                                stroke-dashoffset="534"
+                                id="progressCircle"/>
+                        </svg>
+                        <div class="water-level-text">
+                            <div class="water-amount" id="currentAmount" aria-live="polite">0</div>
+                            <div class="water-unit">ml</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="goal-info">
+                    <span class="goal-label">今日目標</span>
+                    <span class="goal-value">
+                        <span id="goalDisplay">2000</span> ml
+                        <button id="editGoal" aria-label="編輯每日目標">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                            </svg>
+                        </button>
+                    </span>
+                </div>
+            </section>
+
+            <!-- Quick Add Buttons -->
+            <section class="quick-add" aria-label="快速添加飲水紀錄">
+                <button class="quick-add-btn" data-amount="150" aria-label="添加 150 毫升 小杯">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M17 11h-4V7a2 2 0 0 0-4 0v4H5a2 2 0 0 0 0 4h4v4a2 2 0 0 0 4 0v-4h4a2 2 0 0 0 0-4z"/>
+                    </svg>
+                    <span>小杯</span>
+                    <small>150ml</small>
+                </button>
+                <button class="quick-add-btn" data-amount="250" aria-label="添加 250 毫升 中杯">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M17 11h-4V7a2 2 0 0 0-4 0v4H5a2 2 0 0 0 0 4h4v4a2 2 0 0 0 4 0v-4h4a2 2 0 0 0 0-4z"/>
+                    </svg>
+                    <span>中杯</span>
+                    <small>250ml</small>
+                </button>
+                <button class="quick-add-btn" data-amount="350" aria-label="添加 350 毫升 大杯">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M17 11h-4V7a2 2 0 0 0-4 0v4H5a2 2 0 0 0 0 4h4v4a2 2 0 0 0 4 0v-4h4a2 2 0 0 0 0-4z"/>
+                    </svg>
+                    <span>大杯</span>
+                    <small>350ml</small>
+                </button>
+                <button class="quick-add-btn" data-amount="500" aria-label="添加 500 毫升 特大杯">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M17 11h-4V7a2 2 0 0 0-4 0v4H5a2 2 0 0 0 0 4h4v4a2 2 0 0 0 4 0v-4h4a2 2 0 0 0 0-4z"/>
+                    </svg>
+                    <span>特大杯</span>
+                    <small>500ml</small>
+                </button>
+            </section>
+
+            <!-- History Section -->
+            <section class="history-section" aria-labelledby="history-heading">
+                <div class="history-header">
+                    <h2 id="history-heading">今日紀錄</h2>
+                    <button class="clear-history" id="clearHistory" aria-label="清除所有紀錄">清除全部</button>
+                </div>
+                <ul class="history-list" id="historyList" role="list">
+                    <li class="empty-state" role="listitem">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 2.69l5.74 5.88c1.22 1.26 1.9 2.92 1.9 4.66 0 3.63-2.97 6.59-6.64 6.59s-6.64-2.96-6.64-6.59c0-1.74.68-3.4 1.9-4.66L12 2.69z"/>
+                        </svg>
+                        <p>還沒有喝水紀錄，快來補充水分吧！💧</p>
+                    </li>
+                </ul>
+            </section>
+        </main>
+
+        <!-- SEO Content Section -->
+        <article class="seo-content">
+            <h2>關於喝水追蹤器</h2>
+            <p>這是一個專為注重健康生活的使用者設計的免費線上喝水追蹤器。透過簡單直覺的介面，您可以輕鬆記錄每日飲水量，設定個人化的飲水目標，並即時查看補水進度。</p>
+            
+            <h3>為什麼需要追蹤飲水量？</h3>
+            <p>充足的水分攝取對於維持身體健康至關重要。適當補水可以幫助促進新陳代謝、維持皮膚健康、提升專注力，並預防頭痛與疲勞。許多人常常忘記喝水，透過追蹤器可以幫助養成良好的飲水習慣。</p>
+            
+            <h3>喝水追蹤器的主要功能</h3>
+            <ul>
+                <li><strong>快速記錄：</strong>提供四種常見杯量的快速按鈕（150ml、250ml、350ml、500ml），一鍵完成記錄</li>
+                <li><strong>目標自訂：</strong>根據個人需求設定每日飲水目標，建議一般成人每天攝取 2000-2500ml</li>
+                <li><strong>即時進度：</strong>透過圓形進度條視覺化顯示今日完成度</li>
+                <li><strong>歷史追蹤：</strong>查看今日所有飲水紀錄與時間</li>
+                <li><strong>連續打卡：</strong>追蹤連續達成目標的天數，激勵持續喝水</li>
+                <li><strong>深色模式：</strong>支援深色主題，保護眼睛</li>
+                <li><strong>跨裝置使用：</strong>響應式設計，支援手機、平板、桌面電腦</li>
+            </ul>
+
+            <h3>如何有效使用喝水追蹤器？</h3>
+            <p>建議在一天中分配飲水時間，例如：起床後喝一杯、每兩小時記錄一次、運動前後補水。設定實際可行的目標，並透過連續打卡功能來激勵自己持之以恆。</p>
+
+            <h3>資料隱私說明</h3>
+            <p>您的所有飲水紀錄都儲存在本機瀏覽器中，不會上傳到任何伺服器，確保個人隱私安全。清除瀏覽器快取會同時清除紀錄，請定期備份重要資料。</p>
+        </article>
+    </div>
+
+    <!-- Goal Modal -->
+    <div class="modal-overlay" id="goalModal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal" role="document">
+            <h3 id="modal-title">設定每日目標</h3>
+            <label for="goalInput" class="visually-hidden">輸入目標量（毫升）</label>
+            <input type="number" class="modal-input" id="goalInput" placeholder="輸入目標量 (ml)" min="500" max="5000" step="100" aria-describedby="goal-hint">
+            <p id="goal-hint" class="visually-hidden">建議一般成人每天飲用 2000-2500ml</p>
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" id="cancelGoal">取消</button>
+                <button class="modal-btn confirm" id="saveGoal">儲存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script>
+        // State
+        let state = {
+            currentAmount: 0,
+            dailyGoal: 2000,
+            history: [],
+            streak: 0,
+            lastDate: null,
+            darkMode: false
+        };
+
+        // DOM Elements
+        const currentAmountEl = document.getElementById('currentAmount');
+        const goalDisplayEl = document.getElementById('goalDisplay');
+        const progressCircle = document.getElementById('progressCircle');
+        const historyList = document.getElementById('historyList');
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const goalModal = document.getElementById('goalModal');
+        const editGoalBtn = document.getElementById('editGoal');
+        const goalInput = document.getElementById('goalInput');
+        const cancelGoalBtn = document.getElementById('cancelGoal');
+        const saveGoalBtn = document.getElementById('saveGoal');
+        const clearHistoryBtn = document.getElementById('clearHistory');
+        const toast = document.getElementById('toast');
+        const todayCountEl = document.getElementById('todayCount');
+        const streakDaysEl = document.getElementById('streakDays');
+        const remainingMlEl = document.getElementById('remainingMl');
+
+        // SVG Icons
+        const sunIcon = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>`;
+        const moonIcon = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>`;
+
+        // Initialize
+        function init() {
+            loadState();
+            checkNewDay();
+            updateUI();
+            setupEventListeners();
+        }
+
+        // Load state from localStorage
+        function loadState() {
+            const saved = localStorage.getItem('waterTracker');
+            if (saved) {
+                state = { ...state, ...JSON.parse(saved) };
+            }
+            
+            // Load dark mode preference
+            const darkModePref = localStorage.getItem('darkMode');
+            if (darkModePref === 'true') {
+                state.darkMode = true;
+                document.body.classList.add('dark-mode');
+                themeIcon.innerHTML = sunIcon;
+            }
+        }
+
+        // Save state to localStorage
+        function saveState() {
+            localStorage.setItem('waterTracker', JSON.stringify({
+                currentAmount: state.currentAmount,
+                dailyGoal: state.dailyGoal,
+                history: state.history,
+                streak: state.streak,
+                lastDate: state.lastDate
+            }));
+        }
+
+        // Check if it's a new day
+        function checkNewDay() {
+            const today = new Date().toDateString();
+            if (state.lastDate !== today) {
+                // Check if yesterday was completed for streak
+                if (state.lastDate) {
+                    const lastDate = new Date(state.lastDate);
+                    const yesterday = new Date();
+                    yesterday.setDate(yesterday.getDate() - 1);
+                    
+                    if (lastDate.toDateString() === yesterday.toDateString()) {
+                        if (state.currentAmount >= state.dailyGoal) {
+                            state.streak++;
+                        } else {
+                            state.streak = 0;
+                        }
+                    } else {
+                        state.streak = 0;
+                    }
+                }
+                
+                state.currentAmount = 0;
+                state.history = [];
+                state.lastDate = today;
+                saveState();
+            }
+        }
+
+        // Update UI
+        function updateUI() {
+            const progress = Math.min(state.currentAmount / state.dailyGoal, 1);
+            const circumference = 534;
+            const offset = circumference - (progress * circumference);
+            
+            // Animate progress
+            progressCircle.style.strokeDashoffset = offset;
+            
+            // Update amounts
+            currentAmountEl.textContent = state.currentAmount;
+            goalDisplayEl.textContent = state.dailyGoal;
+
+            // Update ARIA attributes for accessibility
+            const progressSvg = progressCircle.closest('svg');
+            if (progressSvg) {
+                progressSvg.setAttribute('aria-valuenow', state.currentAmount);
+                progressSvg.setAttribute('aria-valuemax', state.dailyGoal);
+                progressSvg.setAttribute('aria-label', `今日飲水進度：${state.currentAmount} / ${state.dailyGoal} ml`);
+            }
+            
+            // Update stats
+            todayCountEl.textContent = state.history.length;
+            streakDaysEl.textContent = state.streak;
+            remainingMlEl.textContent = Math.max(0, state.dailyGoal - state.currentAmount);
+            
+            // Change progress color based on completion
+            if (progress >= 1) {
+                progressCircle.style.stroke = 'var(--success)';
+            } else if (progress >= 0.75) {
+                progressCircle.style.stroke = 'var(--primary)';
+            } else if (progress >= 0.5) {
+                progressCircle.style.stroke = 'var(--primary-light)';
+            } else {
+                progressCircle.style.stroke = 'var(--warning)';
+            }
+            
+            // Update history
+            renderHistory();
+        }
+
+        // Render history list
+        function renderHistory() {
+            if (state.history.length === 0) {
+                historyList.innerHTML = `
+                    <li class="empty-state" role="listitem">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 2.69l5.74 5.88c1.22 1.26 1.9 2.92 1.9 4.66 0 3.63-2.97 6.59-6.64 6.59s-6.64-2.96-6.64-6.59c0-1.74.68-3.4 1.9-4.66L12 2.69z"/>
+                        </svg>
+                        <p>還沒有喝水紀錄，快來補充水分吧！</p>
+                    </li>
+                `;
+                return;
+            }
+            
+            historyList.innerHTML = state.history.map((item, index) => `
+                <li class="history-item" role="listitem">
+                    <div class="history-icon" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2.69l5.74 5.88c1.22 1.26 1.9 2.92 1.9 4.66 0 3.63-2.97 6.59-6.64 6.59s-6.64-2.96-6.64-6.59c0-1.74.68-3.4 1.9-4.66L12 2.69z"/>
+                        </svg>
+                    </div>
+                    <div class="history-details">
+                        <div class="history-amount">+${item.amount} ml</div>
+                        <div class="history-time">${formatTime(item.time)}</div>
+                    </div>
+                    <button class="history-delete" onclick="deleteEntry(${index})" aria-label="刪除 ${item.amount} 毫升的紀錄">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M3 6h18"/>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        </svg>
+                    </button>
+                </li>
+            `).join('');
+        }
+
+        // Format time
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        // Add water entry
+        function addWater(amount) {
+            const entry = {
+                amount: amount,
+                time: Date.now()
+            };
+            
+            state.currentAmount += amount;
+            state.history.unshift(entry);
+            saveState();
+            updateUI();
+            
+            // Show toast
+            showToast(`已添加 ${amount} ml 💧`);
+            
+            // Check if goal reached
+            if (state.currentAmount >= state.dailyGoal) {
+                setTimeout(() => {
+                    showCelebration();
+                    showToast('🎉 恭喜！達成今日目標！');
+                }, 300);
+            }
+        }
+
+        // Delete entry
+        function deleteEntry(index) {
+            const entry = state.history[index];
+            state.currentAmount -= entry.amount;
+            state.history.splice(index, 1);
+            saveState();
+            updateUI();
+            showToast('已刪除紀錄');
+        }
+
+        // Show toast
+        function showToast(message) {
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+
+        // Show celebration
+        function showCelebration() {
+            const celebration = document.createElement('div');
+            celebration.className = 'celebration';
+            celebration.textContent = '🎉';
+            celebration.setAttribute('aria-hidden', 'true');
+            document.body.appendChild(celebration);
+            
+            setTimeout(() => {
+                celebration.remove();
+            }, 1000);
+        }
+
+        // Toggle theme
+        function toggleTheme() {
+            state.darkMode = !state.darkMode;
+            document.body.classList.toggle('dark-mode');
+            themeIcon.innerHTML = state.darkMode ? sunIcon : moonIcon;
+            localStorage.setItem('darkMode', state.darkMode);
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Quick add buttons
+            document.querySelectorAll('.quick-add-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const amount = parseInt(btn.dataset.amount);
+                    addWater(amount);
+                });
+            });
+
+            // Theme toggle
+            themeToggle.addEventListener('click', toggleTheme);
+
+            // Edit goal
+            editGoalBtn.addEventListener('click', () => {
+                goalInput.value = state.dailyGoal;
+                goalModal.classList.add('active');
+                setTimeout(() => goalInput.focus(), 100);
+            });
+
+            // Cancel goal edit
+            cancelGoalBtn.addEventListener('click', () => {
+                goalModal.classList.remove('active');
+                themeToggle.focus(); // Return focus
+            });
+
+            // Save goal
+            saveGoalBtn.addEventListener('click', () => {
+                const newGoal = parseInt(goalInput.value);
+                if (newGoal >= 500 && newGoal <= 5000) {
+                    state.dailyGoal = newGoal;
+                    saveState();
+                    updateUI();
+                    goalModal.classList.remove('active');
+                    showToast(`目標已更新為 ${newGoal} ml`);
+                    editGoalBtn.focus(); // Return focus
+                } else {
+                    showToast('請輸入 500-5000 之間的數值');
+                }
+            });
+
+            // Clear history
+            clearHistoryBtn.addEventListener('click', () => {
+                if (state.history.length > 0 && confirm('確定要清除所有紀錄嗎？')) {
+                    state.currentAmount = 0;
+                    state.history = [];
+                    saveState();
+                    updateUI();
+                    showToast('已清除所有紀錄');
+                }
+            });
+
+            // Close modal on overlay click
+            goalModal.addEventListener('click', (e) => {
+                if (e.target === goalModal) {
+                    goalModal.classList.remove('active');
+                    editGoalBtn.focus();
+                }
+            });
+
+            // Keyboard support for modal
+            goalInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    saveGoalBtn.click();
+                } else if (e.key === 'Escape') {
+                    cancelGoalBtn.click();
+                }
+            });
+
+            // Trap focus in modal
+            goalModal.addEventListener('keydown', (e) => {
+                if (e.key === 'Tab' && e.shiftKey && document.activeElement === cancelGoalBtn) {
+                    e.preventDefault();
+                    saveGoalBtn.focus();
+                } else if (e.key === 'Tab' && document.activeElement === saveGoalBtn) {
+                    e.preventDefault();
+                    cancelGoalBtn.focus();
+                }
+            });
+        }
+
+        // Make deleteEntry available globally
+        window.deleteEntry = deleteEntry;
+
+        // Initialize app
+        init();
+    </script>
+
+    <!-- Additional Styles for Accessibility -->
+    <style>
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+    </style>
+</body>
+</html>

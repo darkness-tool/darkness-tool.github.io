@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO: Primary Title with Location & Intent -->
+    <title>香港辭職計算工具 | 免費通知期、工作日倒數及最後支薪日計算機</title>
+    
+    <!-- SEO: Meta Description for CTR - 155 chars -->
+    <meta name="description" content="專為香港打工仔設計的辭職計算工具。根據《僱傭條例》計算通知期、最後工作日倒數及7日內最後支薪日。免費使用，助你妥善處理離職手續。">
+    
+    <!-- SEO: Canonical Tag (placeholder) -->
+    <link rel="canonical" href="https://yourdomain.com/resignation-tools">
+    
+    <!-- SEO: Open Graph Basic Tags (for social sharing) -->
+    <meta property="og:title" content="香港辭職計算工具 | Resignation Tools">
+    <meta property="og:description" content="根據香港《僱傭條例》計算通知期、最後工作日倒數及7日內最後支薪日。免費使用。">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="zh_HK">
+    
+    <!-- SEO: Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="香港辭職計算工具">
+    <meta name="twitter:description" content="根據香港《僱傭條例》計算通知期、最後工作日倒數及7日內最後支薪日。免費使用。">
+    
+    
+      <script src="load_index_common.js"></script>
+      
+    <!-- SEO: Breadcrumb Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "首頁",
+          "item": "https://yourdomain.com"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "辭職計算工具",
+          "item": "https://yourdomain.com/resignation-tools"
+        }
+      ]
+    }
+    </script>
+
+    <!-- SEO: WebApplication Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "辭職好幫手 | Resignation Tools",
+      "url": "https://yourdomain.com/resignation-tools",
+      "description": "免費的香港辭職計算工具，包括通知期計算、工作日倒數及最後支薪日估算。根據香港《僱傭條例》設計。",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "All",
+      "browserRequirements": "Requires JavaScript",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "HKD"
+      },
+      "featureList": "Notice Period Calculator, Resignation Countdown, Final Pay Estimator, HK Labour Ordinance",
+      "inLanguage": "zh-HK",
+      "author": {
+        "@type": "Organization",
+        "name": "Resignation Tools"
+      }
+    }
+    </script>
+    
+    <!-- SEO: FAQ Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "香港辭職通知期一般係幾耐？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "根據《僱傭條例》，如果是按月受薪的僱員，通知期通常為一個月。如果按日受薪，則為七天。具體請參閱你的僱傭合約。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "公司幾時要派最後一次糧？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "僱主必須在僱傭關係終結後 7 日內支付所有應得工資。逾期不付可能需支付利息。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "年假未用完怎算？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "如果僱員在終結合約時仍有未放取的年假，僱主必須支付該年假的薪酬代替。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "如果通知期剛好係假期點算？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "根據法庭判例及一般解釋，通知期應包括假期，除非合約另有註明。但部分公司會以工作天計算，建議與HR確認。"
+          }
+        }
+      ]
+    }
+    </script>
+
+    <!-- Performance: Preconnect for fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <style>
+        :root {
+            --primary-color: #4F46E5; /* Indigo 600 */
+            --primary-hover: #4338CA;
+            --success-color: #10B981; /* Emerald 500 */
+            --bg-color: #F3F4F6;
+            --card-bg: #FFFFFF;
+            --text-main: #1F2937;
+            --text-muted: #6B7280;
+            --border-color: #E5E7EB;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans TC", sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            color: var(--text-main);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* SEO: Introductory Section Styles */
+        .intro-section {
+            background: #fff;
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 24px;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .intro-section strong {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        /* Navigation Tabs */
+        .tabs {
+            display: flex;
+            background: var(--card-bg);
+            padding: 6px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 24px;
+            gap: 6px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            color: var(--text-muted);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .tab-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Tool Cards */
+        .tool-card {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            margin-bottom: 20px;
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .tool-card.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-header {
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--text-main);
+        }
+
+        input[type="date"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            background-color: #FAFAFA;
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: #FFF;
+        }
+
+        button.action-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 8px;
+        }
+
+        button.action-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* Results Display */
+        .result-box {
+            margin-top: 24px;
+            padding: 20px;
+            background-color: #EEF2FF;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
+            display: none;
+        }
+
+        .result-box.visible {
+            display: block;
+        }
+
+        .result-highlight {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: block;
+            margin: 8px 0;
+        }
+
+        .result-sub {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 12px;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--text-main);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* SEO: FAQ Section Styles */
+        .faq-section {
+            margin-top: 30px;
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .faq-item {
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .faq-question {
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 6px;
+            display: block;
+            cursor: pointer;
+        }
+        
+        .faq-question::after {
+            content: " +";
+            color: var(--primary-color);
+            float: right;
+            font-weight: bold;
+        }
+        
+        .faq-item.expanded .faq-question::after {
+            content: " −";
+        }
+
+        .faq-answer {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Tips Section */
+        .tips-section {
+            background: #FFFBEB;
+            border: 1px solid #FCD34D;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 24px;
+        }
+
+        .tips-title {
+            color: #92400E;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tips-list {
+            list-style: none;
+            font-size: 0.85rem;
+            color: #92400E;
+        }
+
+        .tips-list li {
+            margin-bottom: 6px;
+            padding-left: 14px;
+            position: relative;
+        }
+
+        .tips-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            padding-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>辭職好幫手</h1>
+        <p class="subtitle">計清楚最後一日，無後顧之憂</p>
+    </header>
+
+    <!-- SEO: Main Content with Semantic Landmark -->
+    <main>
+        <!-- SEO: Introductory Content for Keywords & Authority -->
+        <article class="intro-section">
+            <p>根據香港<strong>《僱傭條例》</strong>，妥善處理離職手續對保障僱員權益至關重要。無論你是連續性合約還是月薪制，正確計算通知期和最後工作日可以避免誤會。本工具專為香港打工仔設計，助你快速估算<strong>辭職通知期</strong>、<strong>工作日倒數</strong>，以及確認僱主支付最後工資的法定限期（<strong>7日內</strong>）。如需詳細法律意見，請參閱<strong>勞工處</strong>官方指引。</p>
+        </article>
+
+        <nav class="tabs" aria-label="工具分類">
+            <button class="tab-btn active" onclick="switchTab('countdown')" aria-controls="countdown" aria-selected="true">倒數計時</button>
+            <button class="tab-btn" onclick="switchTab('notice')" aria-controls="notice" aria-selected="false">通知期計算</button>
+            <button class="tab-btn" onclick="switchTab('pay')" aria-controls="pay" aria-selected="false">支薪日估算</button>
+        </nav>
+
+        <!-- Tool 1: Countdown -->
+        <section id="countdown" class="tool-card active" aria-labelledby="countdown-title">
+            <div class="card-header">
+                <h2 class="card-title" id="countdown-title">仲有幾多日？</h2>
+            </div>
+            <div class="form-group">
+                <label for="last-working-date">最後返工日</label>
+                <input type="date" id="last-working-date" aria-describedby="last-date-hint">
+                <small id="last-date-hint" style="color: var(--text-muted); font-size: 0.8rem;">請選擇你預計的最後工作日期</small>
+            </div>
+            <button class="action-btn" onclick="calculateCountdown()">開始倒數</button>
+
+            <div id="countdown-result" class="result-box" role="region" aria-live="polite">
+                <span class="result-sub">距離自由還有</span>
+                <span class="result-highlight" id="days-left">0</span>
+                <span class="result-sub">天</span>
+                
+                <div class="stat-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="working-days-left">0</div>
+                        <div class="stat-label">工作日 (Mon-Fri)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="weeks-left">0</div>
+                        <div class="stat-label">星期</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tool 2: Notice Period -->
+        <section id="notice" class="tool-card" aria-labelledby="notice-title">
+            <div class="card-header">
+                <h2 class="card-title" id="notice-title">通知期計算機</h2>
+            </div>
+            <div class="form-group">
+                <label for="resign-date">遞交辭職信日期</label>
+                <input type="date" id="resign-date">
+            </div>
+            <div class="form-group">
+                <label for="notice-length">通知期長度</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="number" id="notice-length" value="1" min="0" aria-label="通知期數值" style="flex: 1;">
+                    <select id="notice-unit" aria-label="通知期單位" style="flex: 1;">
+                        <option value="days">日</option>
+                        <option value="weeks">星期</option>
+                        <option value="months" selected>個月</option>
+                    </select>
+                </div>
+            </div>
+            <button class="action-btn" onclick="calculateNoticePeriod()">計算最後一日</button>
+
+            <div id="notice-result" class="result-box" role="region" aria-live="polite">
+                <span class="result-sub">預計最後返工日是</span>
+                <span class="result-highlight" id="estimated-last-date" style="font-size: 1.5rem;">-</span>
+                <span class="result-sub" id="estimated-day-name">星期一</span>
+            </div>
+        </section>
+
+        <!-- Tool 3: Final Pay -->
+        <section id="pay" class="tool-card" aria-labelledby="pay-title">
+            <div class="card-header">
+                <h2 class="card-title" id="pay-title">最後支薪日</h2>
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;">
+                根據香港《僱傭條例》，僱主必須在僱用關係終結後 <strong>7 日內</strong> 支付所有工資。
+            </p>
+            <div class="form-group">
+                <label for="termination-date">最後工作日 / 僱傭終結日</label>
+                <input type="date" id="termination-date">
+            </div>
+            <button class="action-btn" onclick="calculatePayDeadline()">計算限期</button>
+
+            <div id="pay-result" class="result-box" role="region" aria-live="polite">
+                <span class="result-sub">公司必須在或之前支薪</span>
+                <span class="result-highlight" id="pay-deadline" style="color: var(--success-color);">-</span>
+                <span class="result-sub">(7日內)</span>
+            </div>
+        </section>
+
+        <!-- SEO: Semantic Tips Section -->
+        <section class="tips-section" aria-labelledby="tips-title">
+            <h2 class="tips-title" id="tips-title">💡 辭職貼士</h2>
+            <ul class="tips-list">
+                <li>確認合約中的通知期長度（一個月還是七天？）。</li>
+                <li>以電郵發送辭職信並索取「已開啟」或「已讀」回執，或雙重確認。</li>
+                <li>清楚交代剩餘年假處理方法。</li>
+                <li>備份個人檔案及通訊錄。</li>
+                <li>保持專業，好聚好散。</li>
+            </ul>
+        </section>
+
+        <!-- SEO: FAQ Section for Long-tail Keywords -->
+        <section class="faq-section" aria-labelledby="faq-title">
+            <h2 id="faq-title" style="font-size: 1.25rem; font-weight: 600; margin-bottom: 16px; color: var(--text-main);">常見問題 (FAQ)</h2>
+            
+            <div class="faq-item">
+                <span class="faq-question">香港辭職通知期一般係幾耐？</span>
+                <span class="faq-answer">根據《僱傭條例》，如果是按月受薪的僱員，通知期通常為一個月。如果按日受薪，則為七天。具體請參閱你的僱傭合約。</span>
+            </div>
+            
+            <div class="faq-item">
+                <span class="faq-question">公司幾時要派最後一次糧？</span>
+                <span class="faq-answer">僱主必須在僱傭關係終結後 7 日內支付所有應得工資。逾期不付可能需支付利息。</span>
+            </div>
+
+            <div class="faq-item">
+                <span class="faq-question">年假未用完怎算？</span>
+                <span class="faq-answer">如果僱員在終結合約時仍有未放取的年假，僱主必須支付該年假的薪酬代替。</span>
+            </div>
+            
+            <div class="faq-item">
+                <span class="faq-question">如果通知期剛好係假期點算？</span>
+                <span class="faq-answer">根據法庭判例及一般解釋，通知期應包括假期，除非合約另有註明。但部分公司會以工作天計算，建議與HR確認。</span>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p><strong>Disclaimer:</strong> 此工具僅供參考，實際日期請以人力資源部或合約為準。如有法律爭議，請諮詢專業律師或聯絡勞工處。</p>
+    </footer>
+</div>
+
+<script>
+    // Set default dates to today
+    document.addEventListener('DOMContentLoaded', () => {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('last-working-date').value = today;
+        document.getElementById('resign-date').value = today;
+        document.getElementById('termination-date').value = today;
+        
+        // FAQ Toggle Functionality
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const faqItem = question.parentElement;
+                faqItem.classList.toggle('expanded');
+            });
+        });
+    });
+
+    // Tab Switching Logic with Accessibility
+    function switchTab(tabId) {
+        // Hide all cards
+        document.querySelectorAll('.tool-card').forEach(card => {
+            card.classList.remove('active');
+        });
+        // Remove active class from buttons
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+            btn.setAttribute('aria-selected', 'false');
+        });
+
+        // Show selected card and activate button
+        document.getElementById(tabId).classList.add('active');
+        
+        // Find the button that calls this function (rough matching)
+        const buttons = document.querySelectorAll('.tab-btn');
+        if(tabId === 'countdown') {
+            buttons[0].classList.add('active');
+            buttons[0].setAttribute('aria-selected', 'true');
+        }
+        if(tabId === 'notice') {
+            buttons[1].classList.add('active');
+            buttons[1].setAttribute('aria-selected', 'true');
+        }
+        if(tabId === 'pay') {
+            buttons[2].classList.add('active');
+            buttons[2].setAttribute('aria-selected', 'true');
+        }
+    }
+
+    // Helper: Format Date
+    function formatDate(date) {
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return date.toLocaleDateString('zh-HK', options);
+    }
+
+    // Helper: Get Day Name in Chinese
+    function getDayName(date) {
+        const days = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+        return days[date.getDay()];
+    }
+
+    // Tool 1: Countdown Logic
+    function calculateCountdown() {
+        const lastDateStr = document.getElementById('last-working-date').value;
+        if (!lastDateStr) return;
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        const lastDate = new Date(lastDateStr);
+        lastDate.setHours(0, 0, 0, 0);
+
+        const diffTime = lastDate - today;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        const resultBox = document.getElementById('countdown-result');
+
+        if (diffDays < 0) {
+            document.getElementById('days-left').innerText = "已過咗";
+            document.getElementById('days-left').style.fontSize = "1.5rem";
+            document.getElementById('working-days-left').innerText = "-";
+            document.getElementById('weeks-left').innerText = "-";
+            resultBox.classList.add('visible');
+            return;
+        }
+
+        // Calculate Working Days
+        let workingDays = 0;
+        let current = new Date(today);
+        
+        while (current <= lastDate) {
+            const dayOfWeek = current.getDay();
+            if (dayOfWeek !== 0 && dayOfWeek !== 6) { // Not Sunday (0) or Saturday (6)
+                workingDays++;
+            }
+            current.setDate(current.getDate() + 1);
+        }
+
+        document.getElementById('days-left').innerText = diffDays;
+        document.getElementById('days-left').style.fontSize = "2rem";
+        document.getElementById('working-days-left').innerText = workingDays;
+        document.getElementById('weeks-left').innerText = (diffDays / 7).toFixed(1);
+        
+        resultBox.classList.add('visible');
+    }
+
+    // Tool 2: Notice Period Logic
+    function calculateNoticePeriod() {
+        const resignDateStr = document.getElementById('resign-date').value;
+        const length = parseInt(document.getElementById('notice-length').value);
+        const unit = document.getElementById('notice-unit').value;
+
+        if (!resignDateStr) return;
+
+        const resignDate = new Date(resignDateStr);
+        const estimatedDate = new Date(resignDate);
+
+        if (unit === 'days') {
+            estimatedDate.setDate(resignDate.getDate() + length);
+        } else if (unit === 'weeks') {
+            estimatedDate.setDate(resignDate.getDate() + (length * 7));
+        } else if (unit === 'months') {
+            estimatedDate.setMonth(resignDate.getMonth() + length);
+        }
+
+        // Subtract 1 day because if you resign on 1st with 1 month notice, last day is usually end of that month or day before next month start
+        // Standard practice: Resign 1st Jan + 1 month = 31st Jan. 
+        // JS setMonth adds exact months. Resign 31st Jan + 1 month = 28th Feb (or 3rd Mar).
+        // To be safe: We calculate forward, then subtract 1 day to get the "Last Working Day"
+        estimatedDate.setDate(estimatedDate.getDate() - 1);
+
+        document.getElementById('estimated-last-date').innerText = formatDate(estimatedDate);
+        document.getElementById('estimated-day-name').innerText = getDayName(estimatedDate);
+        document.getElementById('notice-result').classList.add('visible');
+    }
+
+    // Tool 3: Final Pay Logic
+    function calculatePayDeadline() {
+        const termDateStr = document.getElementById('termination-date').value;
+        if (!termDateStr) return;
+
+        const termDate = new Date(termDateStr);
+        // Deadline is 7 days after termination date (inclusive or exclusive? 
+        // Ordinance says "within 7 days of the date of termination". 
+        // If terminated on 1st, 7 days is 8th.
+        
+        const deadline = new Date(termDate);
+        deadline.setDate(termDate.getDate() + 7);
+
+        document.getElementById('pay-deadline').innerText = formatDate(deadline);
+        document.getElementById('pay-result').classList.add('visible');
+    }
+</script>
+
+</body>
+</html>
