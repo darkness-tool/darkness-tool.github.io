@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全能單位轉換器 - 長度重量溫度面積體積轉換工具</title>
+    <meta name="description" content="線上單位轉換器，支援長度、重量、溫度、面積、體積、時間、數據、速度等 8 大類別轉換。免費、即時、精確的雙向轉換工具。">
+    <meta name="keywords" content="單位轉換器, 長度轉換, 重量轉換, 溫度轉換, 面積轉換, 體積轉換, 免費線上工具">
+    <meta name="author" content="Web Tools">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="全能單位轉換器 - 長度重量溫度面積體積轉換工具">
+    <meta property="og:description" content="線上單位轉換器，支援長度、重量、溫度、面積、體積、時間、數據、速度等 8 大類別轉換。">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="全能單位轉換器 - 長度重量溫度面積體積轉換工具">
+    <meta name="twitter:description" content="線上單位轉換器，支援長度、重量、溫度、面積、體積、時間、數據、速度等 8 大類別轉換。">
+
+    <script src="load_index_common.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    
+    <!-- Schema.org -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "全能單位轉換器",
+        "applicationCategory": "UtilityApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "TWD"
+        },
+        "description": "線上單位轉換器，支援長度、重量、溫度、面積、體積、時間、數據、速度等 8 大類別轉換。",
+        "featureList": ["即時轉換", "雙向轉換", "多類別支援", "收藏功能", "歷史記錄"],
+        "browserRequirements": "需要 JavaScript"
+    }
+    </script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        dark: '#1f2937',
+                        darker: '#111827'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .category-active {
+            background-color: #3b82f6;
+            color: white;
+        }
+        .category-btn:hover:not(.category-active) {
+            background-color: #e0f2fe;
+        }
+        .dark .category-btn:hover:not(.category-active) {
+            background-color: #1e40af;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 dark:bg-darker dark:text-gray-100 min-h-screen transition-colors duration-200">
+    
+    <!-- Header -->
+    <header class="bg-white dark:bg-dark shadow-sm sticky top-0 z-50 transition-colors duration-200">
+        <div class="max-w-6xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="calculator" class="w-8 h-8 text-primary"></i>
+                    <div>
+                        <h1 class="text-xl font-bold">全能單位轉換器</h1>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">即時雙向轉換 · 8 大類別</p>
+                    </div>
+                </div>
+                <button id="themeToggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors" aria-label="切換深色模式">
+                    <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
+                    <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        
+        <!-- Category Selection -->
+        <section class="bg-white dark:bg-dark rounded-xl shadow-lg p-4 mb-6 border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+            <div class="flex items-center gap-2 mb-4">
+                <i data-lucide="layers" class="w-5 h-5 text-primary"></i>
+                <h2 class="text-lg font-semibold">選擇類別</h2>
+            </div>
+            <div class="flex flex-wrap gap-2" id="categoryButtons">
+                <button class="category-btn category-active px-4 py-2 rounded-lg font-medium transition-colors" data-category="length">
+                    <i data-lucide="ruler" class="w-4 h-4 inline mr-1"></i>長度
+                </button>
+                <button class="category-btn px-4 py-2 rounded-lg font-medium bg-gray-100 dark:bg-gray-700 transition-colors" data-category="weight">
+                    <i data-lucide="scale" class="w-4 h-4 inline mr-1"></i>重量
+                </button>
+                <button class="category-btn px-4 py-2 rounded-lg font-medium bg-gray-100 dark:bg-gray-700 transition-colors" data-category="temperature">
+                    <i data-lucide="thermometer" class="w-4 h-4 inline mr-1"></i>溫度
+                </button>
+                <button class="category-btn px-4 py-2 rounded-lg font-medium bg-gray-100 dark:bg-gray-700 transition-colors" data-category="area">
+                    <i data-lucide="square" class="w-4 h-4 inline mr-1"></i>面積
+                </button>
+                <button class="category-btn px-4 py-2 rounded-lg font-medium bg-gray-100 dark:bg-gray-700 transition-colors" data-category="volume">
+                    <i data-lucide="droplets" class="w-4 h-4 inline mr-1"></i>體積
+                </button>
+                <button class="category-btn px-4 py-2 rounded-lg font-medium bg-gray-100 dark:bg-gray-700 transition-colors" data-category="time">
+                    <i data-lucide="clock" class="w-4 h-4 inline mr-1"></i>時間
+                </button>
+                <button class="category-btn px-4 py-2 rounded-lg font-medium bg-gray-100 dark:bg-gray-700 transition-colors" data-category="data">
+                    <i data-lucide="hard-drive" class="w-4 h-4 inline mr-1"></i>數據
+                </button>
+                <button class="category-btn px-4 py-2 rounded-lg font-medium bg-gray-100 dark:bg-gray-700 transition-colors" data-category="speed">
+                    <i data-lucide="gauge" class="w-4 h-4 inline mr-1"></i>速度
+                </button>
+            </div>
+        </section>
+        
+        <!-- Converter -->
+        <section class="bg-white dark:bg-dark rounded-xl shadow-lg p-6 mb-6 border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="arrow-left-right" class="w-5 h-5 text-primary"></i>
+                    <h2 class="text-lg font-semibold" id="categoryTitle">長度轉換</h2>
+                </div>
+                <button id="swapBtn" class="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors" aria-label="交換建位">
+                    <i data-lucide="arrows-left-right" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">交換</span>
+                </button>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- From Unit -->
+                <div class="space-y-4">
+                    <label for="fromValue" class="block text-sm font-medium text-gray-700 dark:text-gray-300">從</label>
+                    <input 
+                        type="number" 
+                        id="fromValue" 
+                        class="w-full px-4 py-3 text-lg bg-gray-50 dark:bg-darker border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:border-primary focus:outline-none transition-colors"
+                        placeholder="輸入數值"
+                        step="any"
+                    >
+                    <select id="fromUnit" class="w-full px-4 py-3 bg-gray-50 dark:bg-darker border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:border-primary focus:outline-none transition-colors">
+                    </select>
+                </div>
+                
+                <!-- To Unit -->
+                <div class="space-y-4">
+                    <label for="toValue" class="block text-sm font-medium text-gray-700 dark:text-gray-300">到</label>
+                    <input 
+                        type="number" 
+                        id="toValue" 
+                        class="w-full px-4 py-3 text-lg bg-gray-50 dark:bg-darker border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:border-primary focus:outline-none transition-colors"
+                        placeholder="轉換結果"
+                        step="any"
+                        readonly
+                    >
+                    <select id="toUnit" class="w-full px-4 py-3 bg-gray-50 dark:bg-darker border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:border-primary focus:outline-none transition-colors">
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Formula Display -->
+            <div class="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <div class="flex items-center justify-between cursor-pointer" id="formulaToggle">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="formula" class="w-4 h-4 text-primary"></i>
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">轉換公式</span>
+                    </div>
+                    <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 transition-transform" id="formulaIcon"></i>
+                </div>
+                <p id="formulaText" class="mt-3 text-sm text-gray-600 dark:text-gray-400 hidden"></p>
+            </div>
+        </section>
+        
+        <!-- Actions -->
+        <div class="flex flex-col sm:flex-row gap-4 mb-6">
+            <button 
+                id="copyBtn" 
+                class="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors font-semibold"
+                aria-label="複製結果"
+            >
+                <i data-lucide="copy" class="w-5 h-5"></i>
+                複製結果
+            </button>
+            <button 
+                id="favoriteBtn" 
+                class="flex items-center justify-center gap-2 px-6 py-4 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-semibold"
+                aria-label="加入收藏"
+            >
+                <i data-lucide="star" class="w-5 h-5"></i>
+                加入收藏
+            </button>
+            <button 
+                id="clearBtn" 
+                class="flex items-center justify-center gap-2 px-6 py-4 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-semibold"
+                aria-label="清空"
+            >
+                <i data-lucide="x" class="w-5 h-5"></i>
+                清空
+            </button>
+        </div>
+        
+        <!-- Favorites -->
+        <section class="bg-white dark:bg-dark rounded-xl shadow-lg p-6 mb-6 border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="star" class="w-5 h-5 text-primary"></i>
+                    <h2 class="text-lg font-semibold">收藏的轉換</h2>
+                </div>
+                <button 
+                    id="clearFavorites" 
+                    class="text-sm text-red-500 hover:text-red-600 flex items-center gap-1"
+                    aria-label="清空收藏"
+                >
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    清空
+                </button>
+            </div>
+            <div id="favoritesList" class="space-y-2 max-h-64 overflow-y-auto">
+                <p class="text-gray-500 dark:text-gray-400 text-sm text-center py-4">尚未收藏任何轉換</p>
+            </div>
+        </section>
+        
+        <!-- History -->
+        <section class="bg-white dark:bg-dark rounded-xl shadow-lg p-6 mb-6 border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="history" class="w-5 h-5 text-primary"></i>
+                    <h2 class="text-lg font-semibold">轉換歷史</h2>
+                </div>
+                <button 
+                    id="clearHistory" 
+                    class="text-sm text-red-500 hover:text-red-600 flex items-center gap-1"
+                    aria-label="清空歷史"
+                >
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    清空
+                </button>
+            </div>
+            <div id="historyList" class="space-y-2 max-h-64 overflow-y-auto">
+                <p class="text-gray-500 dark:text-gray-400 text-sm text-center py-4">尚未進行任何轉換</p>
+            </div>
+        </section>
+        
+        <!-- Tips -->
+        <section class="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl shadow-lg p-6 border border-green-100 dark:border-green-800 transition-colors duration-200">
+            <div class="flex items-center gap-2 mb-4">
+                <i data-lucide="lightbulb" class="w-5 h-5 text-green-600"></i>
+                <h2 class="text-lg font-semibold">使用技巧</h2>
+            </div>
+            <ul class="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                <li class="flex items-start gap-2">
+                    <i data-lucide="check-circle" class="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5"></i>
+                    <span>輸入任一側數值，另一側會即時自動轉換</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <i data-lucide="check-circle" class="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5"></i>
+                    <span>點擊「交換」按鈕可快速交換建位</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <i data-lucide="check-circle" class="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5"></i>
+                    <span>收藏常用轉換組合，方便快速使用</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <i data-lucide="check-circle" class="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5"></i>
+                    <span>所有數據保存在瀏覽器本地，離線也可使用</span>
+                </li>
+            </ul>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-dark border-t border-gray-200 dark:border-gray-700 mt-8 py-6 transition-colors duration-200">
+        <div class="max-w-6xl mx-auto px-4">
+            <p class="text-center text-gray-600 dark:text-gray-400 text-sm">
+                <i data-lucide="calculator" class="w-4 h-4 inline mr-1"></i>
+                免費、即時、精確的單位轉換工具
+            </p>
+            <p class="text-center text-gray-500 dark:text-gray-500 text-xs mt-4">
+                © 2025 Web Tools. 保留所有權利。
+            </p>
+        </div>
+    </footer>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-4 right-4 bg-gray-900 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50" role="alert" aria-live="polite">
+        <div class="flex items-center gap-2">
+            <i data-lucide="check-circle" class="w-5 h-5 text-green-400"></i>
+            <span id="toastMessage">操作成功</span>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize icons
+        lucide.createIcons();
+        
+        // Conversion data
+        const conversions = {
+            length: {
+                name: '長度',
+                units: {
+                    'm': { name: '公尺', factor: 1 },
+                    'km': { name: '公里', factor: 1000 },
+                    'cm': { name: '厘米', factor: 0.01 },
+                    'mm': { name: '毫米', factor: 0.001 },
+                    'mi': { name: '英哩', factor: 1609.344 },
+                    'yd': { name: '碼', factor: 0.9144 },
+                    'ft': { name: '英呎', factor: 0.3048 },
+                    'in': { name: '英吋', factor: 0.0254 },
+                    'nm': { name: '海里', factor: 1852 }
+                }
+            },
+            weight: {
+                name: '重量',
+                units: {
+                    'kg': { name: '公斤', factor: 1 },
+                    'g': { name: '克', factor: 0.001 },
+                    'mg': { name: '毫克', factor: 0.000001 },
+                    'lb': { name: '磅', factor: 0.453592 },
+                    'oz': { name: '盎司', factor: 0.0283495 },
+                    't': { name: '公噸', factor: 1000 },
+                    'st': { name: '石', factor: 6.35029 },
+                    'ct': { name: '克拉', factor: 0.0002 }
+                }
+            },
+            temperature: {
+                name: '溫度',
+                type: 'temperature',
+                units: {
+                    'c': { name: '攝氏 (°C)' },
+                    'f': { name: '華氏 (°F)' },
+                    'k': { name: '開爾文 (K)' }
+                },
+                convert: (value, from, to) => {
+                    let celsius;
+                    // Convert to Celsius first
+                    if (from === 'c') celsius = value;
+                    else if (from === 'f') celsius = (value - 32) * 5 / 9;
+                    else if (from === 'k') celsius = value - 273.15;
+                    
+                    // Convert from Celsius to target
+                    if (to === 'c') return celsius;
+                    else if (to === 'f') return celsius * 9 / 5 + 32;
+                    else if (to === 'k') return celsius + 273.15;
+                },
+                getFormula: (from, to) => {
+                    const formulas = {
+                        'c-f': '°F = °C × 9/5 + 32',
+                        'f-c': '°C = (°F - 32) × 5/9',
+                        'c-k': 'K = °C + 273.15',
+                        'k-c': '°C = K - 273.15',
+                        'f-k': 'K = (°F - 32) × 5/9 + 273.15',
+                        'k-f': '°F = (K - 273.15) × 9/5 + 32'
+                    };
+                    const key = `${from}-${to}`;
+                    return formulas[key] || '數值轉換';
+                }
+            },
+            area: {
+                name: '面積',
+                units: {
+                    'sqm': { name: '平方米 (m²)', factor: 1 },
+                    'sqkm': { name: '平方公里 (km²)', factor: 1000000 },
+                    'sqft': { name: '平方英呎 (ft²)', factor: 0.092903 },
+                    'sqyd': { name: '平方碼 (yd²)', factor: 0.836127 },
+                    'acre': { name: '英畝', factor: 4046.86 },
+                    'ha': { name: '公頃', factor: 10000 },
+                    'sqin': { name: '平方英吋 (in²)', factor: 0.00064516 },
+                    'sqmi': { name: '平方英哩 (mi²)', factor: 2589988 }
+                }
+            },
+            volume: {
+                name: '體積',
+                units: {
+                    'l': { name: '公升 (L)', factor: 1 },
+                    'ml': { name: '毫升 (mL)', factor: 0.001 },
+                    'gal': { name: '美制加侖', factor: 3.78541 },
+                    'qt': { name: '美制夸脫', factor: 0.946353 },
+                    'pt': { name: '美制品脫', factor: 0.473176 },
+                    'floz': { name: '美制液盎司', factor: 0.0295735 },
+                    'cbm': { name: '立方米 (m³)', factor: 1000 },
+                    'cuft': { name: '立方英呎 (ft³)', factor: 28.3168 }
+                }
+            },
+            time: {
+                name: '時間',
+                units: {
+                    's': { name: '秒', factor: 1 },
+                    'ms': { name: '毫秒', factor: 0.001 },
+                    'min': { name: '分', factor: 60 },
+                    'h': { name: '小時', factor: 3600 },
+                    'd': { name: '天', factor: 86400 },
+                    'w': { name: '週', factor: 604800 },
+                    'mo': { name: '月 (30天)', factor: 2592000 },
+                    'y': { name: '年 (365天)', factor: 31536000 }
+                }
+            },
+            data: {
+                name: '數據',
+                units: {
+                    'b': { name: '位元', factor: 0.125 },
+                    'B': { name: '位元組', factor: 1 },
+                    'KB': { name: 'KB', factor: 1024 },
+                    'MB': { name: 'MB', factor: 1048576 },
+                    'GB': { name: 'GB', factor: 1073741824 },
+                    'TB': { name: 'TB', factor: 1099511627776 },
+                    'PB': { name: 'PB', factor: 1125899906842624 },
+                    'EB': { name: 'EB', factor: 1152921504606847000 }
+                }
+            },
+            speed: {
+                name: '速度',
+                units: {
+                    'mps': { name: '公尺/秒 (m/s)', factor: 1 },
+                    'kph': { name: '公里/時 (km/h)', factor: 0.277778 },
+                    'mph': { name: '英哩/時 (mph)', factor: 0.44704 },
+                    'kn': { name: '節', factor: 0.514444 },
+                    'fps': { name: '英呎/秒 (ft/s)', factor: 0.3048 },
+                    'mach': { name: '馬赫', factor: 343 }
+                }
+            }
+        };
+        
+        // DOM Elements
+        const fromValue = document.getElementById('fromValue');
+        const toValue = document.getElementById('toValue');
+        const fromUnit = document.getElementById('fromUnit');
+        const toUnit = document.getElementById('toUnit');
+        const swapBtn = document.getElementById('swapBtn');
+        const categoryButtons = document.querySelectorAll('.category-btn');
+        const categoryTitle = document.getElementById('categoryTitle');
+        const formulaToggle = document.getElementById('formulaToggle');
+        const formulaText = document.getElementById('formulaText');
+        const formulaIcon = document.getElementById('formulaIcon');
+        const copyBtn = document.getElementById('copyBtn');
+        const favoriteBtn = document.getElementById('favoriteBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const favoritesList = document.getElementById('favoritesList');
+        const historyList = document.getElementById('historyList');
+        const clearFavorites = document.getElementById('clearFavorites');
+        const clearHistory = document.getElementById('clearHistory');
+        const themeToggle = document.getElementById('themeToggle');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        
+        // State
+        let currentCategory = 'length';
+        let conversionHistory = JSON.parse(localStorage.getItem('unitConverterHistory')) || [];
+        let favorites = JSON.parse(localStorage.getItem('unitConverterFavorites')) || [];
+        
+        // Load saved theme
+        const savedTheme = localStorage.getItem('unitConverterTheme');
+        if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+        
+        // Populate unit dropdowns
+        function populateUnits(category) {
+            const units = conversions[category].units;
+            fromUnit.innerHTML = '';
+            toUnit.innerHTML = '';
+            
+            const unitKeys = Object.keys(units);
+            unitKeys.forEach((key, index) => {
+                const option1 = new Option(units[key].name, key);
+                const option2 = new Option(units[key].name, key);
+                fromUnit.add(option1);
+                toUnit.add(option2);
+            });
+            
+            // Set default selections (different units)
+            fromUnit.selectedIndex = 0;
+            toUnit.selectedIndex = Math.min(1, unitKeys.length - 1);
+            
+            updateFormula();
+        }
+        
+        // Convert value
+        function convert(direction) {
+            const category = conversions[currentCategory];
+            let result;
+            
+            if (category.type === 'temperature') {
+                if (direction === 'from') {
+                    result = category.convert(parseFloat(fromValue.value), fromUnit.value, toUnit.value);
+                    toValue.value = isNaN(result) ? '' : formatNumber(result);
+                } else {
+                    result = category.convert(parseFloat(toValue.value), toUnit.value, fromUnit.value);
+                    fromValue.value = isNaN(result) ? '' : formatNumber(result);
+                }
+            } else {
+                if (direction === 'from') {
+                    const fromFactor = category.units[fromUnit.value].factor;
+                    const toFactor = category.units[toUnit.value].factor;
+                    result = (parseFloat(fromValue.value) * fromFactor) / toFactor;
+                    toValue.value = isNaN(result) ? '' : formatNumber(result);
+                } else {
+                    const fromFactor = category.units[fromUnit.value].factor;
+                    const toFactor = category.units[toUnit.value].factor;
+                    result = (parseFloat(toValue.value) * toFactor) / fromFactor;
+                    fromValue.value = isNaN(result) ? '' : formatNumber(result);
+                }
+            }
+            
+            // Add to history if value is valid
+            if (fromValue.value && toValue.value) {
+                addToHistory();
+            }
+            
+            updateFormula();
+        }
+        
+        // Format number
+        function formatNumber(num) {
+            if (num === 0) return '0';
+            if (Math.abs(num) < 0.000001 || Math.abs(num) > 999999999) {
+                return num.toExponential(6);
+            }
+            // Remove trailing zeros but keep significant digits
+            return parseFloat(num.toPrecision(10)).toString();
+        }
+        
+        // Update formula
+        function updateFormula() {
+            const category = conversions[currentCategory];
+            if (category.type === 'temperature') {
+                formulaText.textContent = category.getFormula(fromUnit.value, toUnit.value);
+            } else {
+                const fromFactor = category.units[fromUnit.value].factor;
+                const toFactor = category.units[toUnit.value].factor;
+                formulaText.textContent = `${category.units[fromUnit.value].name} × ${fromFactor} ÷ ${toFactor} = ${category.units[toUnit.value].name}`;
+            }
+        }
+        
+        // Add to history
+        function addToHistory() {
+            const entry = {
+                category: currentCategory,
+                fromValue: fromValue.value,
+                fromUnit: fromUnit.options[fromUnit.selectedIndex].text,
+                toValue: toValue.value,
+                toUnit: toUnit.options[toUnit.selectedIndex].text,
+                timestamp: new Date().toISOString()
+            };
+            
+            // Avoid duplicates
+            const exists = conversionHistory.some(h => 
+                h.category === entry.category &&
+                h.fromValue === entry.fromValue &&
+                h.fromUnit === entry.fromUnit &&
+                h.toValue === entry.toValue &&
+                h.toUnit === entry.toUnit
+            );
+            
+            if (!exists) {
+                conversionHistory.unshift(entry);
+                if (conversionHistory.length > 20) {
+                    conversionHistory.pop();
+                }
+                localStorage.setItem('unitConverterHistory', JSON.stringify(conversionHistory));
+                updateHistoryUI();
+            }
+        }
+        
+        // Update history UI
+        function updateHistoryUI() {
+            if (conversionHistory.length === 0) {
+                historyList.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-sm text-center py-4">尚未進行任何轉換</p>';
+                return;
+            }
+            
+            historyList.innerHTML = conversionHistory.map((item, index) => `
+                <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-darker rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-700 dark:text-gray-300 truncate">${item.fromValue} ${item.fromUnit} = ${item.toValue} ${item.toUnit}</p>
+                        <p class="text-xs text-gray-500">${conversions[item.category].name}</p>
+                    </div>
+                    <button onclick="useHistoryEntry(${index})" class="ml-2 p-2 text-primary hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors" aria-label="使用此轉換">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            `).join('');
+            
+            lucide.createIcons();
+        }
+        
+        // Use history entry
+        window.useHistoryEntry = function(index) {
+            const entry = conversionHistory[index];
+            selectCategory(entry.category);
+            fromValue.value = entry.fromValue;
+            toValue.value = entry.toValue;
+            fromUnit.value = Object.keys(conversions[entry.category].units).find(key => 
+                conversions[entry.category].units[key].name === entry.fromUnit
+            );
+            toUnit.value = Object.keys(conversions[entry.category].units).find(key => 
+                conversions[entry.category].units[key].name === entry.toUnit
+            );
+            showToast('已載入歷史轉換');
+        };
+        
+        // Add to favorites
+        function addToFavorites() {
+            if (!fromValue.value || !toValue.value) {
+                showToast('請先進行轉換');
+                return;
+            }
+            
+            const entry = {
+                category: currentCategory,
+                fromUnit: fromUnit.value,
+                toUnit: toUnit.value
+            };
+            
+            // Check if already exists
+            const exists = favorites.some(f => 
+                f.category === entry.category &&
+                f.fromUnit === entry.fromUnit &&
+                f.toUnit === entry.toUnit
+            );
+            
+            if (!exists) {
+                favorites.push(entry);
+                localStorage.setItem('unitConverterFavorites', JSON.stringify(favorites));
+                updateFavoritesUI();
+                showToast('已加入收藏');
+            } else {
+                showToast('此轉換已在收藏中');
+            }
+        }
+        
+        // Update favorites UI
+        function updateFavoritesUI() {
+            if (favorites.length === 0) {
+                favoritesList.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-sm text-center py-4">尚未收藏任何轉換</p>';
+                return;
+            }
+            
+            favoritesList.innerHTML = favorites.map((item, index) => {
+                const fromUnitName = conversions[item.category].units[item.fromUnit].name;
+                const toUnitName = conversions[item.category].units[item.toUnit].name;
+                return `
+                    <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-darker rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-gray-700 dark:text-gray-300">${fromUnitName} → ${toUnitName}</p>
+                            <p class="text-xs text-gray-500">${conversions[item.category].name}</p>
+                        </div>
+                        <button onclick="useFavorite(${index})" class="ml-2 p-2 text-primary hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors" aria-label="使用此收藏">
+                            <i data-lucide="play" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+            
+            lucide.createIcons();
+        }
+        
+        // Use favorite
+        window.useFavorite = function(index) {
+            const entry = favorites[index];
+            selectCategory(entry.category);
+            fromUnit.value = entry.fromUnit;
+            toUnit.value = entry.toUnit;
+            fromValue.value = '';
+            toValue.value = '';
+            fromValue.focus();
+            showToast('已載入收藏轉換');
+        };
+        
+        // Select category
+        function selectCategory(category) {
+            currentCategory = category;
+            categoryTitle.textContent = conversions[category].name + '轉換';
+            
+            categoryButtons.forEach(btn => {
+                btn.classList.remove('category-active');
+                btn.classList.add('bg-gray-100', 'dark:bg-gray-700');
+            });
+            
+            const activeBtn = document.querySelector(`[data-category="${category}"]`);
+            activeBtn.classList.add('category-active');
+            activeBtn.classList.remove('bg-gray-100', 'dark:bg-gray-700');
+            
+            populateUnits(category);
+        }
+        
+        // Show toast
+        function showToast(message) {
+            toastMessage.textContent = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+        
+        // Event listeners
+        fromValue.addEventListener('input', () => convert('from'));
+        
+        swapBtn.addEventListener('click', () => {
+            const tempValue = fromValue.value;
+            const tempUnit = fromUnit.value;
+            
+            fromValue.value = toValue.value;
+            toValue.value = tempValue;
+            fromUnit.value = toUnit.value;
+            toUnit.value = tempUnit;
+            
+            updateFormula();
+            showToast('已交換建位');
+        });
+        
+        categoryButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                selectCategory(btn.dataset.category);
+                fromValue.value = '';
+                toValue.value = '';
+            });
+        });
+        
+        fromUnit.addEventListener('change', () => {
+            convert('from');
+        });
+        
+        toUnit.addEventListener('change', () => {
+            convert('from');
+        });
+        
+        formulaToggle.addEventListener('click', () => {
+            formulaText.classList.toggle('hidden');
+            formulaIcon.classList.toggle('rotate-180');
+        });
+        
+        copyBtn.addEventListener('click', async () => {
+            if (!toValue.value) {
+                showToast('請先進行轉換');
+                return;
+            }
+            try {
+                await navigator.clipboard.writeText(toValue.value);
+                showToast('結果已複製到剪貼簿');
+            } catch (err) {
+                console.error('複製失敗:', err);
+                showToast('複製失敗，請重試');
+            }
+        });
+        
+        favoriteBtn.addEventListener('click', addToFavorites);
+        
+        clearBtn.addEventListener('click', () => {
+            fromValue.value = '';
+            toValue.value = '';
+            showToast('已清空');
+        });
+        
+        clearFavorites.addEventListener('click', () => {
+            if (confirm('確定要清空所有收藏嗎？')) {
+                favorites = [];
+                localStorage.removeItem('unitConverterFavorites');
+                updateFavoritesUI();
+                showToast('收藏已清空');
+            }
+        });
+        
+        clearHistory.addEventListener('click', () => {
+            if (confirm('確定要清空所有歷史嗎？')) {
+                conversionHistory = [];
+                localStorage.removeItem('unitConverterHistory');
+                updateHistoryUI();
+                showToast('歷史已清空');
+            }
+        });
+        
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('unitConverterTheme', isDark ? 'dark' : 'light');
+            lucide.createIcons();
+        });
+        
+        // Initialize
+        populateUnits(currentCategory);
+        updateHistoryUI();
+        updateFavoritesUI();
+    </script>
+</body>
+</html>

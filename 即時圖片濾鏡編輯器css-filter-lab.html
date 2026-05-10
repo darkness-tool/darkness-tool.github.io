@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS 濾鏡實驗室 - 即時圖片濾鏡編輯器</title>
+    <meta name="description" content="線上 CSS 濾鏡實驗室，上傳圖片並使用滑桿調整 grayscale、sepia、hue-rotate、invert 等濾鏡，即時生成 CSS 代碼。">
+    <meta name="keywords" content="CSS 濾鏡, 圖片濾鏡, 視覺效果, CSS 視覺, 圖片編輯器, 濾鏡工具">
+    <meta name="author" content="Web Tools">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="CSS 濾鏡實驗室 - 即時圖片濾鏡編輯器">
+    <meta property="og:description" content="線上 CSS 濾鏡實驗室，上傳圖片並使用滑桿調整濾鏡效果，即時生成 CSS 代碼。">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="CSS 濾鏡實驗室 - 即時圖片濾鏡編輯器">
+    <meta name="twitter:description" content="線上 CSS 濾鏡實驗室，上傳圖片並使用滑桿調整濾鏡效果，即時生成 CSS 代碼。">
+
+    <script src="load_index_common.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    
+    <!-- Schema.org -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "CSS 濾鏡實驗室",
+        "applicationCategory": "DesignApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "TWD"
+        },
+        "description": "線上 CSS 濾鏡實驗室，上傳圖片並使用滑桿調整 grayscale、sepia、hue-rotate、invert 等濾鏡，即時生成 CSS 代碼。",
+        "featureList": ["即時預覽", "多種濾鏡", "CSS 代碼生成", "圖片上傳", "濾鏡預設", "匯出功能"],
+        "browserRequirements": "需要 JavaScript"
+    }
+    </script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#8b5cf6',
+                        secondary: '#ec4899',
+                        dark: '#1f2937',
+                        darker: '#111827'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+        
+        .slider {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(to right, #e0e0e0, #9e9e9e);
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        
+        .slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            border: none;
+        }
+        
+        .filtered-image {
+            transition: filter 0.1s ease;
+            max-width: 100%;
+            max-height: 600px;
+            object-fit: contain;
+        }
+        
+        .drop-zone {
+            transition: all 0.3s ease;
+        }
+        
+        .drop-zone.dragover {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: #8b5cf6;
+            transform: scale(1.02);
+        }
+        
+        .preset-card {
+            transition: all 0.2s ease;
+        }
+        
+        .preset-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .preset-card.active {
+            ring: 2px solid #8b5cf6;
+        }
+        
+        code {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 dark:from-darker dark:via-gray-900 dark:to-gray-900 min-h-screen transition-colors duration-200">
+    
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-dark/80 backdrop-blur-sm border-b border-purple-100 dark:border-gray-700 transition-colors duration-200">
+        <div class="max-w-6xl mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                        <i data-lucide="sliders" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-semibold text-gray-900 dark:text-gray-100">CSS 濾鏡實驗室</h1>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">即時圖片濾鏡編輯器</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <!-- Theme Toggle -->
+                    <button 
+                        id="themeToggle" 
+                        class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                        aria-label="切換深色模式"
+                    >
+                        <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
+                        <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 py-20">
+        
+        <!-- Image Preview -->
+        <section class="bg-white dark:bg-dark rounded-xl shadow-lg p-6 mb-6 border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="image" class="w-5 h-5 text-primary"></i>
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">圖片預覽</h2>
+                </div>
+                <button 
+                    id="uploadBtn" 
+                    class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all font-medium"
+                >
+                    <i data-lucide="upload" class="w-4 h-4"></i>
+                    上傳圖片
+                </button>
+            </div>
+            
+            <!-- Image Display -->
+            <div id="dropZone" class="drop-zone border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 text-center min-h-[400px] flex items-center justify-center">
+                <input 
+                    type="file" 
+                    id="fileInput" 
+                    accept="image/*" 
+                    class="hidden"
+                >
+                <div id="placeholder" class="space-y-3">
+                    <div class="w-16 h-16 mx-auto rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                        <i data-lucide="image-plus" class="w-8 h-8 text-gray-400"></i>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-400">拖曳圖片到這裡，或點擊上方按鈕上傳</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-500">支援 JPG、PNG、WEBP、GIF 格式</p>
+                </div>
+                <img 
+                    id="previewImage" 
+                    class="filtered-image hidden mx-auto rounded-lg shadow-lg" 
+                    alt="預覽圖片"
+                >
+            </div>
+            
+            <!-- Download Options -->
+            <div id="downloadOptions" class="hidden flex items-center justify-between mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <div class="flex items-center gap-3">
+                    <button 
+                        id="downloadOriginal" 
+                        class="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors text-sm font-medium"
+                    >
+                        <i data-lucide="download" class="w-4 h-4"></i>
+                        下載原圖
+                    </button>
+                    <button 
+                        id="downloadFiltered" 
+                        class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all text-sm font-medium"
+                    >
+                        <i data-lucide="download" class="w-4 h-4"></i>
+                        下載濾鏡後圖片
+                    </button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Filter Controls -->
+        <section class="bg-white dark:bg-dark rounded-xl shadow-lg p-6 mb-6 border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="sliders" class="w-5 h-5 text-primary"></i>
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">濾鏡調整</h2>
+                </div>
+                <button 
+                    id="resetBtn" 
+                    class="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 hover:text-red-500 transition-colors"
+                >
+                    <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                    重置所有
+                </button>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Grayscale -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">灰階 (Grayscale)</label>
+                        <span id="grayscaleValue" class="text-sm text-gray-500 dark:text-gray-400 font-mono">0%</span>
+                    </div>
+                    <input 
+                        type="range" 
+                        id="grayscaleSlider" 
+                        class="slider w-full" 
+                        min="0" 
+                        max="100" 
+                        value="0"
+                    >
+                </div>
+                
+                <!-- Sepia -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">懷舊 (Sepia)</label>
+                        <span id="sepiaValue" class="text-sm text-gray-500 dark:text-gray-400 font-mono">0%</span>
+                    </div>
+                    <input 
+                        type="range" 
+                        id="sepiaSlider" 
+                        class="slider w-full" 
+                        min="0" 
+                        max="100" 
+                        value="0"
+                    >
+                </div>
+                
+                <!-- Hue Rotate -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">色相旋轉 (Hue Rotate)</label>
+                        <span id="hueRotateValue" class="text-sm text-gray-500 dark:text-gray-400 font-mono">0°</span>
+                    </div>
+                    <input 
+                        type="range" 
+                        id="hueRotateSlider" 
+                        class="slider w-full" 
+                        min="0" 
+                        max="360" 
+                        value="0"
+                    >
+                </div>
+                
+                <!-- Invert -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">反轉 (Invert)</label>
+                        <span id="invertValue" class="text-sm text-gray-500 dark:text-gray-400 font-mono">0%</span>
+                    </div>
+                    <input 
+                        type="range" 
+                        id="invertSlider" 
+                        class="slider w-full" 
+                        min="0" 
+                        max="100" 
+                        value="0"
+                    >
+                </div>
+                
+                <!-- Brightness -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">亮度 (Brightness)</label>
+                        <span id="brightnessValue" class="text-sm text-gray-500 dark:text-gray-400 font-mono">100%</span>
+                    </div>
+                    <input 
+                        type="range" 
+                        id="brightnessSlider" 
+                        class="slider w-full" 
+                        min="0" 
+                        max="200" 
+                        value="100"
+                    >
+                </div>
+                
+                <!-- Contrast -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">對比度 (Contrast)</label>
+                        <span id="contrastValue" class="text-sm text-gray-500 dark:text-gray-400 font-mono">100%</span>
+                    </div>
+                    <input 
+                        type="range" 
+                        id="contrastSlider" 
+                        class="slider w-full" 
+                        min="0" 
+                        max="200" 
+                        value="100"
+                    >
+                </div>
+                
+                <!-- Saturate -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">飽和度 (Saturate)</label>
+                        <span id="saturateValue" class="text-sm text-gray-500 dark:text-gray-400 font-mono">100%</span>
+                    </div>
+                    <input 
+                        type="range" 
+                        id="saturateSlider" 
+                        class="slider w-full" 
+                        min="0" 
+                        max="200" 
+                        value="100"
+                    >
+                </div>
+                
+                <!-- Blur -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">模糊 (Blur)</label>
+                        <span id="blurValue" class="text-sm text-gray-500 dark:text-gray-400 font-mono">0px</span>
+                    </div>
+                    <input 
+                        type="range" 
+                        id="blurSlider" 
+                        class="slider w-full" 
+                        min="0" 
+                        max="20" 
+                        value="0"
+                    >
+                </div>
+            </div>
+        </section>
+        
+        <!-- Presets -->
+        <section class="bg-white dark:bg-dark rounded-xl shadow-lg p-6 mb-6 border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+            <div class="flex items-center gap-2 mb-4">
+                <i data-lucide="sparkles" class="w-5 h-5 text-secondary"></i>
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">快速預設</h2>
+            </div>
+            <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3" id="presetGrid">
+                <button class="preset-card p-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-center" data-preset="none">
+                    <div class="w-12 h-12 mx-auto mb-2 rounded-lg bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600"></div>
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">原始</span>
+                </button>
+                <button class="preset-card p-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-center" data-preset="grayscale">
+                    <div class="w-12 h-12 mx-auto mb-2 rounded-lg bg-gradient-to-br from-gray-400 to-gray-600"></div>
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">黑白</span>
+                </button>
+                <button class="preset-card p-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-center" data-preset="sepia">
+                    <div class="w-12 h-12 mx-auto mb-2 rounded-lg bg-gradient-to-br from-amber-200 to-amber-400"></div>
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">懷舊</span>
+                </button>
+                <button class="preset-card p-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-center" data-preset="invert">
+                    <div class="w-12 h-12 mx-auto mb-2 rounded-lg bg-gradient-to-br from-purple-400 to-purple-600"></div>
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">反轉</span>
+                </button>
+                <button class="preset-card p-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-center" data-preset="vintage">
+                    <div class="w-12 h-12 mx-auto mb-2 rounded-lg bg-gradient-to-br from-amber-300 to-orange-400"></div>
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">復古</span>
+                </button>
+                <button class="preset-card p-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-center" data-preset="cold">
+                    <div class="w-12 h-12 mx-auto mb-2 rounded-lg bg-gradient-to-br from-blue-300 to-cyan-400"></div>
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">冷色調</span>
+                </button>
+                <button class="preset-card p-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-center" data-preset="warm">
+                    <div class="w-12 h-12 mx-auto mb-2 rounded-lg bg-gradient-to-br from-orange-300 to-red-400"></div>
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">暖色調</span>
+                </button>
+                <button class="preset-card p-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-center" data-preset="dramatic">
+                    <div class="w-12 h-12 mx-auto mb-2 rounded-lg bg-gradient-to-br from-gray-700 to-gray-900"></div>
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">戲劇</span>
+                </button>
+                <button class="preset-card p-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-center" data-preset="dreamy">
+                    <div class="w-12 h-12 mx-auto mb-2 rounded-lg bg-gradient-to-br from-purple-300 to-pink-300"></div>
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">夢幻</span>
+                </button>
+                <button class="preset-card p-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-center" data-preset="noir">
+                    <div class="w-12 h-12 mx-auto mb-2 rounded-lg bg-gradient-to-br from-gray-800 to-black"></div>
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">黑色電影</span>
+                </button>
+            </div>
+        </section>
+        
+        <!-- CSS Code -->
+        <section class="bg-white dark:bg-dark rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="code-2" class="w-5 h-5 text-green-600"></i>
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">CSS 代碼</h2>
+                </div>
+                <button 
+                    id="copyCss" 
+                    class="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-purple-600 transition-colors font-medium"
+                >
+                    <i data-lucide="copy" class="w-4 h-4"></i>
+                    複製代碼
+                </button>
+            </div>
+            <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+                <code id="cssCode" class="text-sm text-green-400 whitespace-pre-wrap break-all"></code>
+            </div>
+        </section>
+        
+    </main>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-gray-900 text-white px-4 py-2 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-2" role="alert" aria-live="polite">
+        <i data-lucide="check-circle" class="w-4 h-4 text-green-400"></i>
+        <span id="toastMessage">操作成功</span>
+    </div>
+    
+    <script>
+        // Initialize icons
+        lucide.createIcons();
+        
+        // DOM Elements
+        const fileInput = document.getElementById('fileInput');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const dropZone = document.getElementById('dropZone');
+        const placeholder = document.getElementById('placeholder');
+        const previewImage = document.getElementById('previewImage');
+        const downloadOptions = document.getElementById('downloadOptions');
+        const downloadOriginal = document.getElementById('downloadOriginal');
+        const downloadFiltered = document.getElementById('downloadFiltered');
+        const grayscaleSlider = document.getElementById('grayscaleSlider');
+        const sepiaSlider = document.getElementById('sepiaSlider');
+        const hueRotateSlider = document.getElementById('hueRotateSlider');
+        const invertSlider = document.getElementById('invertSlider');
+        const brightnessSlider = document.getElementById('brightnessSlider');
+        const contrastSlider = document.getElementById('contrastSlider');
+        const saturateSlider = document.getElementById('saturateSlider');
+        const blurSlider = document.getElementById('blurSlider');
+        const grayscaleValue = document.getElementById('grayscaleValue');
+        const sepiaValue = document.getElementById('sepiaValue');
+        const hueRotateValue = document.getElementById('hueRotateValue');
+        const invertValue = document.getElementById('invertValue');
+        const brightnessValue = document.getElementById('brightnessValue');
+        const contrastValue = document.getElementById('contrastValue');
+        const saturateValue = document.getElementById('saturateValue');
+        const blurValue = document.getElementById('blurValue');
+        const resetBtn = document.getElementById('resetBtn');
+        const presetGrid = document.getElementById('presetGrid');
+        const cssCode = document.getElementById('cssCode');
+        const copyCss = document.getElementById('copyCss');
+        const themeToggle = document.getElementById('themeToggle');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        
+        // Presets
+        const PRESETS = {
+            none: { grayscale: 0, sepia: 0, hueRotate: 0, invert: 0, brightness: 100, contrast: 100, saturate: 100, blur: 0 },
+            grayscale: { grayscale: 100, sepia: 0, hueRotate: 0, invert: 0, brightness: 100, contrast: 100, saturate: 0, blur: 0 },
+            sepia: { grayscale: 0, sepia: 100, hueRotate: 0, invert: 0, brightness: 100, contrast: 100, saturate: 100, blur: 0 },
+            invert: { grayscale: 0, sepia: 0, hueRotate: 0, invert: 100, brightness: 100, contrast: 100, saturate: 100, blur: 0 },
+            vintage: { grayscale: 50, sepia: 40, hueRotate: 0, invert: 0, brightness: 110, contrast: 90, saturate: 70, blur: 0 },
+            cold: { grayscale: 0, sepia: 0, hueRotate: 180, invert: 0, brightness: 100, contrast: 100, saturate: 80, blur: 0 },
+            warm: { grayscale: 0, sepia: 20, hueRotate: 0, invert: 0, brightness: 105, contrast: 100, saturate: 120, blur: 0 },
+            dramatic: { grayscale: 30, sepia: 10, hueRotate: 0, invert: 0, brightness: 90, contrast: 140, saturate: 110, blur: 0 },
+            dreamy: { grayscale: 0, sepia: 0, hueRotate: 300, invert: 0, brightness: 110, contrast: 90, saturate: 90, blur: 1 },
+            noir: { grayscale: 100, sepia: 50, hueRotate: 0, invert: 0, brightness: 90, contrast: 130, saturate: 0, blur: 0 }
+        };
+        
+        // State
+        let currentImage = null;
+        let originalImageData = null;
+        
+        // Load saved theme
+        const savedTheme = localStorage.getItem('cssFilterLabTheme');
+        if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+        
+        // Generate CSS filter string
+        function generateFilterCSS() {
+            const filters = [];
+            
+            if (parseInt(grayscaleSlider.value) > 0) {
+                filters.push(`grayscale(${grayscaleSlider.value}%)`);
+            }
+            if (parseInt(sepiaSlider.value) > 0) {
+                filters.push(`sepia(${sepiaSlider.value}%)`);
+            }
+            if (parseInt(hueRotateSlider.value) > 0) {
+                filters.push(`hue-rotate(${hueRotateSlider.value}deg)`);
+            }
+            if (parseInt(invertSlider.value) > 0) {
+                filters.push(`invert(${invertSlider.value}%)`);
+            }
+            if (parseInt(brightnessSlider.value) !== 100) {
+                filters.push(`brightness(${brightnessSlider.value}%)`);
+            }
+            if (parseInt(contrastSlider.value) !== 100) {
+                filters.push(`contrast(${contrastSlider.value}%)`);
+            }
+            if (parseInt(saturateSlider.value) !== 100) {
+                filters.push(`saturate(${saturateSlider.value}%)`);
+            }
+            if (parseInt(blurSlider.value) > 0) {
+                filters.push(`blur(${blurSlider.value}px)`);
+            }
+            
+            return filters.join(' ');
+        }
+        
+        // Apply filters to image
+        function applyFilters() {
+            if (!previewImage.src) return;
+            
+            const filter = generateFilterCSS();
+            previewImage.style.filter = filter;
+            
+            // Update CSS code
+            cssCode.textContent = `filter: ${filter};`;
+            
+            // Update value displays
+            grayscaleValue.textContent = grayscaleSlider.value + '%';
+            sepiaValue.textContent = sepiaSlider.value + '%';
+            hueRotateValue.textContent = hueRotateSlider.value + '°';
+            invertValue.textContent = invertSlider.value + '%';
+            brightnessValue.textContent = brightnessSlider.value + '%';
+            contrastValue.textContent = contrastSlider.value + '%';
+            saturateValue.textContent = saturateSlider.value + '%';
+            blurValue.textContent = blurSlider.value + 'px';
+        }
+        
+        // Handle file upload
+        function handleFile(file) {
+            if (!file || !file.type.startsWith('image/')) {
+                showToast('請選擇有效的圖片檔案');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                currentImage = e.target.result;
+                previewImage.src = currentImage;
+                previewImage.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+                downloadOptions.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // Download filtered image
+        function downloadFilteredEvent() {
+            if (!currentImage) {
+                showToast('請先上傳圖片');
+                return;
+            }
+            
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            const img = new Image();
+            img.onload = () => {
+                canvas.width = img.naturalWidth;
+                canvas.height = img.naturalHeight;
+                
+                ctx.filter = generateFilterCSS();
+                ctx.drawImage(img, 0, 0);
+                
+                const link = document.createElement('a');
+                link.download = `filtered-${Date.now()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+                showToast('圖片已下載');
+            };
+            img.src = currentImage;
+        }
+        
+        // Apply preset
+        function applyPreset(presetName) {
+            const preset = PRESETS[presetName];
+            if (!preset) return;
+            
+            grayscaleSlider.value = preset.grayscale;
+            sepiaSlider.value = preset.sepia;
+            hueRotateSlider.value = preset.hueRotate;
+            invertSlider.value = preset.invert;
+            brightnessSlider.value = preset.brightness;
+            contrastSlider.value = preset.contrast;
+            saturateSlider.value = preset.saturate;
+            blurSlider.value = preset.blur;
+            
+            applyFilters();
+            
+            // Update active preset
+            presetGrid.querySelectorAll('.preset-card').forEach(card => {
+                if (card.dataset.preset === presetName) {
+                    card.classList.add('active');
+                } else {
+                    card.classList.remove('active');
+                }
+            });
+            
+            showToast('已套用預設');
+        }
+        
+        // Reset all filters
+        function resetFilters() {
+            applyPreset('none');
+            showToast('已重置所有濾鏡');
+        }
+        
+        // Copy CSS
+        async function copyToClipboard() {
+            const code = cssCode.textContent;
+            try {
+                await navigator.clipboard.writeText(code);
+                showToast('CSS 代碼已複製');
+            } catch (err) {
+                console.error('複製失敗:', err);
+                showToast('複製失敗，請重試');
+            }
+        }
+        
+        // Show toast
+        function showToast(message) {
+            toastMessage.textContent = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+        
+        // Event listeners
+        uploadBtn.addEventListener('click', () => fileInput.click());
+        
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files[0]) {
+                handleFile(e.target.files[0]);
+            }
+        });
+        
+        // Drag and drop
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+        
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+        
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            
+            if (e.dataTransfer.files[0]) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+        
+        // Filter sliders
+        [grayscaleSlider, sepiaSlider, hueRotateSlider, invertSlider, brightnessSlider, contrastSlider, saturateSlider, blurSlider].forEach(slider => {
+            slider.addEventListener('input', applyFilters);
+        });
+        
+        resetBtn.addEventListener('click', resetFilters);
+        downloadOriginal.addEventListener('click', () => {
+            if (!currentImage) {
+                showToast('請先上傳圖片');
+                return;
+            }
+            const link = document.createElement('a');
+            link.href = currentImage;
+            link.download = `original-${Date.now()}.png`;
+            link.click();
+            showToast('原始圖片已下載');
+        });
+        
+        downloadFiltered.addEventListener('click', downloadFilteredEvent);
+        
+        // Presets
+        presetGrid.querySelectorAll('.preset-card').forEach(card => {
+            card.addEventListener('click', () => {
+                applyPreset(card.dataset.preset);
+            });
+        });
+        
+        copyCss.addEventListener('click', copyToClipboard);
+        
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('cssFilterLabTheme', isDark ? 'dark' : 'light');
+            lucide.createIcons();
+        });
+        
+        // Initialize
+        lucide.createIcons();
+    </script>
+</body>
+</html>

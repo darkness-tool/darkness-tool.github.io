@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>30秒反應測試 - 測試你的點擊速度</title>
+    <meta name="description" content="線上30秒反應測試遊戲，按鈕隨機移動，測試你的點擊速度和反應能力。挑戰你的最高紀錄！">
+    <meta name="keywords" content="反應測試, 點擊速度, 30秒挑戰, 反應遊戲, 速度測試">
+    <meta name="author" content="Web Tools">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="30秒反應測試 - 測試你的點擊速度">
+    <meta property="og:description" content="線上30秒反應測試遊戲，按鈕隨機移動，測試你的點擊速度和反應能力。">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="30秒反應測試 - 測試你的點擊速度">
+    <meta name="twitter:description" content="線上30秒反應測試遊戲，按鈕隨機移動，測試你的點擊速度。">
+    
+    <script src="load_index_common.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    
+    <!-- Schema.org -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "30秒反應測試",
+        "applicationCategory": "GameApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "TWD"
+        },
+        "description": "線上30秒反應測試遊戲，按鈕隨機移動，測試你的點擊速度和反應能力。",
+        "featureList": ["30秒挑戰", "隨機移動", "分數統計", "最高紀錄", "深色模式", "即時顯示"],
+        "browserRequirements": "需要 JavaScript"
+    }
+    </script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#ef4444',
+                        secondary: '#f59e0b',
+                        dark: '#1f2937',
+                        darker: '#111827'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;300;700;900&display=swap');
+        
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            user-select: none;
+        }
+        
+        .target-button {
+            transition: all 0.1s ease;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .target-button:active {
+            transform: scale(0.95);
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+            }
+        }
+        
+        @keyframes pop {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .score-popup {
+            animation: pop 0.3s ease-out forwards;
+        }
+        
+        .countdown-ring {
+            stroke-dasharray: 283;
+            stroke-dashoffset: 0;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            transition: stroke-dashoffset 0.3s ease;
+        }
+        
+        .game-area {
+            touch-action: none;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-darker dark:via-gray-900 dark:to-gray-900 min-h-screen transition-colors duration-200">
+    
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-dark/80 backdrop-blur-sm border-b border-red-100 dark:border-gray-700 transition-colors duration-200">
+        <div class="max-w-4xl mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
+                        <i data-lucide="zap" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-semibold text-gray-900 dark:text-gray-100">30秒反應測試</h1>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">測試你的點擊速度</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <!-- Theme Toggle -->
+                    <button 
+                        id="themeToggle" 
+                        class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-300 transition-colors"
+                        aria-label="切換深色模式"
+                    >
+                        <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
+                        <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-20">
+        
+        <!-- Stats Bar -->
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-4">
+                <!-- Countdown Timer -->
+                <div class="relative w-16 h-16">
+                    <svg class="w-full h-full" viewBox="0 0 100 100">
+                        <circle 
+                            class="text-gray-200 dark:text-gray-700" 
+                            stroke-width="8" 
+                            fill="transparent" 
+                            r="45" 
+                            cx="50" 
+                            cy="50"
+                        />
+                        <circle 
+                            id="countdownRing" 
+                            class="countdown-ring text-red-500" 
+                            stroke-width="8" 
+                            fill="transparent" 
+                            r="45" 
+                            cx="50" 
+                            cy="50"
+                        />
+                    </svg>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <span id="countdownText" class="text-2xl font-bold text-gray-900 dark:text-gray-100">30</span>
+                    </div>
+                </div>
+                
+                <!-- Current Score -->
+                <div class="text-center">
+                    <p class="text-xs text-gray-500 dark:text-gray-400">目前分數</p>
+                    <p id="currentScore" class="text-3xl font-black text-primary">0</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <!-- High Score -->
+                <div class="text-center">
+                    <p class="text-xs text-gray-500 dark:text-gray-400">最高紀錄</p>
+                    <p id="highScore" class="text-3xl font-black text-secondary">0</p>
+                </div>
+                
+                <!-- Click Rate -->
+                <div class="text-center hidden sm:block">
+                    <p class="text-xs text-gray-500 dark:text-gray-400">每秒點擊</p>
+                    <p id="clickRate" class="text-2xl font-bold text-gray-700 dark:text-gray-300">0</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Game Area -->
+        <section id="gameArea" class="game-area bg-white dark:bg-dark rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 transition-colors duration-200 relative overflow-hidden" style="min-height: 500px;">
+            <!-- Start Screen -->
+            <div id="startScreen" class="absolute inset-0 flex flex-col items-center justify-center bg-white/95 dark:bg-dark/95 z-10">
+                <div class="w-24 h-24 rounded-full bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center mb-6 shadow-2xl">
+                    <i data-lucide="target" class="w-12 h-12 text-white"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">準備好了嗎？</h2>
+                <p class="text-gray-300 dark:text-gray-400 mb-6 text-center max-w-md px-4">
+                    在30秒內盡可能多地點擊移動的按鈕。按鈕會隨機跳躍，考驗你的反應速度！
+                </p>
+                <button 
+                    id="startBtn" 
+                    class="flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-2xl hover:from-red-300 hover:to-orange-300 transition-all shadow-xl hover:shadow-2xl font-semibold text-lg"
+                >
+                    <i data-lucide="play" class="w-6 h-6"></i>
+                    開始挑戰
+                </button>
+            </div>
+            
+            <!-- Target Button -->
+            <button 
+                id="targetButton" 
+                class="target-button hidden absolute w-20 h-20 rounded-full bg-gradient-to-br from-red-500 to-orange-500 text-white font-bold text-2xl shadow-xl hover:shadow-2xl cursor-pointer flex items-center justify-center"
+                style="touch-action: manipulation;"
+            >
+                點我！
+            </button>
+            
+            <!-- Score Popups Container -->
+            <div id="popupsContainer" class="absolute inset-0 pointer-events-none overflow-hidden">
+            </div>
+        </section>
+        
+        <!-- Results Modal -->
+        <div id="resultsModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-200">
+            <div class="bg-white dark:bg-dark rounded-2xl shadow-2xl p-8 max-w-sm mx-4 transform scale-95 transition-transform duration-200" id="resultsModalContent">
+                <div class="text-center">
+                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center mx-auto mb-4 shadow-xl">
+                        <i data-lucide="trophy" class="w-10 h-10 text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">時間到！</h3>
+                    <p class="text-gray-300 dark:text-gray-400 mb-6">30秒挑戰結束</p>
+                    
+                    <div class="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 mb-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-gray-300 dark:text-gray-400">點擊次數</span>
+                            <span id="finalScore" class="text-3xl font-bold text-primary">0</span>
+                        </div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-gray-300 dark:text-gray-400">每秒平均</span>
+                            <span id="finalCPS" class="text-2xl font-bold text-secondary">0</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-300 dark:text-gray-400">最高紀錄</span>
+                            <span id="finalHighScore" class="text-xl font-bold text-green-300">0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <button 
+                            id="restartBtn" 
+                            class="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-xl hover:from-red-300 hover:to-orange-300 transition-all font-semibold"
+                        >
+                            <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+                            再玩一次
+                        </button>
+                        <button 
+                            id="closeResultsBtn" 
+                            class="w-full px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-300 transition-colors font-medium"
+                        >
+                            關閉
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tips Section -->
+        <section class="mt-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl shadow-lg p-6 border border-blue-100 dark:border-blue-800 transition-colors duration-200">
+            <div class="flex items-center gap-2 mb-4">
+                <i data-lucide="lightbulb" class="w-5 h-5 text-blue-300"></i>
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">提升技巧</h2>
+            </div>
+            <ul class="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                <li class="flex items-start gap-2">
+                    <i data-lucide="check-circle" class="w-4 h-4 text-green-300 flex-shrink-0 mt-0.5"></i>
+                    <span>保持專注，預測按鈕的移動方向</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <i data-lucide="check-circle" class="w-4 h-4 text-green-300 flex-shrink-0 mt-0.5"></i>
+                    <span>使用滑鼠或觸控螢幕，選擇最舒服的方式</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <i data-lucide="check-circle" class="w-4 h-4 text-green-300 flex-shrink-0 mt-0.5"></i>
+                    <span>練習後會更快掌握移動規律</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <i data-lucide="check-circle" class="w-4 h-4 text-green-300 flex-shrink-0 mt-0.5"></i>
+                    <span>定期練習可提升反應速度</span>
+                </li>
+            </ul>
+        </section>
+    </main>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-gray-900 text-white px-4 py-2 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-2" role="alert" aria-live="polite">
+        <i data-lucide="check-circle" class="w-4 h-4 text-green-400"></i>
+        <span id="toastMessage">操作成功</span>
+    </div>
+    
+    <script>
+        // Initialize icons
+        lucide.createIcons();
+        
+        // DOM Elements
+        const gameArea = document.getElementById('gameArea');
+        const startScreen = document.getElementById('startScreen');
+        const startBtn = document.getElementById('startBtn');
+        const targetButton = document.getElementById('targetButton');
+        const currentScoreEl = document.getElementById('currentScore');
+        const highScoreEl = document.getElementById('highScore');
+        const clickRateEl = document.getElementById('clickRate');
+        const countdownText = document.getElementById('countdownText');
+        const countdownRing = document.getElementById('countdownRing');
+        const resultsModal = document.getElementById('resultsModal');
+        const resultsModalContent = document.getElementById('resultsModalContent');
+        const finalScore = document.getElementById('finalScore');
+        const finalCPS = document.getElementById('finalCPS');
+        const finalHighScore = document.getElementById('finalHighScore');
+        const restartBtn = document.getElementById('restartBtn');
+        const closeResultsBtn = document.getElementById('closeResultsBtn');
+        const popupsContainer = document.getElementById('popupsContainer');
+        const themeToggle = document.getElementById('themeToggle');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        
+        // Constants
+        const GAME_DURATION = 30;
+        const RING_CIRCUMFERENCE = 2 * Math.PI * 45;
+        
+        // State
+        let score = 0;
+        let highScore = parseInt(localStorage.getItem('reflexTestHighScore')) || 0;
+        let timeLeft = GAME_DURATION;
+        let gameRunning = false;
+        let gameInterval = null;
+        let countdownInterval = null;
+        let gameStartTime = null;
+        
+        // Load saved theme
+        const savedTheme = localStorage.getItem('reflexTestTheme');
+        if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+        
+        // Initialize
+        highScoreEl.textContent = highScore;
+        
+        // Start game
+        function startGame() {
+            score = 0;
+            timeLeft = GAME_DURATION;
+            gameRunning = true;
+            gameStartTime = Date.now();
+            
+            currentScoreEl.textContent = score;
+            clickRateEl.textContent = '0';
+            countdownText.textContent = timeLeft;
+            countdownRing.style.strokeDashoffset = 0;
+            
+            startScreen.classList.add('hidden');
+            targetButton.classList.remove('hidden');
+            
+            moveTargetButton();
+            
+            // Start countdown
+            countdownInterval = setInterval(() => {
+                timeLeft--;
+                countdownText.textContent = timeLeft;
+                
+                // Update ring
+                const progress = timeLeft / GAME_DURATION;
+                countdownRing.style.strokeDashoffset = RING_CIRCUMFERENCE * (1 - progress);
+                
+                // Update click rate
+                const elapsedSeconds = (Date.now() - gameStartTime) / 1000;
+                const cps = elapsedSeconds > 0 ? (score / elapsedSeconds).toFixed(1) : '0';
+                clickRateEl.textContent = cps;
+                
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+        
+        // End game
+        function endGame() {
+            gameRunning = false;
+            clearInterval(countdownInterval);
+            
+            // Calculate final stats
+            const elapsedSeconds = (Date.now() - gameStartTime) / 1000;
+            const finalCPSValue = elapsedSeconds > 0 ? (score / elapsedSeconds).toFixed(1) : '0';
+            
+            // Update high score
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('reflexTestHighScore', highScore.toString());
+                highScoreEl.textContent = highScore;
+            }
+            
+            // Show results
+            finalScore.textContent = score;
+            finalCPS.textContent = finalCPSValue + ' /秒';
+            finalHighScore.textContent = highScore;
+            
+            targetButton.classList.add('hidden');
+            resultsModal.classList.remove('opacity-0', 'pointer-events-none');
+            resultsModalContent.classList.remove('scale-95');
+        }
+        
+        // Move target button
+        function moveTargetButton() {
+            if (!gameRunning) return;
+            
+            const areaRect = gameArea.getBoundingClientRect();
+            const buttonSize = 80;
+            const padding = 20;
+            
+            const maxX = areaRect.width - buttonSize - padding;
+            const maxY = areaRect.height - buttonSize - padding;
+            
+            const newX = Math.random() * (maxX - padding) + padding / 2;
+            const newY = Math.random() * (maxY - padding) + padding / 2;
+            
+            targetButton.style.left = newX + 'px';
+            targetButton.style.top = newY + 'px';
+        }
+        
+        // Handle target click
+        function handleTargetClick(e) {
+            if (!gameRunning) return;
+            
+            e.preventDefault();
+            e.stopPropagation();
+            
+            score++;
+            currentScoreEl.textContent = score;
+            
+            // Show score popup
+            showScorePopup(e.clientX, e.clientY);
+            
+            // Move button
+            moveTargetButton();
+        }
+        
+        // Show score popup
+        function showScorePopup(x, y) {
+            const popup = document.createElement('div');
+            popup.className = 'score-popup absolute text-2xl font-bold text-primary pointer-events-none';
+            popup.textContent = '+1';
+            popup.style.left = (x - gameArea.getBoundingClientRect().left) + 'px';
+            popup.style.top = (y - gameArea.getBoundingClientRect().top) + 'px';
+            
+            popupsContainer.appendChild(popup);
+            
+            setTimeout(() => {
+                popup.remove();
+            }, 500);
+        }
+        
+        // Close results modal
+        function closeResults() {
+            resultsModal.classList.add('opacity-0', 'pointer-events-none');
+            resultsModalContent.classList.add('scale-95');
+            startScreen.classList.remove('hidden');
+        }
+        
+        // Show toast
+        function showToast(message) {
+            toastMessage.textContent = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+        
+        // Event listeners
+        startBtn.addEventListener('click', startGame);
+        targetButton.addEventListener('click', handleTargetClick);
+        targetButton.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            handleTargetClick(e.touches[0]);
+        });
+        
+        restartBtn.addEventListener('click', () => {
+            closeResults();
+            setTimeout(startGame, 300);
+        });
+        
+        closeResultsBtn.addEventListener('click', closeResults);
+        
+        resultsModal.addEventListener('click', (e) => {
+            if (e.target === resultsModal) closeResults();
+        });
+        
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('reflexTestTheme', isDark ? 'dark' : 'light');
+            lucide.createIcons();
+        });
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (gameRunning) {
+                moveTargetButton();
+            }
+        });
+        
+        // Initialize
+        lucide.createIcons();
+    </script>
+</body>
+</html>

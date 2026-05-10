@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>免費 Markdown 編輯器 - 即時預覽與匯出工具</title>
+    <meta name="description" content="線上 Markdown 編輯器，支援即時預覽、深色模式、字數統計與匯出功能。無需註冊，完全免費使用。">
+    <meta name="keywords" content="Markdown 編輯器, 即時預覽, Markdown 轉 HTML, 免費線上工具, Markdown 編輯器">
+    <meta name="author" content="Web Tools">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="免費 Markdown 編輯器 - 即時預覽與匯出工具">
+    <meta property="og:description" content="線上 Markdown 編輯器，支援即時預覽、深色模式、字數統計與匯出功能。">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="免費 Markdown 編輯器 - 即時預覽與匯出工具">
+    <meta name="twitter:description" content="線上 Markdown 編輯器，支援即時預覽、深色模式、字數統計與匯出功能。">
+    
+    <script src="load_index_common.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    
+    <!-- Schema.org -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "免費 Markdown 編輯器",
+        "applicationCategory": "UtilityApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "TWD"
+        },
+        "description": "線上 Markdown 編輯器，支援即時預覽、深色模式、字數統計與匯出功能。",
+        "featureList": ["即時預覽", "深色模式", "字數統計", "匯出功能", "自動儲存"],
+        "browserRequirements": "需要 JavaScript"
+    }
+    </script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        dark: '#1f2937',
+                        darker: '#111827'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+        
+        /* Preview styles */
+        .preview-content {
+            line-height: 1.7;
+        }
+        .preview-content h1 { font-size: 2em; font-weight: bold; margin: 0.67em 0; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.3em; }
+        .dark .preview-content h1 { border-bottom-color: #374151; }
+        .preview-content h2 { font-size: 1.5em; font-weight: bold; margin: 0.83em 0; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.3em; }
+        .dark .preview-content h2 { border-bottom-color: #374151; }
+        .preview-content h3 { font-size: 1.17em; font-weight: bold; margin: 1em 0; }
+        .preview-content h4 { font-size: 1em; font-weight: bold; margin: 1.33em 0; }
+        .preview-content p { margin: 1em 0; }
+        .preview-content ul, .preview-content ol { margin: 1em 0; padding-left: 2em; }
+        .preview-content li { margin: 0.5em 0; }
+        .preview-content ul { list-style-type: disc; }
+        .preview-content ol { list-style-type: decimal; }
+        .preview-content code { background: #f1f5f9; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace; }
+        .dark .preview-content code { background: #374151; }
+        .preview-content pre { background: #f1f5f9; padding: 1em; border-radius: 6px; overflow-x: auto; margin: 1em 0; }
+        .dark .preview-content pre { background: #1f2937; }
+        .preview-content pre code { background: none; padding: 0; }
+        .preview-content blockquote { border-left: 4px solid #3b82f6; margin: 1em 0; padding-left: 1em; color: #64748b; }
+        .dark .preview-content blockquote { color: #9ca3af; }
+        .preview-content a { color: #3b82f6; text-decoration: underline; }
+        .preview-content a:hover { color: #2563eb; }
+        .preview-content table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+        .preview-content th, .preview-content td { border: 1px solid #e2e8f0; padding: 0.5em 1em; }
+        .dark .preview-content th, .dark .preview-content td { border-color: #374151; }
+        .preview-content th { background: #f8fafc; }
+        .dark .preview-content th { background: #1f2937; }
+        .preview-content img { max-width: 100%; height: auto; }
+        .preview-content hr { border: none; border-top: 2px solid #e2e8f0; margin: 2em 0; }
+        .dark .preview-content hr { border-top-color: #374151; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 dark:bg-darker dark:text-gray-100 min-h-screen transition-colors duration-200">
+    
+    <!-- Header -->
+    <header class="bg-white dark:bg-dark shadow-sm sticky top-0 z-50 transition-colors duration-200">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="file-text" class="w-8 h-8 text-primary"></i>
+                    <div>
+                        <h1 class="text-xl font-bold">免費 Markdown 編輯器</h1>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">即時預覽 · 深色模式 · 自動儲存</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button id="themeToggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors" aria-label="切換深色模式">
+                        <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
+                        <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
+                    </button>
+                    <button id="downloadMd" class="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors" aria-label="下載 Markdown 文件">
+                        <i data-lucide="download" class="w-4 h-4"></i>
+                        <span class="hidden sm:inline">下載 MD</span>
+                    </button>
+                    <button id="copyHtml" class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors" aria-label="複製 HTML">
+                        <i data-lucide="copy" class="w-4 h-4"></i>
+                        <span class="hidden sm:inline">複製 HTML</span>
+                    </button>
+                    <button id="clearBtn" class="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors" aria-label="清空內容">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        <span class="hidden sm:inline">清空</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Stats Bar -->
+    <div class="bg-white dark:bg-dark border-b border-gray-200 dark:border-gray-700 px-4 py-2 transition-colors duration-200">
+        <div class="max-w-7xl mx-auto flex items-center gap-6 text-sm text-gray-600 dark:text-gray-400">
+            <div class="flex items-center gap-2">
+                <i data-lucide="type" class="w-4 h-4"></i>
+                <span>字數: <strong id="wordCount" class="text-primary">0</strong></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i data-lucide="hash" class="w-4 h-4"></i>
+                <span>字元: <strong id="charCount" class="text-primary">0</strong></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i data-lucide="minimize-2" class="w-4 h-4"></i>
+                <span>行數: <strong id="lineCount" class="text-primary">0</strong></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i data-lucide="save" class="w-4 h-4"></i>
+                <span id="saveStatus" class="text-green-600 dark:text-green-400">已自動儲存</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-6">
+        <div class="grid lg:grid-cols-2 gap-4 h-[calc(100vh-220px)] min-h-[500px]">
+            
+            <!-- Editor Panel -->
+            <div class="bg-white dark:bg-dark rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+                <div class="bg-gray-100 dark:bg-gray-800 px-4 py-2 border-b border-gray-200 dark:border-gray-700 flex items-center gap-2">
+                    <i data-lucide="edit-3" class="w-4 h-4 text-gray-600 dark:text-gray-400"></i>
+                    <span class="font-medium text-gray-700 dark:text-gray-300">編輯器</span>
+                </div>
+                <textarea 
+                    id="editor" 
+                    class="w-full h-full p-4 resize-none focus:outline-none bg-white dark:bg-darker text-gray-900 dark:text-gray-100 font-mono text-sm leading-relaxed transition-colors duration-200"
+                    placeholder="在這裡輸入 Markdown 內容...
+
+# 歡迎使用 Markdown 編輯器
+
+這是一個功能完整的 Markdown 編輯器，支援以下功能：
+
+## 功能特色
+
+- **即時預覽**：左側編輯，右側即時顯示渲染結果
+- **深色模式**：護眼深色主題，適合夜間編輯
+- **自動儲存**：內容會自動儲存到瀏覽器
+- **匯出功能**：可下載為 MD 檔案或複製 HTML 代碼
+
+## 語法示範
+
+### 文字格式
+**粗體**、*斜體*、~~刪除線~~、`行內代碼`
+
+### 程式碼區塊
+\`\`\`javascript
+function hello() {
+    console.log('Hello, World!');
+}
+\`\`\`
+
+### 表格
+| 功能 | 狀態 |
+|------|------|
+| 即時預覽 | ✅ |
+| 深色模式 | ✅ |
+| 自動儲存 | ✅ |
+
+開始編輯吧！"
+                    aria-label="Markdown 編輯器輸入區域"
+                ></textarea>
+            </div>
+            
+            <!-- Preview Panel -->
+            <div class="bg-white dark:bg-dark rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+                <div class="bg-gray-100 dark:bg-gray-800 px-4 py-2 border-b border-gray-200 dark:border-gray-700 flex items-center gap-2">
+                    <i data-lucide="eye" class="w-4 h-4 text-gray-600 dark:text-gray-400"></i>
+                    <span class="font-medium text-gray-700 dark:text-gray-300">預覽</span>
+                </div>
+                <div id="preview" class="preview-content w-full h-full p-4 overflow-auto bg-white dark:bg-darker transition-colors duration-200"></div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-dark border-t border-gray-200 dark:border-gray-700 mt-8 py-6 transition-colors duration-200">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <p class="text-gray-600 dark:text-gray-400 text-sm">
+                    <i data-lucide="code-2" class="w-4 h-4 inline mr-1"></i>
+                    完全免費 · 無需註冊 · 即時運作
+                </p>
+                <div class="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+                    <a href="#" class="hover:text-primary transition-colors">使用說明</a>
+                    <a href="#" class="hover:text-primary transition-colors">Markdown 語法</a>
+                    <a href="#" class="hover:text-primary transition-colors">更多工具</a>
+                </div>
+            </div>
+            <p class="text-center text-gray-500 dark:text-gray-500 text-xs mt-4">
+                © 2025 Web Tools. 保留所有權利。
+            </p>
+        </div>
+    </footer>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-4 right-4 bg-gray-900 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50" role="alert" aria-live="polite">
+        <div class="flex items-center gap-2">
+            <i data-lucide="check-circle" class="w-5 h-5 text-green-400"></i>
+            <span id="toastMessage">操作成功</span>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize icons
+        lucide.createIcons();
+        
+        // DOM Elements
+        const editor = document.getElementById('editor');
+        const preview = document.getElementById('preview');
+        const wordCount = document.getElementById('wordCount');
+        const charCount = document.getElementById('charCount');
+        const lineCount = document.getElementById('lineCount');
+        const saveStatus = document.getElementById('saveStatus');
+        const themeToggle = document.getElementById('themeToggle');
+        const downloadMd = document.getElementById('downloadMd');
+        const copyHtml = document.getElementById('copyHtml');
+        const clearBtn = document.getElementById('clearBtn');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        
+        // Load saved content
+        const savedContent = localStorage.getItem('markdownEditorContent');
+        if (savedContent) {
+            editor.value = savedContent;
+        }
+        
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('markdownEditorTheme');
+        if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+        
+        // Update preview
+        function updatePreview() {
+            const markdown = editor.value;
+            preview.innerHTML = marked.parse(markdown);
+            updateStats();
+            saveContent();
+        }
+        
+        // Update statistics
+        function updateStats() {
+            const text = editor.value;
+            const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+            const chars = text.length;
+            const lines = text.split('\n').length;
+            
+            wordCount.textContent = words;
+            charCount.textContent = chars;
+            lineCount.textContent = lines;
+        }
+        
+        // Save content to localStorage
+        let saveTimeout;
+        function saveContent() {
+            clearTimeout(saveTimeout);
+            saveStatus.textContent = '儲存中...';
+            saveStatus.className = 'text-yellow-600 dark:text-yellow-400';
+            
+            saveTimeout = setTimeout(() => {
+                localStorage.setItem('markdownEditorContent', editor.value);
+                saveStatus.textContent = '已自動儲存';
+                saveStatus.className = 'text-green-600 dark:text-green-400';
+            }, 500);
+        }
+        
+        // Show toast notification
+        function showToast(message) {
+            toastMessage.textContent = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+        
+        // Theme toggle
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('markdownEditorTheme', isDark ? 'dark' : 'light');
+            lucide.createIcons();
+        });
+        
+        // Event listeners for editor
+        editor.addEventListener('input', updatePreview);
+        
+        // Download as MD
+        downloadMd.addEventListener('click', () => {
+            const blob = new Blob([editor.value], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'document.md';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Markdown 文件已下載');
+        });
+        
+        // Copy HTML
+        copyHtml.addEventListener('click', async () => {
+            const html = marked.parse(editor.value);
+            try {
+                await navigator.clipboard.writeText(html);
+                showToast('HTML 已複製到剪貼簿');
+            } catch (err) {
+                console.error('複製失敗:', err);
+                showToast('複製失敗，請重試');
+            }
+        });
+        
+        // Clear content
+        clearBtn.addEventListener('click', () => {
+            if (confirm('確定要清空所有內容嗎？此操作無法復原。')) {
+                editor.value = '';
+                updatePreview();
+                showToast('內容已清空');
+            }
+        });
+        
+        // Initial render
+        updatePreview();
+    </script>
+</body>
+</html>

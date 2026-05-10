@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>免費 JSON 格式化器驗證器 - 即時格式化美化壓縮工具</title>
+    <meta name="description" content="線上JSON格式化器，支援即時驗證、美化、壓縮、錯誤檢測。免費、快速、易用的開發者工具。">
+    <meta name="keywords" content="JSON格式化器, JSON驗證器, JSON美化器, JSON壓縮, 免費開發工具, JSON工具">
+    <meta name="author" content="Web Tools">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="免費 JSON 格式化器驗證器 - 即時格式化美化壓縮工具">
+    <meta property="og:description" content="線上JSON格式化器，支援即時驗證、美化、壓縮、錯誤檢測。">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="免費 JSON 格式化器驗證器 - 即時格式化美化壓縮工具">
+    <meta name="twitter:description" content="線上JSON格式化器，支援即時驗證、美化、壓縮、錯誤檢測。">
+    
+    <script src="load_index_common.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    
+    <!-- Schema.org -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "免費 JSON 格式化器",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "TWD"
+        },
+        "description": "線上JSON格式化器，支援即時驗證、美化、壓縮、錯誤檢測。",
+        "featureList": ["即時驗證", "格式化美化", "壓縮", "錯誤檢測", "語法高亮", "匯出功能"],
+        "browserRequirements": "需要 JavaScript"
+    }
+    </script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        dark: '#1f2937',
+                        darker: '#111827',
+                        jsonKey: '#8b5cf6',
+                        jsonString: '#10b981',
+                        jsonNumber: '#f59e0b',
+                        jsonBoolean: '#ef4444',
+                        jsonNull: '#6b7280'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .json-container {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            line-height: 1.6;
+        }
+        
+        .json-line {
+            counter-increment: line;
+        }
+        
+        .json-line::before {
+            content: counter(line);
+            display: inline-block;
+            width: 3em;
+            padding-right: 1em;
+            text-align: right;
+            color: #9ca3af;
+            border-right: 1px solid #e5e7eb;
+            margin-right: 1em;
+            user-select: none;
+        }
+        
+        .dark .json-line::before {
+            color: #6b7280;
+            border-right-color: #374151;
+        }
+        
+        .json-key { color: #8b5cf6; }
+        .json-string { color: #10b981; }
+        .json-number { color: #f59e0b; }
+        .json-boolean { color: #ef4444; }
+        .json-null { color: #6b7280; }
+        
+        .json-error {
+            background-color: #fee2e2;
+            border-left: 4px solid #ef4444;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0.5rem;
+        }
+        
+        .dark .json-error {
+            background-color: rgba(239, 68, 68, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 dark:bg-darker dark:text-gray-100 min-h-screen transition-colors duration-200">
+    
+    <!-- Header -->
+    <header class="bg-white dark:bg-dark shadow-sm sticky top-0 z-50 transition-colors duration-200">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="braces" class="w-8 h-8 text-primary"></i>
+                    <div>
+                        <h1 class="text-xl font-bold">免費 JSON 格式化器</h1>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">即時驗證 · 格式化美化 · 壓縮工具</p>
+                    </div>
+                </div>
+                <button id="themeToggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors" aria-label="切換深色模式">
+                    <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
+                    <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        
+        <!-- Error Display -->
+        <div id="errorDisplay" class="hidden mb-6">
+            <div class="json-error">
+                <div class="flex items-center gap-2 mb-2">
+                    <i data-lucide="alert-circle" class="w-5 h-5 text-red-500"></i>
+                    <h3 class="font-bold text-red-600 dark:text-red-400">JSON 語法錯誤</h3>
+                </div>
+                <p id="errorMessage" class="text-sm text-gray-700 dark:text-gray-300 mb-2"></p>
+                <p id="errorPosition" class="text-xs text-gray-500 dark:text-gray-400"></p>
+            </div>
+        </div>
+        
+        <!-- Stats Bar -->
+        <div class="bg-white dark:bg-dark rounded-xl shadow-sm p-4 mb-6 border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+            <div class="flex flex-wrap items-center gap-6 text-sm text-gray-600 dark:text-gray-400">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="type" class="w-4 h-4"></i>
+                    <span>字元數: <strong id="charCount" class="text-primary">0</strong></span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <i data-lucide="minimize-2" class="w-4 h-4"></i>
+                    <span>行數: <strong id="lineCount" class="text-primary">0</strong></span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <i data-lucide="file-size" class="w-4 h-4"></i>
+                    <span>大小: <strong id="size" class="text-primary">0 B</strong></span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <i data-lucide="check-circle" class="w-4 h-4 text-green-500" id="validityIcon"></i>
+                    <span id="validityText" class="text-green-600 dark:text-green-400">有效 JSON</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Editor Panels -->
+        <div class="grid lg:grid-cols-2 gap-6 mb-6">
+            
+            <!-- Input Panel -->
+            <div class="bg-white dark:bg-dark rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+                <div class="bg-gray-100 dark:bg-gray-800 px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="edit-3" class="w-4 h-4 text-gray-600 dark:text-gray-400"></i>
+                        <span class="font-medium text-gray-700 dark:text-gray-300">輸入 JSON</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button id="loadExample" class="p-2 text-gray-500 hover:text-primary transition-colors" title="載入範例" aria-label="載入範例">
+                            <i data-lucide="file-code" class="w-4 h-4"></i>
+                        </button>
+                        <button id="clearInput" class="p-2 text-gray-500 hover:text-red-500 transition-colors" title="清空" aria-label="清空輸入">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+                <textarea 
+                    id="jsonInput" 
+                    class="w-full h-[400px] p-4 resize-none focus:outline-none bg-white dark:bg-darker text-gray-900 dark:text-gray-100 font-mono text-sm leading-relaxed transition-colors"
+                    placeholder="在此貼上或輸入 JSON 數據..."
+                    aria-label="JSON 輸入區域"
+                    spellcheck="false"
+                ></textarea>
+            </div>
+            
+            <!-- Output Panel -->
+            <div class="bg-white dark:bg-dark rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+                <div class="bg-gray-100 dark:bg-gray-800 px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="code" class="w-4 h-4 text-gray-600 dark:text-gray-400"></i>
+                        <span class="font-medium text-gray-700 dark:text-gray-300">格式化結果</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <select style="display: none;" id="indentSize" class="text-sm bg-white dark:bg-darker border border-gray-300 dark:border-gray-600 rounded px-2 py-1 focus:outline-none focus:border-primary" aria-label="縮排大小">
+                            <option value="2">2 空格</option>
+                            <option value="4" selected>4 空格</option>
+                            <option value="tab">Tab</option>
+                        </select>
+                        <button id="copyOutput" class="p-2 text-gray-500 hover:text-primary transition-colors" title="複製" aria-label="複製輸出">
+                            <i data-lucide="copy" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="jsonOutput" class="json-container w-full h-[400px] p-4 overflow-auto bg-white dark:bg-darker text-gray-900 dark:text-gray-100 text-sm leading-relaxed transition-colors" style="counter-reset: line;">
+                    <p class="text-gray-500 dark:text-gray-400 text-sm text-center py-8">格式化後的 JSON 將顯示在這裡</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="flex flex-wrap gap-4 mb-6">
+            <button 
+                id="formatBtn" 
+                class="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors font-semibold shadow-lg hover:shadow-xl"
+                aria-label="格式化 JSON"
+            >
+                <i data-lucide="sparkles" class="w-5 h-5"></i>
+                格式化
+            </button>
+            <button 
+                id="minifyBtn" 
+                class="flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-semibold shadow-lg hover:shadow-xl"
+                aria-label="壓縮 JSON"
+            >
+                <i data-lucide="minimize" class="w-5 h-5"></i>
+                壓縮
+            </button>
+            <button 
+                id="downloadBtn" 
+                class="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold shadow-lg hover:shadow-xl"
+                aria-label="下載 JSON 文件"
+            >
+                <i data-lucide="download" class="w-5 h-5"></i>
+                下載
+            </button>
+            <button 
+                id="validateBtn" 
+                class="flex items-center gap-2 px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-semibold"
+                aria-label="驗證 JSON"
+            >
+                <i data-lucide="check" class="w-5 h-5"></i>
+                驗證
+            </button>
+        </div>
+        
+        <!-- JSON Basics -->
+        <section class="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl shadow-lg p-6 border border-blue-100 dark:border-blue-800 transition-colors duration-200">
+            <div class="flex items-center gap-2 mb-4">
+                <i data-lucide="book-open" class="w-5 h-5 text-primary"></i>
+                <h2 class="text-lg font-semibold">JSON 基礎知識</h2>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="font-semibold mb-3 text-gray-800 dark:text-gray-200">數據類型</h3>
+                    <ul class="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                        <li class="flex items-center gap-2">
+                            <span class="json-key">"鍵"</span>
+                            <span>字串（必須用雙引號）</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="json-string">"值"</span>
+                            <span>字串（雙引號）</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="json-number">123</span>
+                            <span>數字</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="json-boolean">true / false</span>
+                            <span>布林值</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="json-null">null</span>
+                            <span>空值</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-gray-500">[]</span>
+                            <span>數組</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-gray-500">{}</span>
+                            <span>對象</span>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-3 text-gray-800 dark:text-gray-200">常見錯誤</h3>
+                    <ul class="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                        <li class="flex items-start gap-2">
+                            <i data-lucide="x-circle" class="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5"></i>
+                            <span>使用單引號代替雙引號</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i data-lucide="x-circle" class="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5"></i>
+                            <span>對象或數組後有多餘逗號</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i data-lucide="x-circle" class="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5"></i>
+                            <span>鍵名未用引號包圍</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i data-lucide="x-circle" class="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5"></i>
+                            <span>未轉義的特殊字符</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i data-lucide="x-circle" class="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5"></i>
+                            <span>註釋（JSON 不支援註釋）</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i data-lucide="x-circle" class="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5"></i>
+                            <span>尾隨逗號</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-dark border-t border-gray-200 dark:border-gray-700 mt-8 py-6 transition-colors duration-200">
+        <div class="max-w-7xl mx-auto px-4">
+            <p class="text-center text-gray-600 dark:text-gray-400 text-sm">
+                <i data-lucide="shield-check" class="w-4 h-4 inline mr-1"></i>
+                JSON 處理完全在瀏覽器端進行，不會上傳到任何伺服器
+            </p>
+            <p class="text-center text-gray-500 dark:text-gray-500 text-xs mt-4">
+                © 2025 Web Tools. 保留所有權利。
+            </p>
+        </div>
+    </footer>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-4 right-4 bg-gray-900 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50" role="alert" aria-live="polite">
+        <div class="flex items-center gap-2">
+            <i data-lucide="check-circle" class="w-5 h-5 text-green-400"></i>
+            <span id="toastMessage">操作成功</span>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize icons
+        lucide.createIcons();
+        
+        // DOM Elements
+        const jsonInput = document.getElementById('jsonInput');
+        const jsonOutput = document.getElementById('jsonOutput');
+        const errorDisplay = document.getElementById('errorDisplay');
+        const errorMessage = document.getElementById('errorMessage');
+        const errorPosition = document.getElementById('errorPosition');
+        const charCount = document.getElementById('charCount');
+        const lineCount = document.getElementById('lineCount');
+        const size = document.getElementById('size');
+        const validityIcon = document.getElementById('validityIcon');
+        const validityText = document.getElementById('validityText');
+        const indentSize = document.getElementById('indentSize');
+        const formatBtn = document.getElementById('formatBtn');
+        const minifyBtn = document.getElementById('minifyBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const validateBtn = document.getElementById('validateBtn');
+        const copyOutput = document.getElementById('copyOutput');
+        const loadExample = document.getElementById('loadExample');
+            const clearInput = document.getElementById('clearInput');
+        const themeToggle = document.getElementById('themeToggle');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        
+        // Example JSON
+        const exampleJSON = {
+            "name": "John Doe",
+            "age": 30,
+            "isActive": true,
+            "email": "john@example.com",
+            "address": {
+                "street": "123 Main St",
+                "city": "New York",
+                "country": "USA"
+            },
+            "hobbies": ["reading", "swimming", "coding"],
+            "metadata": null
+        };
+        
+        // Load saved theme
+        const savedTheme = localStorage.getItem('jsonFormatterTheme');
+        if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+        
+        // Validate JSON
+        function validateJSON(jsonString) {
+            try {
+                JSON.parse(jsonString);
+                return { valid: true, error: null };
+            } catch (e) {
+                return { 
+                    valid: false, 
+                    error: e.message,
+                    position: extractErrorPosition(e)
+                };
+            }
+        }
+        
+        // Extract error position
+        function extractErrorPosition(error) {
+            const match = error.message.match(/position (\d+)/);
+            return match ? parseInt(match[1]) : null;
+        }
+        
+        // Format JSON with syntax highlighting
+        function formatJSON(json, indent = 4) {
+            const indentChar = indent === 'tab' ? '\t' : ' '.repeat(indent);
+            const jsonString = JSON.stringify(json, null, indentChar);
+            return highlightJSON(jsonString);
+        }
+        
+        // Syntax highlighting
+        function highlightJSON(json) {
+            json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            
+            return json.replace(/(".*?")|\b(true|false|null)\b|(-?\d+\.?\d*)|([\[\]{}:,])/g, function(match) {
+                if (match.startsWith('"')) {
+                    // Check if it's a key (followed by colon) or value
+                    if (match.endsWith(':')) {
+                        return '<span class="json-key">' + match + '</span>';
+                    } else {
+                        return '<span class="json-string">' + match + '</span>';
+                    }
+                } else if (match === 'true' || match === 'false') {
+                    return '<span class="json-boolean">' + match + '</span>';
+                } else if (match === 'null') {
+                    return '<span class="json-null">' + match + '</span>';
+                } else if (/^-?\d+\.?\d*$/.test(match)) {
+                    return '<span class="json-number">' + match + '</span>';
+                } else {
+                    return '<span class="text-gray-500">' + match + '</span>';
+                }
+            });
+        }
+        
+        // Render output with line numbers
+        function renderOutput(content) {
+            const lines = content.split('\n');
+            return lines.map(line => `<div class="json-line">${line || '&nbsp;'}</div>`).join('');
+        }
+        
+        // Update stats
+        function updateStats() {
+            const text = jsonInput.value;
+            const lines = text.split('\n');
+            const bytes = new Blob([text]).size;
+            
+            charCount.textContent = text.length;
+            lineCount.textContent = lines.length;
+            size.textContent = formatBytes(bytes);
+            
+            const validation = validateJSON(text);
+            if (validation.valid) {
+                validityIcon.setAttribute('data-lucide', 'check-circle');
+                validityIcon.classList.remove('text-red-500');
+                validityIcon.classList.add('text-green-500');
+                validityText.textContent = '有效 JSON';
+                validityText.classList.remove('text-red-600', 'dark:text-red-400');
+                validityText.classList.add('text-green-600', 'dark:text-green-400');
+            } else {
+                validityIcon.setAttribute('data-lucide', 'alert-circle');
+                validityIcon.classList.remove('text-green-500');
+                validityIcon.classList.add('text-red-500');
+                validityText.textContent = '無效 JSON';
+                validityText.classList.remove('text-green-600', 'dark:text-green-400');
+                validityText.classList.add('text-red-600', 'dark:text-red-400');
+            }
+            
+            lucide.createIcons();
+        }
+        
+        // Format bytes
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Show error
+        function showError(validation) {
+            errorDisplay.classList.remove('hidden');
+            errorMessage.textContent = validation.error;
+            if (validation.position !== null) {
+                errorPosition.textContent = `錯誤位置: 第 ${validation.position} 個字元`;
+            } else {
+                errorPosition.textContent = '';
+            }
+        }
+        
+        // Hide error
+        function hideError() {
+            errorDisplay.classList.add('hidden');
+        }
+        
+        // Format JSON
+        function format() {
+            const input = jsonInput.value.trim();
+            if (!input) {
+                showToast('請輸入 JSON 數據');
+                return;
+            }
+            
+            const validation = validateJSON(input);
+            if (!validation.valid) {
+                showError(validation);
+                return;
+            }
+            
+            hideError();
+            const json = JSON.parse(input);
+            const indent = indentSize.value;
+            const formatted = formatJSON(json, indent);
+            jsonOutput.innerHTML = renderOutput(formatted);
+            showToast('JSON 已格式化');
+        }
+        
+        // Minify JSON
+        function minify() {
+            const input = jsonInput.value.trim();
+            if (!input) {
+                showToast('請輸入 JSON 數據');
+                return;
+            }
+            
+            const validation = validateJSON(input);
+            if (!validation.valid) {
+                showError(validation);
+                return;
+            }
+            
+            hideError();
+            const json = JSON.parse(input);
+            const minified = JSON.stringify(json);
+            jsonOutput.textContent = minified;
+            showToast('JSON 已壓縮');
+        }
+        
+        // Validate JSON
+        function validate() {
+            const input = jsonInput.value.trim();
+            if (!input) {
+                showToast('請輸入 JSON 數據');
+                return;
+            }
+            
+            const validation = validateJSON(input);
+            if (validation.valid) {
+                hideError();
+                showToast('JSON 驗證通過');
+            } else {
+                showError(validation);
+                showToast('JSON 驗證失敗');
+            }
+        }
+        
+        // Download JSON
+        function download() {
+            const content = jsonOutput.textContent || jsonInput.value;
+            if (!content) {
+                showToast('沒有可下載的內容');
+                return;
+            }
+            
+            const blob = new Blob([content], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'data.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('JSON 已下載');
+        }
+        
+        // Copy output
+        async function copy() {
+            const content = jsonOutput.textContent;
+            if (!content) {
+                showToast('沒有可複製的內容');
+                return;
+            }
+            
+            try {
+                await navigator.clipboard.writeText(content);
+                showToast('內容已複製到剪貼簿');
+            } catch (err) {
+                console.error('複製失敗:', err);
+                showToast('複製失敗，請重試');
+            }
+        }
+        
+        // Load example
+        function loadExampleJSON() {
+            jsonInput.value = JSON.stringify(exampleJSON, null, 4);
+            updateStats();
+            format();
+            showToast('範例已載入');
+        }
+        
+        // Clear input
+        function clear() {
+            jsonInput.value = '';
+            jsonOutput.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-sm text-center py-8">格式化後的 JSON 將顯示在這裡</p>';
+            hideError();
+            updateStats();
+            showToast('內容已清空');
+        }
+        
+        // Show toast
+        function showToast(message) {
+            toastMessage.textContent = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+        
+        // Event listeners
+        jsonInput.addEventListener('input', updateStats);
+        
+        formatBtn.addEventListener('click', format);
+        minifyBtn.addEventListener('click', minify);
+        downloadBtn.addEventListener('click', download);
+        validateBtn.addEventListener('click', validate);
+        copyOutput.addEventListener('click', copy);
+        loadExample.addEventListener('click', loadExampleJSON);
+        clearInput.addEventListener('click', clear);
+        
+        indentSize.addEventListener('change', format);
+        
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('jsonFormatterTheme', isDark ? 'dark' : 'light');
+            lucide.createIcons();
+        });
+        
+        // Auto-format on load if content exists
+        window.addEventListener('load', () => {
+            updateStats();
+            if (jsonInput.value.trim()) {
+                format();
+            }
+        });
+    </script>
+</body>
+</html>

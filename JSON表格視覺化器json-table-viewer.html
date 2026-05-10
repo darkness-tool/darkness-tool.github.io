@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON 表格視覺化器 - 將 JSON 轉換為可搜尋排序的表格</title>
+    <meta name="description" content="線上 JSON 表格視覺化工具，將 JSON 數據轉換為整潔的 HTML 表格，支援搜尋、排序和匯出。適合開發者和數據分析。">
+    <meta name="keywords" content="JSON 表格, JSON 轉換器, JSON 視覺化, 數據表格, JSON 解析">
+    <meta name="author" content="Web Tools">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="JSON 表格視覺化器 - 將 JSON 轉換為可搜尋排序的表格">
+    <meta property="og:description" content="線上 JSON 表格視覺化工具，將 JSON 數據轉換為整潔的 HTML 表格。">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="JSON 表格視覺化器 - 將 JSON 轉換為可搜尋排序的表格">
+    <meta name="twitter:description" content="線上 JSON 表格視覺化工具，將 JSON 數據轉換為整潔的 HTML 表格。">
+
+    <script src="load_index_common.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    
+    <!-- Schema.org -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "JSON 表格視覺化器",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "TWD"
+        },
+        "description": "線上 JSON 表格視覺化工具，將 JSON 數據轉換為整潔的 HTML 表格，支援搜尋、排序和匯出。",
+        "featureList": ["即時解析", "表格顯示", "欄位排序", "內容搜尋", "CSV匯出", "語法高亮"],
+        "browserRequirements": "需要 JavaScript"
+    }
+    </script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#059669',
+                        secondary: '#0891b2',
+                        dark: '#1f2937',
+                        darker: '#111827'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+        
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+        
+        .code-editor {
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        .sortable-header {
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        
+        .sortable-header:hover {
+            background-color: rgba(5, 150, 105, 0.1);
+        }
+        
+        .sort-icon {
+            opacity: 0.3;
+            transition: opacity 0.2s ease;
+        }
+        
+        .sort-icon.active {
+            opacity: 1;
+        }
+        
+        .highlight-match {
+            background-color: rgba(251, 191, 36, 0.3);
+            font-weight: 600;
+        }
+        
+        .json-editor {
+            tab-size: 2;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 dark:from-darker dark:via-gray-900 dark:to-gray-900 min-h-screen transition-colors duration-200">
+    
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-dark/80 backdrop-blur-sm border-b border-emerald-100 dark:border-gray-700 transition-colors duration-200">
+        <div class="max-w-6xl mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center">
+                        <i data-lucide="braces" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-semibold text-gray-900 dark:text-gray-100">JSON 表格視覺化器</h1>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">將 JSON 轉換為可搜尋排序的表格</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <!-- Load Example -->
+                    <button 
+                        id="loadExampleBtn" 
+                        class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                        aria-label="載入範例"
+                    >
+                        <i data-lucide="file-code" class="w-5 h-5"></i>
+                    </button>
+                    
+                    <!-- Theme Toggle -->
+                    <button 
+                        id="themeToggle" 
+                        class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                        aria-label="切換深色模式"
+                    >
+                        <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
+                        <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 py-20">
+        
+        <!-- Input Section -->
+        <section class="bg-white dark:bg-dark rounded-xl shadow-lg p-6 mb-6 border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="code-2" class="w-5 h-5 text-primary"></i>
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">輸入 JSON</h2>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button 
+                        id="formatBtn" 
+                        class="flex items-center gap-1 px-3 py-1.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg text-sm font-medium transition-colors"
+                    >
+                        <i data-lucide="align-left" class="w-4 h-4"></i>
+                        格式化
+                    </button>
+                    <button 
+                        id="clearBtn" 
+                        class="flex items-center gap-1 px-3 py-1.5 bg-red-100 text-red-600 hover:bg-red-200 rounded-lg text-sm font-medium transition-colors"
+                    >
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        清空
+                    </button>
+                    <button 
+                        id="convertBtn" 
+                        class="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg hover:from-emerald-600 hover:to-teal-600 transition-all shadow-md font-medium"
+                    >
+                        <i data-lucide="table" class="w-5 h-5"></i>
+                        轉換為表格
+                    </button>
+                </div>
+            </div>
+            <textarea 
+                id="jsonInput" 
+                class="code-editor json-editor w-full h-64 px-4 py-3 bg-gray-50 dark:bg-darker border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:border-primary focus:outline-none resize-y text-sm text-gray-800 dark:text-gray-200"
+                placeholder="在此貼上 JSON 數據...
+
+範例格式：
+[
+  {&quot;id&quot;: 1, &quot;name&quot;: &quot;John&quot;, &quot;age&quot;: 25},
+  {&quot;id&quot;: 2, &quot;name&quot;: &quot;Jane&quot;, &quot;age&quot;: 30}
+]"
+            ></textarea>
+            <div id="errorDisplay" class="hidden mt-3 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                <div class="flex items-start gap-2">
+                    <i data-lucide="alert-circle" class="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5"></i>
+                    <div>
+                        <p class="font-medium text-red-600 dark:text-red-400">JSON 解析錯誤</p>
+                        <p id="errorMessage" class="text-sm text-red-600 dark:text-red-400 mt-1"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Table Section -->
+        <section id="tableSection" class="hidden">
+            <!-- Toolbar -->
+            <div class="bg-white dark:bg-dark rounded-t-xl shadow-lg p-4 border border-gray-200 dark:border-gray-700 border-b-0 transition-colors duration-200">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                    <!-- Search -->
+                    <div class="flex-1 w-full">
+                        <div class="relative">
+                            <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                            <input 
+                                type="text" 
+                                id="searchInput" 
+                                class="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-darker border border-gray-200 dark:border-gray-700 rounded-lg focus:border-primary focus:outline-none text-sm"
+                                placeholder="搜尋表格內容..."
+                            >
+                        </div>
+                    </div>
+                    
+                    <!-- Row Count -->
+                    <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                        <i data-lucide="database" class="w-4 h-4"></i>
+                        <span>共 <span id="rowCount">0</span> 筆資料</span>
+                        <span id="filteredCount" class="hidden">(篩選後: <span>0</span> 筆)</span>
+                    </div>
+                    
+                    <!-- Actions -->
+                    <div class="flex items-center gap-2">
+                        <button 
+                            id="exportCsvBtn" 
+                            class="flex items-center gap-1 px-3 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg text-sm font-medium transition-colors"
+                        >
+                            <i data-lucide="download" class="w-4 h-4"></i>
+                            匯出 CSV
+                        </button>
+                        <button 
+                            id="exportHtmlBtn" 
+                            class="flex items-center gap-1 px-3 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg text-sm font-medium transition-colors"
+                        >
+                            <i data-lucide="file-code" class="w-4 h-4"></i>
+                            匯出 HTML
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Table -->
+            <div class="bg-white dark:bg-dark rounded-b-xl shadow-lg border border-gray-200 dark:border-gray-700 border-t-0 overflow-hidden transition-colors duration-200">
+                <div class="table-container">
+                    <table class="w-full">
+                        <thead class="bg-gray-50 dark:bg-darker border-b border-gray-200 dark:border-gray-700">
+                            <tr id="tableHeader">
+                                <!-- Headers will be generated by JS -->
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <!-- Rows will be generated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="emptyState" class="hidden p-12 text-center">
+                    <i data-lucide="search-x" class="w-16 h-16 mx-auto text-gray-300 dark:text-gray-600 mb-4"></i>
+                    <p class="text-gray-500 dark:text-gray-400">找不到符合的結果</p>
+                </div>
+            </div>
+            
+            <!-- Pagination -->
+            <div id="pagination" class="bg-white dark:bg-dark rounded-xl shadow-lg mt-4 p-4 border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                        <span>每頁顯示:</span>
+                        <select id="pageSize" class="px-2 py-1 bg-gray-50 dark:bg-darker border border-gray-200 dark:border-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-primary">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                        <span>筆</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button id="prevPage" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors" disabled>
+                            <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                        </button>
+                        <span class="text-sm text-gray-600 dark:text-gray-400">
+                            第 <span id="currentPage">1</span> / <span id="totalPages">1</span> 頁
+                        </span>
+                        <button id="nextPage" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors" disabled>
+                            <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Tips Section -->
+        <section class="mt-6 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl shadow-lg p-6 border border-blue-100 dark:border-blue-800 transition-colors duration-200">
+            <div class="flex items-center gap-2 mb-4">
+                <i data-lucide="lightbulb" class="w-5 h-5 text-blue-600"></i>
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">使用提示</h2>
+            </div>
+            <ul class="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                <li class="flex items-start gap-2">
+                    <i data-lucide="check-circle" class="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5"></i>
+                    <span>支援巢狀物件和陣列，會自動展開顯示</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <i data-lucide="check-circle" class="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5"></i>
+                    <span>點擊欄位標題可進行升序/降序排序</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <i data-lucide="check-circle" class="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5"></i>
+                    <span>使用搜尋框可快速過濾表格內容</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <i data-lucide="check-circle" class="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5"></i>
+                    <span>可匯出為 CSV 或 HTML 格式</span>
+                </li>
+            </ul>
+        </section>
+    </main>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-gray-900 text-white px-4 py-2 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-2" role="alert" aria-live="polite">
+        <i data-lucide="check-circle" class="w-4 h-4 text-green-400"></i>
+        <span id="toastMessage">操作成功</span>
+    </div>
+    
+    <script>
+        // Initialize icons
+        lucide.createIcons();
+        
+        // DOM Elements
+        const jsonInput = document.getElementById('jsonInput');
+        const formatBtn = document.getElementById('formatBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const convertBtn = document.getElementById('convertBtn');
+        const loadExampleBtn = document.getElementById('loadExampleBtn');
+        const errorDisplay = document.getElementById('errorDisplay');
+        const errorMessage = document.getElementById('errorMessage');
+        const tableSection = document.getElementById('tableSection');
+        const tableHeader = document.getElementById('tableHeader');
+        const tableBody = document.getElementById('tableBody');
+        const searchInput = document.getElementById('searchInput');
+        const rowCount = document.getElementById('rowCount');
+        const filteredCount = document.getElementById('filteredCount');
+        const exportCsvBtn = document.getElementById('exportCsvBtn');
+        const exportHtmlBtn = document.getElementById('exportHtmlBtn');
+        const emptyState = document.getElementById('emptyState');
+        const pageSize = document.getElementById('pageSize');
+        const prevPage = document.getElementById('prevPage');
+        const nextPage = document.getElementById('nextPage');
+        const currentPageEl = document.getElementById('currentPage');
+        const totalPagesEl = document.getElementById('totalPages');
+        const themeToggle = document.getElementById('themeToggle');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        
+        // Example data
+        const EXAMPLE_JSON = `[
+  {
+    "id": 1,
+    "name": "張三",
+    "age": 25,
+    "email": "zhangsan@example.com",
+    "city": "台北",
+    "salary": 50000,
+    "department": "研發部"
+  },
+  {
+    "id": 2,
+    "name": "李四",
+    "age": 30,
+    "email": "lisi@example.com",
+    "city": "高雄",
+    "salary": 65000,
+    "department": "行銷部"
+  },
+  {
+    "id": 3,
+    "name": "王五",
+    "age": 28,
+    "email": "wangwu@example.com",
+    "city": "台中",
+    "salary": 55000,
+    "department": "研發部"
+  },
+  {
+    "id": 4,
+    "name": "趙六",
+    "age": 35,
+    "email": "zhaoliu@example.com",
+    "city": "台北",
+    "salary": 75000,
+    "department": "管理部"
+  },
+  {
+    "id": 5,
+    "name": "錢七",
+    "age": 27,
+    "email": "qianqi@example.com",
+    "city": "新竹",
+    "salary": 58000,
+    "department": "研發部"
+  }
+]`;
+        
+        // State
+        let tableData = [];
+        let filteredData = [];
+        let headers = [];
+        let sortColumn = null;
+        let sortDirection = 'asc';
+        let currentPage = 1;
+        let currentPageSize = 10;
+        
+        // Load saved theme
+        const savedTheme = localStorage.getItem('jsonTableViewerTheme');
+        if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+        
+        // Format JSON
+        function formatJson() {
+            const input = jsonInput.value.trim();
+            if (!input) return;
+            
+            try {
+                const parsed = JSON.parse(input);
+                jsonInput.value = JSON.stringify(parsed, null, 2);
+                errorDisplay.classList.add('hidden');
+                showToast('JSON 已格式化');
+            } catch (e) {
+                showError(e.message);
+            }
+        }
+        
+        // Parse and convert to table
+        function convertToTable() {
+            const input = jsonInput.value.trim();
+            if (!input) {
+                showToast('請輸入 JSON 數據');
+                return;
+            }
+            
+            try {
+                const parsed = JSON.parse(input);
+                
+                // Handle different data structures
+                if (Array.isArray(parsed)) {
+                    tableData = parsed;
+                } else if (typeof parsed === 'object') {
+                    // Try to find array in object
+                    const arrayKey = Object.keys(parsed).find(key => Array.isArray(parsed[key]));
+                    if (arrayKey) {
+                        tableData = parsed[arrayKey];
+                    } else {
+                        // Treat as single object
+                        tableData = [parsed];
+                    }
+                } else {
+                    throw new Error('JSON 必須是物件或陣列');
+                }
+                
+                // Extract headers
+                headers = new Set();
+                tableData.forEach(item => {
+                    if (typeof item === 'object' && item !== null) {
+                        Object.keys(item).forEach(key => headers.add(key));
+                    }
+                });
+                headers = Array.from(headers);
+                
+                filteredData = [...tableData];
+                sortColumn = null;
+                sortDirection = 'asc';
+                currentPage = 1;
+                
+                errorDisplay.classList.add('hidden');
+                tableSection.classList.remove('hidden');
+                
+                renderTable();
+                updatePagination();
+                
+                rowCount.textContent = tableData.length;
+                showToast(`成功轉換 ${tableData.length} 筆資料`);
+            } catch (e) {
+                showError(e.message);
+            }
+        }
+        
+        // Show error
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorDisplay.classList.remove('hidden');
+        }
+        
+        // Render table header
+        function renderHeader() {
+            tableHeader.innerHTML = headers.map(header => `
+                <th class="sortable-header px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider" data-column="${header}">
+                    <div class="flex items-center gap-1">
+                        <span>${header}</span>
+                        <i data-lucide="${sortColumn === header ? (sortDirection === 'asc' ? 'chevron-up' : 'chevron-down') : 'chevrons-up-down'}" class="sort-icon w-4 h-4 ${sortColumn === header ? 'active' : ''}"></i>
+                    </div>
+                </th>
+            `).join('');
+            
+            tableHeader.querySelectorAll('.sortable-header').forEach(th => {
+                th.addEventListener('click', () => sortTable(th.dataset.column));
+            });
+            
+            lucide.createIcons();
+        }
+        
+        // Render table body
+        function renderBody() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const paginatedData = getPaginatedData();
+            
+            if (paginatedData.length === 0) {
+                tableBody.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            
+            emptyState.classList.add('hidden');
+            
+            tableBody.innerHTML = paginatedData.map((row, index) => `
+                <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${index % 2 === 0 ? 'bg-white dark:bg-dark' : 'bg-gray-50/50 dark:bg-gray-800/50'}">
+                    ${headers.map(header => {
+                        const value = getCellValue(row, header);
+                        const displayValue = formatCellValue(value);
+                        return `
+                            <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
+                                ${highlightMatch(displayValue, searchTerm)}
+                            </td>
+                        `;
+                    }).join('')}
+                </tr>
+            `).join('');
+        }
+        
+        // Get cell value (handle nested objects)
+        function getCellValue(row, header) {
+            const keys = header.split('.');
+            let value = row;
+            
+            for (const key of keys) {
+                if (value && typeof value === 'object') {
+                    value = value[key];
+                } else {
+                    return undefined;
+                }
+            }
+            
+            return value;
+        }
+        
+        // Format cell value for display
+        function formatCellValue(value) {
+            if (value === null || value === undefined) return '-';
+            if (typeof value === 'object') return JSON.stringify(value);
+            return String(value);
+        }
+        
+        // Highlight matching text
+        function highlightMatch(text, searchTerm) {
+            if (!searchTerm) return text;
+            
+            const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[]\]/g, '\\$&')})`, 'gi');
+            return text.replace(regex, '<span class="highlight-match">$1</span>');
+        }
+        
+        // Sort table
+        function sortTable(column) {
+            if (sortColumn === column) {
+                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortColumn = column;
+                sortDirection = 'asc';
+            }
+            
+            filteredData.sort((a, b) => {
+                const valueA = getCellValue(a, column);
+                const valueB = getCellValue(b, column);
+                
+                if (valueA === valueB) return 0;
+                if (valueA == null) return 1;
+                if (valueB == null) return -1;
+                
+                const comparison = valueA < valueB ? -1 : 1;
+                return sortDirection === 'asc' ? comparison : -comparison;
+            });
+            
+            renderHeader();
+            renderBody();
+        }
+        
+        // Filter data based on search
+        function filterData() {
+            const searchTerm = searchInput.value.toLowerCase();
+            
+            if (!searchTerm) {
+                filteredData = [...tableData];
+                filteredCount.classList.add('hidden');
+            } else {
+                filteredData = tableData.filter(row => {
+                    return headers.some(header => {
+                        const value = getCellValue(row, header);
+                        if (value == null) return false;
+                        const displayValue = formatCellValue(value);
+                        return displayValue.toLowerCase().includes(searchTerm);
+                    });
+                });
+                
+                filteredCount.classList.remove('hidden');
+                filteredCount.querySelector('span').textContent = filteredData.length;
+            }
+            
+            currentPage = 1;
+            updatePagination();
+            renderBody();
+        }
+        
+        // Get paginated data
+        function getPaginatedData() {
+            const start = (currentPage - 1) * currentPageSize;
+            const end = start + currentPageSize;
+            return filteredData.slice(start, end);
+        }
+        
+        // Update pagination
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredData.length / currentPageSize) || 1;
+            
+            currentPageEl.textContent = currentPage;
+            totalPagesEl.textContent = totalPages;
+            
+            prevPage.disabled = currentPage === 1;
+            nextPage.disabled = currentPage === totalPages;
+        }
+        
+        // Export as CSV
+        function exportCsv() {
+            if (filteredData.length === 0) {
+                showToast('沒有資料可匯出');
+                return;
+            }
+            
+            const csvContent = [
+                headers.join(','),
+                ...filteredData.map(row => 
+                    headers.map(header => {
+                        const value = getCellValue(row, header);
+                        const displayValue = formatCellValue(value);
+                        return `"${displayValue.replace(/"/g, '""')}"`;
+                    }).join(',')
+                )
+            ].join('\n');
+            
+            const blob = new Blob(['﻿' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `json-table-${Date.now()}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('CSV 已匯出');
+        }
+        
+        // Export as HTML
+        function exportHtml() {
+            if (filteredData.length === 0) {
+                showToast('沒有資料可匯出');
+                return;
+            }
+            
+            const htmlContent = `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>JSON Table Export</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f5f5f5; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+    </style>
+</head>
+<body>
+    <table>
+        <thead>
+            <tr>
+                ${headers.map(header => `<th>${header}</th>`).join('')}
+            </tr>
+        </thead>
+        <tbody>
+            ${filteredData.map(row => `
+                <tr>
+                    ${headers.map(header => {
+                        const value = getCellValue(row, header);
+                        const displayValue = formatCellValue(value);
+                        return `<td>${displayValue}</td>`;
+                    }).join('')}
+                </tr>
+            `).join('')}
+        </tbody>
+    </table>
+</body>
+</html>`;
+            
+            const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `json-table-${Date.now()}.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('HTML 已匯出');
+        }
+        
+        // Load example
+        function loadExample() {
+            jsonInput.value = EXAMPLE_JSON;
+            errorDisplay.classList.add('hidden');
+            showToast('範例已載入');
+        }
+        
+        // Clear input
+        function clearInput() {
+            jsonInput.value = '';
+            errorDisplay.classList.add('hidden');
+            tableSection.classList.add('hidden');
+            showToast('已清空');
+        }
+        
+        // Show toast
+        function showToast(message) {
+            toastMessage.textContent = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+        
+        // Render complete table
+        function renderTable() {
+            renderHeader();
+            renderBody();
+        }
+        
+        // Event listeners
+        formatBtn.addEventListener('click', formatJson);
+        clearBtn.addEventListener('click', clearInput);
+        convertBtn.addEventListener('click', convertToTable);
+        loadExampleBtn.addEventListener('click', loadExample);
+        searchInput.addEventListener('input', filterData);
+        
+        exportCsvBtn.addEventListener('click', exportCsv);
+        exportHtmlBtn.addEventListener('click', exportHtml);
+        
+        pageSize.addEventListener('change', (e) => {
+            currentPageSize = parseInt(e.target.value);
+            currentPage = 1;
+            updatePagination();
+            renderBody();
+        });
+        
+        prevPage.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                updatePagination();
+                renderBody();
+            }
+        });
+        
+        nextPage.addEventListener('click', () => {
+            const totalPages = Math.ceil(filteredData.length / currentPageSize);
+            if (currentPage < totalPages) {
+                currentPage++;
+                updatePagination();
+                renderBody();
+            }
+        });
+        
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('jsonTableViewerTheme', isDark ? 'dark' : 'light');
+            lucide.createIcons();
+        });
+        
+        // Initialize
+        lucide.createIcons();
+    </script>
+</body>
+</html>

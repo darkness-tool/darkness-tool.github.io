@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVG 圖案製作器 - 創作獨特背景圖案</title>
+    <meta name="description" content="線上 SVG 圖案製作工具，重複簡單形狀並隨機偏移，創作獨特背景圖案。支援多種形狀、顏色和大小調整，可匯出 SVG。">
+    <meta name="keywords" content="SVG 圖案, 背景圖案, 幾何圖案, 設計工具, SVG 製作器, 圖案生成">
+    <meta name="author" content="Web Tools">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="SVG 圖案製作器 - 創作獨特背景圖案">
+    <meta property="og:description" content="線上 SVG 圖案製作工具，重複簡單形狀並隨機偏移，創作獨特背景圖案。">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SVG 圖案製作器 - 創作獨特背景圖案">
+    <meta name="twitter:description" content="線上 SVG 圖案製作工具，重複簡單形狀並隨機偏移。">
+    
+    <script src="load_index_common.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    
+    <!-- Schema.org -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "SVG 圖案製作器",
+        "applicationCategory": "DesignApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "TWD"
+        },
+        "description": "線上 SVG 圖案製作工具，重複簡單形狀並隨機偏移，創作獨特背景圖案。支援多種形狀、顏色和大小調整，可匯出 SVG。",
+        "featureList": ["多種形狀", "隨機偏移", "即時預覽", "SVG 匯出", "PNG 匯出", "深色模式"],
+        "browserRequirements": "需要 JavaScript"
+    }
+    </script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#06b6d4',
+                        secondary: '#8b5cf6',
+                        dark: '#1f2937',
+                        darker: '#111827'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+        
+        .pattern-preview {
+            background-repeat: repeat;
+        }
+        
+        .shape-btn {
+            transition: all 0.2s ease;
+        }
+        
+        .shape-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .shape-btn.active {
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+        }
+        
+        .slider {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(to right, #e0e0e0, #9e9e9e);
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #06b6d4, #8b5cf6);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        
+        .slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #06b6d4, #8b5cf6);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            border: none;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-cyan-50 via-blue-50 to-purple-50 dark:from-darker dark:via-gray-900 dark:to-gray-900 min-h-screen transition-colors duration-200">
+    
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-dark/80 backdrop-blur-sm border-b border-cyan-100 dark:border-gray-700 transition-colors duration-200">
+        <div class="max-w-4xl mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-purple-500 flex items-center justify-center">
+                        <i data-lucide="svg" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-semibold text-gray-900 dark:text-gray-100">SVG 圖案製作器</h1>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">創作獨特背景圖案</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <!-- Randomize -->
+                    <button 
+                        id="randomizeBtn" 
+                        class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                        aria-label="隨機化"
+                    >
+                        <i data-lucide="shuffle" class="w-5 h-5"></i>
+                    </button>
+                    
+                    <!-- Theme Toggle -->
+                    <button 
+                        id="themeToggle" 
+                        class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                        aria-label="切換深色模式"
+                    >
+                        <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
+                        <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-20">
+        
+        <!-- Pattern Preview -->
+        <section class="bg-white dark:bg-dark rounded-xl shadow-lg p-6 mb-6 border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="eye" class="w-5 h-5 text-primary"></i>
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">預覽</h2>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span id="canvasSize" class="text-xs text-gray-500 dark:text-gray-400">512 × 512</span>
+                </div>
+            </div>
+            <div 
+                id="patternPreview" 
+                class="pattern-preview w-full aspect-square rounded-xl border-2 border-gray-200 dark:border-gray-700 transition-all duration-300"
+            >
+                <!-- Pattern will be generated by JS -->
+            </div>
+        </section>
+        
+        <!-- Shape Selection -->
+        <section class="bg-white dark:bg-dark rounded-xl shadow-lg p-6 mb-6 border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+            <div class="flex items-center gap-2 mb-4">
+                <i data-lucide="shapes" class="w-5 h-5 text-secondary"></i>
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">選擇形狀</h2>
+            </div>
+            <div class="grid grid-cols-4 sm:grid-cols-8 gap-3" id="shapeGrid">
+                <button class="shape-btn active p-4 rounded-xl bg-gray-100 dark:bg-gray-700 flex flex-col items-center gap-1" data-shape="circle">
+                    <div class="w-8 h-8 rounded-full bg-current"></div>
+                    <span class="text-xs">圓形</span>
+                </button>
+                <button class="shape-btn p-4 rounded-xl bg-gray-100 dark:bg-gray-700 flex flex-col items-center gap-1" data-shape="square">
+                    <div class="w-8 h-8 bg-current"></div>
+                    <span class="text-xs">方形</span>
+                </button>
+                <button class="shape-btn p-4 rounded-xl bg-gray-100 dark:bg-gray-700 flex flex-col items-center gap-1" data-shape="triangle">
+                    <div class="w-0 h-0" style="border-left: 16px solid transparent; border-right: 16px solid transparent; border-bottom: 28px solid currentColor;"></div>
+                    <span class="text-xs">三角形</span>
+                </button>
+                <button class="shape-btn p-4 rounded-xl bg-gray-100 dark:bg-gray-700 flex flex-col items-center gap-1" data-shape="diamond">
+                    <div class="w-6 h-6 bg-current" style="transform: rotate(45deg);"></div>
+                    <span class="text-xs">菱形</span>
+                </button>
+                <button class="shape-btn p-4 rounded-xl bg-gray-100 dark:bg-gray-700 flex flex-col items-center gap-1" data-shape="star">
+                    <i data-lucide="star" class="w-8 h-8 fill-current"></i>
+                    <span class="text-xs">星形</span>
+                </button>
+                <button class="shape-btn p-4 rounded-xl bg-gray-100 dark:bg-gray-700 flex flex-col items-center gap-1" data-shape="hexagon">
+                    <i data-lucide="hexagon" class="w-8 h-8 fill-current"></i>
+                    <span class="text-xs">六邊形</span>
+                </button>
+                <button class="shape-btn p-4 rounded-xl bg-gray-100 dark:bg-gray-700 flex flex-col items-center gap-1" data-shape="cross">
+                    <span class="text-3xl">✝</span>
+                    <span class="text-xs">十字</span>
+                </button>
+                <button class="shape-btn p-4 rounded-xl bg-gray-100 dark:bg-gray-700 flex flex-col items-center gap-1" data-shape="heart">
+                    <span class="text-3xl">❤</span>
+                    <span class="text-xs">愛心</span>
+                </button>
+            </div>
+        </section>
+        
+        <!-- Pattern Settings -->
+        <section class="bg-white dark:bg-dark rounded-xl shadow-lg p-6 mb-6 border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+            <div class="flex items-center gap-2 mb-6">
+                <i data-lucide="sliders" class="w-5 h-5 text-primary"></i>
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">圖案設定</h2>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Colors -->
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">主要顏色</label>
+                        <div class="flex items-center gap-3">
+                            <input type="color" id="primaryColor" value="#06b6d4" class="w-12 h-12 rounded-lg cursor-pointer border-2 border-gray-200 dark:border-gray-700">
+                            <input type="text" id="primaryColorHex" value="#06b6d4" class="flex-1 px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary text-gray-900 dark:text-gray-100">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">次要顏色</label>
+                        <div class="flex items-center gap-3">
+                            <input type="color" id="secondaryColor" value="#8b5cf6" class="w-12 h-12 rounded-lg cursor-pointer border-2 border-gray-200 dark:border-gray-700">
+                            <input type="text" id="secondaryColorHex" value="#8b5cf6" class="flex-1 px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary text-gray-900 dark:text-gray-100">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">背景顏色</label>
+                        <div class="flex items-center gap-3">
+                            <input type="color" id="bgColor" value="#ffffff" class="w-12 h-12 rounded-lg cursor-pointer border-2 border-gray-200 dark:border-gray-700">
+                            <input type="text" id="bgColorHex" value="#ffffff" class="flex-1 px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary text-gray-900 dark:text-gray-100">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Size & Spacing -->
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">形狀大小</label>
+                            <span id="sizeValue" class="text-sm text-gray-500 dark:text-gray-400">30px</span>
+                        </div>
+                        <input type="range" id="sizeSlider" class="slider w-full" min="5" max="80" value="30">
+                    </div>
+                    
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">間距</label>
+                            <span id="spacingValue" class="text-sm text-gray-500 dark:text-gray-400">20px</span>
+                        </div>
+                        <input type="range" id="spacingSlider" class="slider w-full" min="5" max="80" value="20">
+                    </div>
+                    
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">旋轉角度</label>
+                            <span id="rotationValue" class="text-sm text-gray-500 dark:text-gray-400">0°</span>
+                        </div>
+                        <input type="range" id="rotationSlider" class="slider w-full" min="0" max="360" value="0">
+                    </div>
+                    
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">隨機偏移</label>
+                            <span id="offsetValue" class="text-sm text-gray-500 dark:text-gray-400">10px</span>
+                        </div>
+                        <input type="range" id="offsetSlider" class="slider w-full" min="0" max="50" value="10">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Options -->
+            <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <div class="flex flex-wrap gap-4">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="alternateColors" class="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary">
+                        <span class="text-sm text-gray-700 dark:text-gray-300">交替顏色</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="randomRotation" class="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary">
+                        <span class="text-sm text-gray-700 dark:text-gray-300">隨機旋轉</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="varySizes" class="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary">
+                        <span class="text-sm text-gray-700 dark:text-gray-300">大小變化</span>
+                    </label>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Export -->
+        <section class="bg-white dark:bg-dark rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+            <div class="flex items-center gap-2 mb-4">
+                <i data-lucide="download" class="w-5 h-5 text-green-600"></i>
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">匯出</h2>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-4">
+                <button id="exportSvg" class="flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl hover:from-cyan-600 hover:to-blue-600 transition-all shadow-lg font-medium">
+                    <i data-lucide="file-code" class="w-5 h-5"></i>
+                    匯出 SVG
+                </button>
+                <button id="exportPng" class="flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg font-medium">
+                    <i data-lucide="file-image" class="w-5 h-5"></i>
+                    匯出 PNG
+                </button>
+            </div>
+        </section>
+        
+    </main>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-gray-900 text-white px-4 py-2 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-2" role="alert" aria-live="polite">
+        <i data-lucide="check-circle" class="w-4 h-4 text-green-400"></i>
+        <span id="toastMessage">操作成功</span>
+    </div>
+    
+    <script>
+        // Initialize icons
+        lucide.createIcons();
+        
+        // DOM Elements
+        const patternPreview = document.getElementById('patternPreview');
+        const shapeGrid = document.getElementById('shapeGrid');
+        const primaryColor = document.getElementById('primaryColor');
+        const secondaryColor = document.getElementById('secondaryColor');
+        const bgColor = document.getElementById('bgColor');
+        const primaryColorHex = document.getElementById('primaryColorHex');
+        const secondaryColorHex = document.getElementById('secondaryColorHex');
+        const bgColorHex = document.getElementById('bgColorHex');
+        const sizeSlider = document.getElementById('sizeSlider');
+        const spacingSlider = document.getElementById('spacingSlider');
+        const rotationSlider = document.getElementById('rotationSlider');
+        const offsetSlider = document.getElementById('offsetSlider');
+        const sizeValue = document.getElementById('sizeValue');
+        const spacingValue = document.getElementById('spacingValue');
+        const rotationValue = document.getElementById('rotationValue');
+        const offsetValue = document.getElementById('offsetValue');
+        const alternateColors = document.getElementById('alternateColors');
+        const randomRotation = document.getElementById('randomRotation');
+        const varySizes = document.getElementById('varySizes');
+        const exportSvg = document.getElementById('exportSvg');
+        const exportPng = document.getElementById('exportPng');
+        const randomizeBtn = document.getElementById('randomizeBtn');
+        const themeToggle = document.getElementById('themeToggle');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        
+        // State
+        let currentShape = 'circle';
+        let patternSvg = null;
+        
+        // Load saved theme
+        const savedTheme = localStorage.getItem('svgPatternMakerTheme');
+        if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+        
+        // Generate pattern SVG
+        function generatePattern() {
+            const size = parseInt(sizeSlider.value);
+            const spacing = parseInt(spacingSlider.value);
+            const rotation = parseInt(rotationSlider.value);
+            const offset = parseInt(offsetSlider.value);
+            const alternate = alternateColors.checked;
+            const randRotation = randomRotation.checked;
+            const varySize = varySizes.checked;
+            
+            const primary = primaryColor.value;
+            const secondary = secondaryColor.value;
+            const bg = bgColor.value;
+            
+            const cellSize = size + spacing;
+            const canvasSize = 512;
+            const cols = Math.ceil(canvasSize / cellSize);
+            const rows = Math.ceil(canvasSize / cellSize);
+            
+            let svgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="${canvasSize}" height="${canvasSize}" viewBox="0 0 ${canvasSize} ${canvasSize}">`;
+            svgContent += `<rect width="${canvasSize}" height="${canvasSize}" fill="${bg}"/>`;
+            
+            let isAlternate = false;
+            
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    const x = col * cellSize + (Math.random() - 0.5) * offset * 2 + size / 2;
+                    const y = row * cellSize + (Math.random() - 0.5) * offset * 2 + size / 2;
+                    
+                    const currentColor = alternate && isAlternate ? secondary : primary;
+                    const currentSize = varySize ? size * (0.5 + Math.random()) : size;
+                    const currentRotation = randRotation ? Math.random() * 360 : rotation;
+                    
+                    let shapeElement = '';
+                    const colorAttr = `fill="${currentColor}"`;
+                    
+                    switch (currentShape) {
+                        case 'circle':
+                            shapeElement = `<circle cx="${x}" cy="${y}" r="${currentSize / 2}" ${colorAttr}/>`;
+                            break;
+                        case 'square':
+                            shapeElement = `<rect x="${x - currentSize / 2}" y="${y - currentSize / 2}" width="${currentSize}" height="${currentSize}" ${colorAttr}/>`;
+                            break;
+                        case 'triangle':
+                            const h = currentSize * 0.866;
+                            shapeElement = `<polygon points="${x},${y - h/2} ${x - currentSize/2},${y + h/2} ${x + currentSize/2},${y + h/2}" ${colorAttr}/>`;
+                            break;
+                        case 'diamond':
+                            shapeElement = `<rect x="${x - currentSize / 2}" y="${y - currentSize / 2}" width="${currentSize}" height="${currentSize}" transform="rotate(45 ${x} ${y})" ${colorAttr}/>`;
+                            break;
+                        case 'star':
+                            const starSize = currentSize / 2;
+                            const starPoints = '12,2 15,9 22,9 17,14 20,21 12,17 4,21 7,14 2,9 9,9';
+                            shapeElement = `<polygon points="${starPoints}" fill="${currentColor}" transform="translate(${x - 12}, ${y - 12}) scale(${starSize / 10})"/>`;
+                            break;
+                        case 'hexagon':
+                            const hexSize = currentSize / 2;
+                            const hexPoints = `0,-${hexSize} ${hexSize * 0.866},-${hexSize / 2} ${hexSize * 0.866},${hexSize / 2} 0,${hexSize} -${hexSize * 0.866},${hexSize / 2} -${hexSize * 0.866},-${hexSize / 2}`;
+                            shapeElement = `<polygon points="${hexPoints}" fill="${currentColor}" transform="translate(${x}, ${y}) rotate(${currentRotation})"/>`;
+                            break;
+                        case 'cross':
+                            shapeElement = `<path d="M${x - currentSize/4},${y - currentSize} L${x + currentSize/4},${y - currentSize} L${x + currentSize/4},${y - currentSize/4} L${x + currentSize},${y - currentSize/4} L${x + currentSize},${y + currentSize/4} L${x + currentSize/4},${y + currentSize/4} L${x + currentSize/4},${y + currentSize} L${x - currentSize/4},${y + currentSize} L${x - currentSize/4},${y + currentSize/4} L${x - currentSize},${y + currentSize/4} L${x - currentSize},${y - currentSize/4} L${x - currentSize/4},${y - currentSize/4} Z" fill="${currentColor}" transform="rotate(${currentRotation} ${x} ${y})"/>`;
+                            break;
+                        case 'heart':
+                            const heartSize = currentSize / 2;
+                            shapeElement = `<path d="M${x},${y + heartSize/2} C${x - heartSize},${y - heartSize/2} ${x - heartSize},${y - heartSize} ${x},${y - heartSize/4} C${x + heartSize},${y - heartSize} ${x + heartSize},${y - heartSize/2} ${x},${y + heartSize/2} Z" fill="${currentColor}" transform="rotate(${currentRotation} ${x} ${y})"/>`;
+                            break;
+                    }
+                    
+                    svgContent += shapeElement;
+                    isAlternate = !isAlternate;
+                }
+            }
+            
+            svgContent += '</svg>';
+            
+            patternSvg = svgContent;
+            
+            // Create blob URL and set as background
+            const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            patternPreview.style.backgroundImage = `url(${url})`;
+            patternPreview.style.backgroundColor = bg;
+        }
+        
+        // Export SVG
+        function exportAsSvg() {
+            if (!patternSvg) {
+                showToast('請先生成圖案');
+                return;
+            }
+            
+            const blob = new Blob([patternSvg], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `pattern-${Date.now()}.svg`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('SVG 已匯出');
+        }
+        
+        // Export PNG
+        function exportAsPng() {
+            if (!patternSvg) {
+                showToast('請先生成圖案');
+                return;
+            }
+            
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024;
+            canvas.height = 1024;
+            const ctx = canvas.getContext('2d');
+            
+            const img = new Image();
+            const blob = new Blob([patternSvg], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            
+            img.onload = () => {
+                ctx.fillStyle = bgColor.value;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                const pattern = ctx.createPattern(img, 'repeat');
+                ctx.fillStyle = pattern;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                const pngUrl = canvas.toDataURL('image/png');
+                const a = document.createElement('a');
+                a.href = pngUrl;
+                a.download = `pattern-${Date.now()}.png`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                URL.revokeObjectURL(pngUrl);
+                showToast('PNG 已匯出');
+            };
+            
+            img.src = url;
+        }
+        
+        // Randomize settings
+        function randomize() {
+            const shapes = ['circle', 'square', 'triangle', 'diamond', 'star', 'hexagon', 'cross', 'heart'];
+            const randomShape = shapes[Math.floor(Math.random() * shapes.length)];
+            selectShape(randomShape);
+            
+            const randomPrimary = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+            const randomSecondary = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+            const randomBg = Math.random() > 0.5 ? '#ffffff' : '#f0f0f0';
+            
+            primaryColor.value = randomPrimary;
+            primaryColorHex.value = randomPrimary;
+            secondaryColor.value = randomSecondary;
+            secondaryColorHex.value = randomSecondary;
+            bgColor.value = randomBg;
+            bgColorHex.value = randomBg;
+            
+            sizeSlider.value = Math.floor(Math.random() * 50) + 15;
+            spacingSlider.value = Math.floor(Math.random() * 50) + 10;
+            rotationSlider.value = Math.floor(Math.random() * 360);
+            offsetSlider.value = Math.floor(Math.random() * 30);
+            
+            alternateColors.checked = Math.random() > 0.5;
+            randomRotation.checked = Math.random() > 0.7;
+            varySizes.checked = Math.random() > 0.7;
+            
+            updateDisplayValues();
+            generatePattern();
+            showToast('已隨機化設定');
+        }
+        
+        // Select shape
+        function selectShape(shape) {
+            currentShape = shape;
+            
+            shapeGrid.querySelectorAll('.shape-btn').forEach(btn => {
+                if (btn.dataset.shape === shape) {
+                    btn.classList.add('active');
+                    btn.classList.remove('bg-gray-100', 'dark:bg-gray-700');
+                } else {
+                    btn.classList.remove('active');
+                    btn.classList.add('bg-gray-100', 'dark:bg-gray-700');
+                }
+            });
+            
+            generatePattern();
+        }
+        
+        // Update display values
+        function updateDisplayValues() {
+            sizeValue.textContent = sizeSlider.value + 'px';
+            spacingValue.textContent = spacingSlider.value + 'px';
+            rotationValue.textContent = rotationSlider.value + '°';
+            offsetValue.textContent = offsetSlider.value + 'px';
+        }
+        
+        // Show toast
+        function showToast(message) {
+            toastMessage.textContent = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+        
+        // Event listeners
+        shapeGrid.querySelectorAll('.shape-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                selectShape(btn.dataset.shape);
+            });
+        });
+        
+        [primaryColor, primaryColorHex].forEach(el => {
+            el.addEventListener('input', (e) => {
+                primaryColor.value = e.target.value;
+                primaryColorHex.value = e.target.value;
+                generatePattern();
+            });
+        });
+        
+        [secondaryColor, secondaryColorHex].forEach(el => {
+            el.addEventListener('input', (e) => {
+                secondaryColor.value = e.target.value;
+                secondaryColorHex.value = e.target.value;
+                generatePattern();
+            });
+        });
+        
+        [bgColor, bgColorHex].forEach(el => {
+            el.addEventListener('input', (e) => {
+                bgColor.value = e.target.value;
+                bgColorHex.value = e.target.value;
+                generatePattern();
+            });
+        });
+        
+        [sizeSlider, spacingSlider, rotationSlider, offsetSlider].forEach(slider => {
+            slider.addEventListener('input', () => {
+                updateDisplayValues();
+                generatePattern();
+            });
+        });
+        
+        [alternateColors, randomRotation, varySizes].forEach(checkbox => {
+            checkbox.addEventListener('change', generatePattern);
+        });
+        
+        exportSvg.addEventListener('click', exportAsSvg);
+        exportPng.addEventListener('click', exportAsPng);
+        randomizeBtn.addEventListener('click', randomize);
+        
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('svgPatternMakerTheme', isDark ? 'dark' : 'light');
+            lucide.createIcons();
+        });
+        
+        // Initialize
+        generatePattern();
+        lucide.createIcons();
+    </script>
+</body>
+</html>

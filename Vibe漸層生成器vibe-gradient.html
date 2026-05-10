@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vibe 漸層生成器 - 情緒色彩設計工具</title>
+    <meta name="description" content="線上Vibe漸層生成器，根據情緒選擇生成獨特CSS漸層色彩。支援多種情緒氛圍，一鍵複製CSS代碼。">
+    <meta name="keywords" content="漸層生成器, CSS漸層, 情緒色彩, 色彩設計, Vibe色彩, 漸層代碼">
+    <meta name="author" content="Web Tools">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Vibe 漸層生成器 - 情緒色彩設計工具">
+    <meta property="og:description" content="根據情緒選擇生成獨特CSS漸層色彩。">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Vibe 漸層生成器 - 情緒色彩設計工具">
+    <meta name="twitter:description" content="根據情緒選擇生成獨特CSS漸層色彩。">
+    
+    <script src="load_index_common.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    
+    <!-- Schema.org -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Vibe 漸層生成器",
+        "applicationCategory": "DesignApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "TWD"
+        },
+        "description": "線上Vibe漸層生成器，根據情緒選擇生成獨特CSS漸層色彩。",
+        "featureList": ["情緒選擇", "即時預覽", "CSS代碼導出", "自定義調整", "隨機生成", "深色模式"],
+        "browserRequirements": "需要 JavaScript"
+    }
+    </script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#8b5cf6',
+                        secondary: '#ec4899',
+                        dark: '#1f2937',
+                        darker: '#111827'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+        
+        .gradient-preview {
+            transition: background 0.5s ease;
+        }
+        
+        .vibe-card {
+            transition: all 0.3s ease;
+        }
+        
+        .vibe-card:hover {
+            transform: translateY(-4px);
+        }
+        
+        .vibe-card.active {
+            ring: 4px;
+            ring-color: #8b5cf6;
+            transform: scale(1.02);
+        }
+        
+        .color-swatch {
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .color-swatch:hover {
+            transform: scale(1.1);
+        }
+        
+        .angle-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 8px;
+            border-radius: 4px;
+            background: linear-gradient(to right, #e0e0e0, #9e9e9e);
+        }
+        
+        .angle-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #8b5cf6;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        
+        .angle-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #8b5cf6;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            border: none;
+        }
+        
+        code {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 dark:from-darker dark:via-gray-900 dark:to-gray-900 min-h-screen transition-colors duration-200">
+    
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-dark/80 backdrop-blur-sm border-b border-purple-100 dark:border-gray-700 transition-colors duration-200">
+        <div class="max-w-4xl mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                        <i data-lucide="palette" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Vibe 漸層生成器</h1>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">根據情緒創造獨特漸層</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <!-- Random Button -->
+                    <button 
+                        id="randomBtn" 
+                        class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                        aria-label="隨機生成"
+                    >
+                        <i data-lucide="shuffle" class="w-5 h-5"></i>
+                    </button>
+                    
+                    <!-- Theme Toggle -->
+                    <button 
+                        id="themeToggle" 
+                        class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                        aria-label="切換深色模式"
+                    >
+                        <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
+                        <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-20">
+        
+        <!-- Gradient Preview -->
+        <section class="mb-8">
+            <div 
+                id="gradientPreview" 
+                class="gradient-preview w-full aspect-video rounded-2xl shadow-2xl flex items-center justify-center"
+                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"
+            >
+                <div class="text-center text-white drop-shadow-lg">
+                    <h2 id="vibeTitle" class="text-3xl md:text-4xl font-bold mb-2">Dreamy</h2>
+                    <p id="vibeDescription" class="text-sm opacity-80">夢幻紫色調，帶來放鬆感</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Vibe Selection -->
+        <section class="bg-white dark:bg-dark rounded-xl shadow-lg p-6 mb-6 border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+            <div class="flex items-center gap-2 mb-4">
+                <i data-lucide="sparkles" class="w-5 h-5 text-primary"></i>
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">選擇情緒 Vibe</h2>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4" id="vibeGrid">
+                <!-- Vibes will be generated by JS -->
+            </div>
+        </section>
+        
+        <!-- Customization -->
+        <section class="bg-white dark:bg-dark rounded-xl shadow-lg p-6 mb-6 border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+            <div class="flex items-center gap-2 mb-4">
+                <i data-lucide="sliders" class="w-5 h-5 text-secondary"></i>
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">自定義調整</h2>
+            </div>
+            
+            <!-- Angle Slider -->
+            <div class="mb-6">
+                <div class="flex items-center justify-between mb-2">
+                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">漸層角度</label>
+                    <span id="angleValue" class="text-sm text-gray-500 dark:text-gray-400">135°</span>
+                </div>
+                <input 
+                    type="range" 
+                    id="angleSlider" 
+                    class="angle-slider w-full" 
+                    min="0" 
+                    max="360" 
+                    value="135"
+                >
+            </div>
+            
+            <!-- Color Stops -->
+            <div class="mb-4">
+                <div class="flex items-center justify-between mb-3">
+                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">色彩節點</label>
+                    <button 
+                        id="addColor" 
+                        class="text-sm text-primary hover:text-purple-600 flex items-center gap-1"
+                    >
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        新增色彩
+                    </button>
+                </div>
+                <div id="colorStops" class="space-y-3">
+                    <!-- Color stops will be generated by JS -->
+                </div>
+            </div>
+        </section>
+        
+        <!-- CSS Code -->
+        <section class="bg-white dark:bg-dark rounded-xl shadow-lg p-6 mb-6 border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="code-2" class="w-5 h-5 text-green-600"></i>
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">CSS 代碼</h2>
+                </div>
+                <button 
+                    id="copyCss" 
+                    class="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-purple-600 transition-colors text-sm font-medium"
+                >
+                    <i data-lucide="copy" class="w-4 h-4"></i>
+                    複製代碼
+                </button>
+            </div>
+            <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+                <code id="cssCode" class="text-sm text-green-400 whitespace-pre-wrap break-all">background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);</code>
+            </div>
+        </section>
+        
+        <!-- Preset Collections -->
+        <section class="bg-white dark:bg-dark rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+            <div class="flex items-center gap-2 mb-4">
+                <i data-lucide="layers" class="w-5 h-5 text-orange-500"></i>
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">熱門系列</h2>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="collectionGrid">
+                <!-- Collections will be generated by JS -->
+            </div>
+        </section>
+    </main>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-gray-900 text-white px-4 py-2 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-2" role="alert" aria-live="polite">
+        <i data-lucide="check-circle" class="w-4 h-4 text-green-400"></i>
+        <span id="toastMessage">操作成功</span>
+    </div>
+    
+    <script>
+        // Initialize icons
+        lucide.createIcons();
+        
+        // DOM Elements
+        const gradientPreview = document.getElementById('gradientPreview');
+        const vibeTitle = document.getElementById('vibeTitle');
+        const vibeDescription = document.getElementById('vibeDescription');
+        const vibeGrid = document.getElementById('vibeGrid');
+        const angleSlider = document.getElementById('angleSlider');
+        const angleValue = document.getElementById('angleValue');
+        const colorStops = document.getElementById('colorStops');
+        const addColorBtn = document.getElementById('addColor');
+        const cssCode = document.getElementById('cssCode');
+        const copyCssBtn = document.getElementById('copyCss');
+        const randomBtn = document.getElementById('randomBtn');
+        const themeToggle = document.getElementById('themeToggle');
+        const collectionGrid = document.getElementById('collectionGrid');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        
+        // Vibe Presets
+        const VIBES = [
+            { name: 'Dreamy', title: '夢幻', description: '夢幻紫色調，帶來放鬆感', colors: ['#667eea', '#764ba2'] },
+            { name: 'Sunset', title: '夕陽', description: '溫暖的日落橘紅色', colors: ['#ff512f', '#dd2476'] },
+            { name: 'Ocean', title: '海洋', description: '清新藍色，如海風吹拂', colors: ['#2193b0', '#6dd5ed'] },
+            { name: 'Forest', title: '森林', description: '綠意盎然，充滿生機', colors: ['#134e5e', '#71b280'] },
+            { name: 'Moody', title: '憂鬱', description: '深藍灰色調，沉穩內斂', colors: ['#232526', '#414345'] },
+            { name: 'Cyberpunk', title: '賽博', description: '霓虹紫與青，科技未來感', colors: ['#7f00ff', '#e100ff'] },
+            { name: 'Pastel', title: '粉彩', description: '柔和粉彩，溫柔可愛', colors: ['#fad0c4', '#ffd1ff'] },
+            { name: 'Fire', title: '火焰', description: '燃燒的紅橙色彩', colors: ['#f12711', '#f5af19'] },
+            { name: 'Aurora', title: '極光', description: '北極光般的綠藍色調', colors: ['#00c6ff', '#0072ff'] },
+            { name: 'Vintage', title: '復古', description: '懷舊的棕色與米色', colors: ['#b79891', '#94716b'] },
+            { name: 'Neon', title: '霓虹', description: '高對比度霓虹色彩', colors: ['#ff00cc', '#333399'] },
+            { name: 'Minimal', title: '極簡', description: '簡約黑白灰漸層', colors: ['#e5e5e5', '#a3a3a3'] }
+        ];
+        
+        // Collections
+        const COLLECTIONS = [
+            { name: '自然系列', vibes: ['Ocean', 'Forest', 'Sunset'] },
+            { name: '科技系列', vibes: ['Cyberpunk', 'Neon', 'Aurora'] },
+            { name: '情緒系列', vibes: ['Dreamy', 'Moody', 'Pastel'] },
+            { name: '活力系列', vibes: ['Fire', 'Sunset', 'Ocean'] }
+        ];
+        
+        // State
+        let currentVibe = VIBES[0];
+        let currentAngle = 135;
+        let currentColors = [...VIBES[0].colors];
+        
+        // Load saved theme
+        const savedTheme = localStorage.getItem('vibeGradientTheme');
+        if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+        
+        // Render vibe grid
+        function renderVibeGrid() {
+            vibeGrid.innerHTML = VIBES.map(vibe => `
+                <div 
+                    class="vibe-card rounded-xl overflow-hidden cursor-pointer border-2 ${currentVibe.name === vibe.name ? 'border-primary ring-4 ring-purple-200 dark:ring-purple-900' : 'border-transparent'}"
+                    data-vibe="${vibe.name}"
+                    style="background: linear-gradient(135deg, ${vibe.colors[0]}, ${vibe.colors[1]});"
+                >
+                    <div class="p-3 bg-black/20 backdrop-blur-sm">
+                        <p class="text-white font-semibold text-sm">${vibe.title}</p>
+                        <p class="text-white/70 text-xs mt-0.5">${vibe.name}</p>
+                    </div>
+                </div>
+            `).join('');
+            
+            vibeGrid.querySelectorAll('.vibe-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const vibeName = card.dataset.vibe;
+                    const vibe = VIBES.find(v => v.name === vibeName);
+                    if (vibe) {
+                        selectVibe(vibe);
+                    }
+                });
+            });
+        }
+        
+        // Render collections
+        function renderCollections() {
+            collectionGrid.innerHTML = COLLECTIONS.map(collection => {
+                const vibe = VIBES.find(v => v.name === collection.vibes[0]);
+                return `
+                    <div 
+                        class="collection-card rounded-xl overflow-hidden cursor-pointer border-2 border-transparent hover:border-gray-300 dark:hover:border-gray-600 transition-all"
+                        data-collection="${collection.name}"
+                        style="background: linear-gradient(135deg, ${vibe.colors[0]}, ${vibe.colors[1]});"
+                    >
+                        <div class="p-3 bg-black/20 backdrop-blur-sm text-center">
+                            <p class="text-white font-semibold text-sm">${collection.name}</p>
+                            <p class="text-white/70 text-xs mt-0.5">${collection.vibes.join(', ')}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            collectionGrid.querySelectorAll('.collection-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const collectionName = card.dataset.collection;
+                    const collection = COLLECTIONS.find(c => c.name === collectionName);
+                    if (collection) {
+                        // Pick random vibe from collection
+                        const randomVibeName = collection.vibes[Math.floor(Math.random() * collection.vibes.length)];
+                        const vibe = VIBES.find(v => v.name === randomVibeName);
+                        if (vibe) {
+                            selectVibe(vibe);
+                            showToast(`已選擇 ${vibe.title}`);
+                        }
+                    }
+                });
+            });
+        }
+        
+        // Select vibe
+        function selectVibe(vibe) {
+            currentVibe = vibe;
+            currentColors = [...vibe.colors];
+            currentAngle = 135;
+            
+            updatePreview();
+            renderVibeGrid();
+            renderColorStops();
+        }
+        
+        // Render color stops
+        function renderColorStops() {
+            colorStops.innerHTML = currentColors.map((color, index) => {
+                const position = Math.round((index / (currentColors.length - 1 || 1)) * 100);
+                return `
+                    <div class="flex items-center gap-3 bg-gray-50 dark:bg-gray-800 rounded-lg p-2">
+                        <input 
+                            type="color" 
+                            value="${color}" 
+                            data-index="${index}"
+                            class="color-swatch w-10 h-10 rounded border-2 border-white shadow cursor-pointer"
+                            onchange="updateColor(this.dataset.index, this.value)"
+                        >
+                        <input 
+                            type="text" 
+                            value="${color}" 
+                            data-index="${index}"
+                            class="flex-1 px-3 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary"
+                            onchange="updateColor(this.dataset.index, this.value)"
+                        >
+                        <input 
+                            type="number" 
+                            value="${position}" 
+                            min="0" 
+                            max="100"
+                            data-index="${index}"
+                            class="w-16 px-2 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                            onchange="updatePosition(this.dataset.index, this.value)"
+                        >
+                        <span class="text-xs text-gray-500">%</span>
+                        ${currentColors.length > 2 ? `
+                            <button 
+                                onclick="removeColor(${index})" 
+                                class="p-1 text-gray-400 hover:text-red-500 transition-colors"
+                                aria-label="刪除色彩"
+                            >
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+        
+        // Update preview
+        function updatePreview() {
+            const gradient = generateGradient();
+            gradientPreview.style.background = gradient;
+            vibeTitle.textContent = currentVibe.title;
+            vibeDescription.textContent = currentVibe.description;
+            cssCode.textContent = `background: ${gradient};`;
+        }
+        
+        // Generate gradient CSS
+        function generateGradient() {
+            const colorString = currentColors.map((color, index) => {
+                const position = Math.round((index / (currentColors.length - 1 || 1)) * 100);
+                return `${color} ${position}%`;
+            }).join(', ');
+            return `linear-gradient(${currentAngle}deg, ${colorString})`;
+        }
+        
+        // Update color
+        window.updateColor = function(index, value) {
+            currentColors[index] = value;
+            updatePreview();
+        };
+        
+        // Update position
+        window.updatePosition = function(index, value) {
+            // Positions will be recalculated when generating gradient
+            updatePreview();
+        };
+        
+        // Remove color
+        window.removeColor = function(index) {
+            if (currentColors.length <= 2) {
+                showToast('至少需要保留 2 個色彩');
+                return;
+            }
+            currentColors.splice(index, 1);
+            updatePreview();
+            renderColorStops();
+        };
+        
+        // Add color
+        function addColor() {
+            if (currentColors.length >= 6) {
+                showToast('最多支援 6 個色彩節點');
+                return;
+            }
+            // Add a color between the last two colors
+            const lastColor = currentColors[currentColors.length - 1];
+            currentColors.push(lastColor);
+            updatePreview();
+            renderColorStops();
+        }
+        
+        // Random vibe
+        function randomVibe() {
+            const randomIndex = Math.floor(Math.random() * VIBES.length);
+            selectVibe(VIBES[randomIndex]);
+            currentAngle = Math.floor(Math.random() * 360);
+            angleSlider.value = currentAngle;
+            angleValue.textContent = currentAngle + '°';
+            updatePreview();
+            showToast('已隨機生成漸層');
+        }
+        
+        // Copy CSS
+        async function copyCss() {
+            const code = cssCode.textContent;
+            try {
+                await navigator.clipboard.writeText(code);
+                showToast('CSS 代碼已複製');
+            } catch (err) {
+                console.error('複製失敗:', err);
+                showToast('複製失敗，請重試');
+            }
+        }
+        
+        // Show toast
+        function showToast(message) {
+            toastMessage.textContent = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+        
+        // Event listeners
+        angleSlider.addEventListener('input', (e) => {
+            currentAngle = parseInt(e.target.value);
+            angleValue.textContent = currentAngle + '°';
+            updatePreview();
+        });
+        
+        addColorBtn.addEventListener('click', addColor);
+        copyCssBtn.addEventListener('click', copyCss);
+        randomBtn.addEventListener('click', randomVibe);
+        
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('vibeGradientTheme', isDark ? 'dark' : 'light');
+            lucide.createIcons();
+        });
+        
+        // Initialize
+        renderVibeGrid();
+        renderCollections();
+        renderColorStops();
+        updatePreview();
+        lucide.createIcons();
+    </script>
+</body>
+</html>

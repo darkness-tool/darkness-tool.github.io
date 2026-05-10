@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>摩爾斯電碼 - 文字轉摩爾斯電碼</title>
+    <meta name="description" content="線上摩爾斯電碼工具，輸入文字顯示摩爾斯電碼。免費使用，即時轉換。">
+    <meta name="keywords" content="摩爾斯電碼, 摩爾斯翻譯, 訊號傳輸, 電碼學習">
+    <meta name="author" content="Web Tools">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="摩爾斯電碼 - 文字轉摩爾斯電碼">
+    <meta property="og:description" content="線上摩爾斯電碼工具，輸入文字顯示摩爾斯電碼。">
+    <meta property="og:type" content="website">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="摩爾斯電碼 - 文字轉摩爾斯電碼">
+    <meta name="twitter:description" content="線上摩爾斯電碼工具，輸入文字顯示摩爾斯電碼。">
+    
+    <script src="load_index_common.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    
+    <!-- Schema.org -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "摩爾斯電碼器",
+        "applicationCategory": "UtilityApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "TWD"
+        },
+        "description": "線上摩爾斯電碼工具，輸入文字並透過螢幕背景閃爍顯示摩爾斯電碼。",
+        "featureList": ["即時轉換", "螢幕閃爍", "電碼參考表", "速度調整", "深色模式", "音效支援"],
+        "browserRequirements": "需要 JavaScript"
+    }
+    </script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        secondary: '#f59e0b',
+                        dark: '#1f2937',
+                        darker: '#111827'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+        
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+        
+        .morse-code {
+            font-family: 'Fira Code', 'Monaco', 'Menlo', monospace;
+        }
+        
+        .flash-container {
+            transition: background-color 0.05s ease;
+        }
+        
+        .flash-container.active {
+            background-color: #ffffff !important;
+        }
+        
+        .flash-container.inactive {
+            background-color: #000000 !important;
+        }
+        
+        .flash-container.dark .active {
+            background-color: #ffffff !important;
+        }
+        
+        .flash-container.dark .inactive {
+            background-color: #1f2937 !important;
+        }
+        
+        .signal-bar {
+            transition: all 0.1s ease;
+        }
+        
+        .reference-table {
+            font-size: 0.875rem;
+        }
+        
+        .reference-row:hover {
+            background-color: rgba(99, 102, 241, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-darker dark:via-gray-900 dark:to-gray-900 min-h-screen transition-colors duration-200">
+    
+    <!-- Flash Overlay -->
+    <div id="flashOverlay" class="flash-container fixed inset-0 z-50 pointer-events-none"></div>
+    
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-40 bg-white/80 dark:bg-dark/80 backdrop-blur-sm border-b border-indigo-100 dark:border-gray-700 transition-colors duration-200">
+        <div class="max-w-4xl mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
+                        <i data-lucide="radio" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-semibold text-gray-900 dark:text-gray-100">摩爾斯電碼器</h1>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">文字轉摩爾斯電碼</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <!-- Reference Toggle -->
+                    <button 
+                        id="referenceToggle" 
+                        class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                        aria-label="顯示參考表"
+                    >
+                        <i data-lucide="book" class="w-5 h-5"></i>
+                    </button>
+                    
+                    <!-- Theme Toggle -->
+                    <button 
+                        id="themeToggle" 
+                        class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                        aria-label="切換深色模式"
+                    >
+                        <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
+                        <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-20">
+        
+        <!-- Text Input -->
+        <section class="bg-white dark:bg-dark rounded-xl shadow-lg p-6 mb-6 border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+            <div class="flex items-center gap-2 mb-4">
+                <i data-lucide="type" class="w-5 h-5 text-primary"></i>
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">輸入文字</h2>
+            </div>
+            
+            <textarea 
+                id="textInput" 
+                class="w-full px-4 py-3 text-lg bg-gray-50 dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:border-primary focus:outline-none resize-none h-32 text-gray-900 dark:text-gray-100"
+                placeholder="輸入要轉換為摩爾斯電碼的文字..."
+                maxlength="500"
+            ></textarea>
+            
+            <div class="flex items-center justify-between mt-3">
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                    <span id="charCount">0</span> / 500 字元
+                </p>
+                <button 
+                    id="clearBtn" 
+                    class="text-sm text-red-500 hover:text-red-600 flex items-center gap-1"
+                    aria-label="清空"
+                >
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    清空
+                </button>
+            </div>
+        </section>
+        
+        <!-- Output -->
+        <section class="bg-white dark:bg-dark rounded-xl shadow-lg p-6 mb-6 border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="code-2" class="w-5 h-5 text-secondary"></i>
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">摩爾斯電碼</h2>
+                </div>
+                <button 
+                    id="copyBtn" 
+                    class="flex items-center gap-1 px-3 py-1.5 bg-gray-100 dark:bg-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                >
+                    <i data-lucide="copy" class="w-4 h-4"></i>
+                    複製
+                </button>
+            </div>
+            
+            <div id="morseOutput" class="morse-code bg-gray-900 rounded-xl p-4 text-green-400 min-h-[100px] whitespace-pre-wrap break-all">
+                <span class="text-gray-500 dark:text-gray-600">摩爾斯電碼將在此顯示...</span>
+            </div>
+        </section>
+        
+        <!-- Controls -->
+        <section style="display: none;" class="bg-white dark:bg-dark rounded-xl shadow-lg p-6 mb-6 border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+            <div class="flex items-center gap-2 mb-6">
+                <i data-lucide="sliders" class="w-5 h-5 text-primary"></i>
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">播放設定</h2>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Speed Control -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">播放速度</label>
+                        <span id="speedValue" class="text-sm text-gray-500 dark:text-gray-400">正常</span>
+                    </div>
+                    <input 
+                        type="range" 
+                        id="speedSlider" 
+                        class="w-full" 
+                        min="1" 
+                        max="5" 
+                        value="3"
+                    >
+                    <div class="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        <span>慢</span>
+                        <span>快</span>
+                    </div>
+                </div>
+                
+                <!-- Unit Duration -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">點/線長度</label>
+                        <span id="unitValue" class="text-sm text-gray-500 dark:text-gray-400">100ms</span>
+                    </div>
+                    <input 
+                        type="range" 
+                        id="unitSlider" 
+                        class="w-full" 
+                        min="50" 
+                        max="300" 
+                        value="100"
+                    >
+                    <div class="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        <span>50ms</span>
+                        <span>300ms</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Play Buttons -->
+            <div class="flex flex-wrap gap-3 mt-6">
+                <button 
+                    id="playBtn" 
+                    class="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl hover:from-indigo-600 hover:to-purple-600 transition-all shadow-lg font-medium"
+                >
+                    <i data-lucide="play" class="w-5 h-5" id="playIcon"></i>
+                    <span id="playText">開始閃爍</span>
+                </button>
+                <button 
+                    id="stopBtn" 
+                    class="flex items-center justify-center gap-2 px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors font-medium"
+                    disabled
+                >
+                    <i data-lucide="square" class="w-5 h-5"></i>
+                    停止
+                </button>
+                <button 
+                    id="stepBtn" 
+                    class="flex items-center justify-center gap-2 px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors font-medium"
+                >
+                    <i data-lucide="step-forward" class="w-5 h-5"></i>
+                    下一步
+                </button>
+            </div>
+            
+            <!-- Progress -->
+            <div class="mt-6">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">進度</span>
+                    <span id="progressText" class="text-sm text-gray-500 dark:text-gray-400">0 / 0</span>
+                </div>
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+                    <div id="progressBar" class="signal-bar h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all" style="width: 0%"></div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Current Signal -->
+        <section style="display: none;" class="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-xl shadow-lg p-6 mb-6 border border-amber-100 dark:border-amber-800 transition-colors duration-200">
+            <div class="flex items-center gap-2 mb-4">
+                <i data-lucide="activity" class="w-5 h-5 text-amber-600"></i>
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">目前訊號</h2>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="flex-1 text-center">
+                    <p class="text-2xl font-bold text-gray-900 dark:text-gray-100" id="currentChar">-</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">字元</p>
+                </div>
+                <div class="text-2xl">→</div>
+                <div class="flex-1 text-center">
+                    <p class="morse-code text-2xl font-bold text-secondary" id="currentMorse">-</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">摩爾斯</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Reference Table -->
+        <section id="referenceSection" class="hidden bg-white dark:bg-dark rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="book-open" class="w-5 h-5 text-primary"></i>
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">摩爾斯電碼參考表</h2>
+                </div>
+            </div>
+            <div class="grid grid-cols-6 sm:grid-cols-9 md:grid-cols-10 gap-2 max-h-64 overflow-y-auto" id="referenceGrid">
+                <!-- Reference items will be generated by JS -->
+            </div>
+        </section>
+        
+        <!-- Tips -->
+        <section class="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl shadow-lg p-6 border border-blue-100 dark:border-blue-800 transition-colors duration-200">
+            <div class="flex items-center gap-2 mb-4">
+                <i data-lucide="lightbulb" class="w-5 h-5 text-blue-600"></i>
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">使用說明</h2>
+            </div>
+            <ul class="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                <li class="flex items-start gap-2">
+                    <i data-lucide="check-circle" class="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5"></i>
+                    <span>點 = 1 單位，線 = 3 單位，字元間隔 = 3 單位</span>
+                </li>
+            </ul>
+        </section>
+        
+    </main>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-gray-900 text-white px-4 py-2 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-2" role="alert" aria-live="polite">
+        <i data-lucide="check-circle" class="w-4 h-4 text-green-400"></i>
+        <span id="toastMessage">操作成功</span>
+    </div>
+    
+    <script>
+        // Initialize icons
+        lucide.createIcons();
+        
+        // Morse code mapping
+        const MORSE_CODE = {
+            'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.',
+            'F': '..-.', 'G': '--.', 'H': '....', 'I': '..', 'J': '.---',
+            'K': '-.-', 'L': '.-..', 'M': '--', 'N': '-.', 'O': '---',
+            'P': '.--.', 'Q': '--.-', 'R': '.-.', 'S': '...', 'T': '-',
+            'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-', 'Y': '-.--', 'Z': '--..',
+            '0': '-----', '1': '.----', '2': '..---', '3': '...--', '4': '....-',
+            '5': '.....', '6': '-....', '7': '--...', '8': '---..', '9': '----.',
+            '.': '.-.-.-', ',': '--..--', '?': '..--..', ' ': '/', "'": '.----.', '!': '-.-.--',
+            '/': '-..-.'
+        };
+        
+        // DOM Elements
+        const textInput = document.getElementById('textInput');
+        const morseOutput = document.getElementById('morseOutput');
+        const charCount = document.getElementById('charCount');
+        const clearBtn = document.getElementById('clearBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const playBtn = document.getElementById('playBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const stepBtn = document.getElementById('stepBtn');
+        const playIcon = document.getElementById('playIcon');
+        const playText = document.getElementById('playText');
+        const speedSlider = document.getElementById('speedSlider');
+        const speedValue = document.getElementById('speedValue');
+        const unitSlider = document.getElementById('unitSlider');
+        const unitValue = document.getElementById('unitValue');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        const currentChar = document.getElementById('currentChar');
+        const currentMorse = document.getElementById('currentMorse');
+        const flashOverlay = document.getElementById('flashOverlay');
+        const referenceToggle = document.getElementById('referenceToggle');
+        const referenceSection = document.getElementById('referenceSection');
+        const referenceGrid = document.getElementById('referenceGrid');
+        const themeToggle = document.getElementById('themeToggle');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        
+        // State
+        let isPlaying = false;
+        let playTimeout = null;
+        let currentCharIndex = 0;
+        let currentSymbolIndex = 0;
+        let morseSymbols = [];
+        let unitDuration = 100;
+        let speedMultiplier = 1;
+        
+        // Load saved theme
+        const savedTheme = localStorage.getItem('morseFlasherTheme');
+        if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            flashOverlay.classList.add('dark');
+        }
+        
+        // Convert text to morse
+        function textToMorse(text) {
+            return text.toUpperCase().split('').map(char => {
+                return MORSE_CODE[char] || '';
+            }).join(' ');
+        }
+        
+        // Parse morse into symbols
+        function parseMorse(morse) {
+            const symbols = [];
+            for (const char of morse) {
+                if (char === '.') {
+                    symbols.push({ type: 'dot', duration: unitDuration });
+                } else if (char === '-') {
+                    symbols.push({ type: 'dash', duration: unitDuration * 3 });
+                } else if (char === ' ') {
+                    symbols.push({ type: 'space', duration: unitDuration * 7 });
+                }
+            }
+            return symbols;
+        }
+        
+        // Flash screen
+        function flash(type, duration) {
+            if (type === 'dot') {
+                flashOverlay.classList.remove('inactive');
+                flashOverlay.classList.add('active');
+                setTimeout(() => {
+                    flashOverlay.classList.remove('active');
+                    flashOverlay.classList.add('inactive');
+                }, duration * speedMultiplier);
+            } else if (type === 'space') {
+                // Space is just darkness
+                flashOverlay.classList.remove('active');
+                flashOverlay.classList.add('inactive');
+            }
+        }
+        
+        // Play next symbol
+        function playNextSymbol() {
+            if (currentSymbolIndex >= morseSymbols.length) {
+                stopPlayback();
+                showToast('播放完成');
+                return;
+            }
+            
+            const symbol = morseSymbols[currentSymbolIndex];
+            flash(symbol.type, symbol.duration);
+            
+            // Update current signal display
+            updateCurrentSignal();
+            
+            // Schedule next
+            currentSymbolIndex++;
+            updateProgress();
+            
+            if (isPlaying) {
+                playTimeout = setTimeout(playNextSymbol, symbol.duration * speedMultiplier);
+            }
+        }
+        
+        // Update current signal
+        function updateCurrentSignal() {
+            const text = textInput.value;
+            const morse = textToMorse(text);
+            const chars = morse.split(' ');
+            
+            if (currentCharIndex < chars.length) {
+                const char = chars[currentCharIndex];
+                const originalChar = text.toUpperCase()[currentCharIndex] || ' ';
+                currentChar.textContent = originalChar;
+                currentMorse.textContent = char || ' ';
+            }
+        }
+        
+        // Update progress
+        function updateProgress() {
+            const total = morseSymbols.length;
+            const current = currentSymbolIndex;
+            const percentage = total > 0 ? (current / total) * 100 : 0;
+            
+            progressBar.style.width = percentage + '%';
+            progressText.textContent = `${current} / ${total}`;
+        }
+        
+        // Start playback
+        function startPlayback() {
+            const text = textInput.value.trim();
+            if (!text) {
+                showToast('請先輸入文字');
+                return;
+            }
+            
+            const morse = textToMorse(text);
+            morseSymbols = parseMorse(morse);
+            
+            isPlaying = true;
+            currentCharIndex = 0;
+            currentSymbolIndex = 0;
+            
+            playIcon.setAttribute('data-lucide', 'pause');
+            playText.textContent = '暫停';
+            stopBtn.disabled = false;
+            
+            lucide.createIcons();
+            playNextSymbol();
+        }
+        
+        // Stop playback
+        function stopPlayback() {
+            isPlaying = false;
+            clearTimeout(playTimeout);
+            
+            flashOverlay.classList.remove('active');
+            flashOverlay.classList.add('inactive');
+            
+            playIcon.setAttribute('data-lucide', 'play');
+            playText.textContent = '繼續';
+            stopBtn.disabled = true;
+            
+            lucide.createIcons();
+        }
+        
+        // Step through
+        function stepThrough() {
+            if (currentSymbolIndex === 0 && !isPlaying) {
+                const text = textInput.value.trim();
+                if (!text) {
+                    showToast('請先輸入文字');
+                    return;
+                }
+                const morse = textToMorse(text);
+                morseSymbols = parseMorse(morse);
+            }
+            
+            if (currentSymbolIndex < morseSymbols.length) {
+                const symbol = morseSymbols[currentSymbolIndex];
+                flash(symbol.type, symbol.duration);
+                updateCurrentSignal();
+                currentSymbolIndex++;
+                updateProgress();
+            } else {
+                showToast('已播放完所有符號');
+            }
+        }
+        
+        // Update speed display
+        function updateSpeedDisplay() {
+            const speed = parseInt(speedSlider.value);
+            const labels = ['非常慢', '慢', '正常', '快', '非常快'];
+            speedValue.textContent = labels[speed - 1];
+            speedMultiplier = 6 - speed; // Invert so higher = faster
+        }
+        
+        // Render reference table
+        function renderReferenceTable() {
+            referenceGrid.innerHTML = Object.entries(MORSE_CODE).map(([char, morse]) => `
+                <div class="reference-row p-2 bg-gray-50 dark:bg-gray-800 rounded-lg text-center cursor-pointer hover:scale-105 transition-transform" data-char="${char}">
+                    <div class="text-lg font-bold text-gray-900 dark:text-gray-100">${char}</div>
+                    <div class="morse-code text-xs text-secondary">${morse}</div>
+                </div>
+            `).join('');
+            
+            referenceGrid.querySelectorAll('.reference-row').forEach(row => {
+                row.addEventListener('click', () => {
+                    textInput.value += row.dataset.char;
+                    handleInputChange();
+                    textInput.focus();
+                });
+            });
+        }
+        
+        // Handle input change
+        function handleInputChange() {
+            const text = textInput.value;
+            const morse = textToMorse(text);
+            
+            morseOutput.innerHTML = morse || '<span class="text-gray-500 dark:text-gray-600">摩爾斯電碼將在此顯示...</span>';
+            charCount.textContent = text.length;
+            
+            // Reset progress
+            currentCharIndex = 0;
+            currentSymbolIndex = 0;
+            morseSymbols = [];
+            updateProgress();
+            currentChar.textContent = '-';
+            currentMorse.textContent = '-';
+        }
+        
+        // Copy morse code
+        async function copyMorse() {
+            const text = morseOutput.textContent;
+            if (!text || text.includes('將在此顯示')) {
+                showToast('沒有可複製的摩爾斯電碼');
+                return;
+            }
+            
+            try {
+                await navigator.clipboard.writeText(text);
+                showToast('摩爾斯電碼已複製');
+            } catch (err) {
+                console.error('複製失敗:', err);
+                showToast('複製失敗，請重試');
+            }
+        }
+        
+        // Clear input
+        function clearInput() {
+            textInput.value = '';
+            handleInputChange();
+            showToast('已清空');
+        }
+        
+        // Show toast
+        function showToast(message) {
+            toastMessage.textContent = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+        
+        // Event listeners
+        textInput.addEventListener('input', handleInputChange);
+        
+        clearBtn.addEventListener('click', clearInput);
+        copyBtn.addEventListener('click', copyMorse);
+        
+        playBtn.addEventListener('click', () => {
+            if (isPlaying) {
+                stopPlayback();
+            } else {
+                startPlayback();
+            }
+        });
+        
+        stopBtn.addEventListener('click', stopPlayback);
+        stepBtn.addEventListener('click', stepThrough);
+        
+        speedSlider.addEventListener('input', updateSpeedDisplay);
+        
+        unitSlider.addEventListener('input', (e) => {
+            unitDuration = parseInt(e.target.value);
+            unitValue.textContent = unitDuration + 'ms';
+        });
+        
+        referenceToggle.addEventListener('click', () => {
+            referenceSection.classList.toggle('hidden');
+            renderReferenceTable();
+        });
+        
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            if (isDark) {
+                flashOverlay.classList.add('dark');
+            } else {
+                flashOverlay.classList.remove('dark');
+            }
+            localStorage.setItem('morseFlasherTheme', isDark ? 'dark' : 'light');
+            lucide.createIcons();
+        });
+        
+        // Initialize
+        handleInputChange();
+        renderReferenceTable();
+        lucide.createIcons();
+    </script>
+</body>
+</html>
