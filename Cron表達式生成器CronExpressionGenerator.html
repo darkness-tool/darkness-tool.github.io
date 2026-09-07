@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+	<meta name="description" content="免費線上 Cron 表達式生成器，提供直觀的圖像化介面，幫助您輕鬆快速生成排程設定（分鐘、小時、日期、月份及星期），即時輸出標準 Cron 語法。">
+<meta name="keywords" content="Cron表達式生成器, Cron生成器, 排程設定, Cron generator, 免費線上工具, 定時任務, Cron語法">
+<meta name="robots" content="index, follow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="load_index_common.js"></script>
+    <title>Cron 表達式生成器</title>
+    <style>
+        body {
+            font-family: 'Microsoft JhengHei', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            max-width: 800px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .output-box {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 2em;
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            letter-spacing: 5px;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #7f8c8d;
+            border-bottom: 3px solid transparent;
+        }
+        .tab.active {
+            color: #3498db;
+            border-bottom: 3px solid #3498db;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .option-group {
+            margin-bottom: 15px;
+        }
+        .option-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .grid label {
+            font-weight: normal;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: #ecf0f1;
+            padding: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        input[type="number"] {
+            width: 60px;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Cron 表達式生成器</h1>
+    
+    <div class="output-box" id="cron-output">* * * * *</div>
+
+    <div class="tabs">
+        <div class="tab active" onclick="showTab('minute')">分鐘</div>
+        <div class="tab" onclick="showTab('hour')">小時</div>
+        <div class="tab" onclick="showTab('day')">日期</div>
+        <div class="tab" onclick="showTab('month')">月份</div>
+        <div class="tab" onclick="showTab('week')">星期</div>
+    </div>
+
+    <!-- 分鐘頁籤 -->
+    <div id="minute" class="tab-content active">
+        <div class="option-group">
+            <label><input type="radio" name="min_type" value="*" checked onchange="updateCron()"> 每分鐘 (*)</label>
+            <label><input type="radio" name="min_type" value="step" onchange="updateCron()"> 每隔 <input type="number" id="min_step" value="5" min="1" max="59" onchange="updateCron()"> 分鐘</label>
+            <label><input type="radio" name="min_type" value="specific" onchange="updateCron()"> 指定分鐘（在下方選擇）</label>
+        </div>
+        <div class="grid" id="min_grid"></div>
+    </div>
+
+    <!-- 小時頁籤 -->
+    <div id="hour" class="tab-content">
+        <div class="option-group">
+            <label><input type="radio" name="hour_type" value="*" checked onchange="updateCron()"> 每小時 (*)</label>
+            <label><input type="radio" name="hour_type" value="step" onchange="updateCron()"> 每隔 <input type="number" id="hour_step" value="2" min="1" max="23" onchange="updateCron()"> 小時</label>
+            <label><input type="radio" name="hour_type" value="specific" onchange="updateCron()"> 指定小時</label>
+        </div>
+        <div class="grid" id="hour_grid"></div>
+    </div>
+
+    <!-- 日期頁籤 -->
+    <div id="day" class="tab-content">
+        <div class="option-group">
+            <label><input type="radio" name="day_type" value="*" checked onchange="updateCron()"> 每日 (*)</label>
+            <label><input type="radio" name="day_type" value="step" onchange="updateCron()"> 每隔 <input type="number" id="day_step" value="2" min="1" max="31" onchange="updateCron()"> 天</label>
+            <label><input type="radio" name="day_type" value="specific" onchange="updateCron()"> 指定日期</label>
+        </div>
+        <div class="grid" id="day_grid"></div>
+    </div>
+
+    <!-- 月份頁籤 -->
+    <div id="month" class="tab-content">
+        <div class="option-group">
+            <label><input type="radio" name="month_type" value="*" checked onchange="updateCron()"> 每月 (*)</label>
+            <label><input type="radio" name="month_type" value="specific" onchange="updateCron()"> 指定月份</label>
+        </div>
+        <div class="grid" id="month_grid"></div>
+    </div>
+
+    <!-- 星期頁籤 -->
+    <div id="week" class="tab-content">
+        <div class="option-group">
+            <label><input type="radio" name="week_type" value="*" checked onchange="updateCron()"> 每星期幾 (*)</label>
+            <label><input type="radio" name="week_type" value="specific" onchange="updateCron()"> 指定星期幾</label>
+        </div>
+        <div class="grid" id="week_grid"></div>
+    </div>
+</div>
+
+<script>
+    // 頁籤切換邏輯
+    function showTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+        
+        document.getElementById(tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    // 產生核取方塊的輔助函式
+    function generateCheckboxes(containerId, max, namePrefix, startIndex = 0, labels = []) {
+        const container = document.getElementById(containerId);
+        for (let i = startIndex; i <= max; i++) {
+            const labelText = labels.length ? labels[i - startIndex] : i;
+            const label = document.createElement('label');
+            label.innerHTML = `<input type="checkbox" name="${namePrefix}" value="${i}" onchange="document.querySelector('input[name=\\'${namePrefix}_type\\'][value=\\'specific\\']').checked = true; updateCron();"> ${labelText}`;
+            container.appendChild(label);
+        }
+    }
+
+    // 初始化選項網格
+    generateCheckboxes('min_grid', 59, 'min', 0);
+    generateCheckboxes('hour_grid', 23, 'hour', 0);
+    generateCheckboxes('day_grid', 31, 'day', 1);
+    generateCheckboxes('month_grid', 12, 'month', 1, ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月']);
+    generateCheckboxes('week_grid', 6, 'week', 0, ['日', '一', '二', '三', '四', '五', '六']);
+
+    // 產生 Cron 字串
+    function getPart(name) {
+        const type = document.querySelector(`input[name="${name}_type"]:checked`).value;
+        if (type === '*') return '*';
+        
+        if (type === 'step') {
+            const stepVal = document.getElementById(`${name}_step`).value;
+            return `*/${stepVal}`;
+        }
+
+        if (type === 'specific') {
+            const checked = Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(el => el.value);
+            return checked.length > 0 ? checked.join(',') : '*';
+        }
+        return '*';
+    }
+
+    function updateCron() {
+        const min = getPart('min');
+        const hour = getPart('hour');
+        const day = getPart('day');
+        const month = getPart('month');
+        const week = getPart('week');
+
+        const cronString = `${min} ${hour} ${day} ${month} ${week}`;
+        document.getElementById('cron-output').innerText = cronString;
+    }
+</script>
+
+</body>
+</html>
