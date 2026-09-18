@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="zh-HK" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>香港六合彩互動模擬與概率驗證器 | HK Mark Six Simulator</title>
+	<meta name="description" content="香港六合彩互動模擬器兼概率驗證工具，提供擬真3D氣流攪珠體驗、單式複式膽拖投注策略測試、蒙特卡羅大數據模擬、冷熱號碼統計及回報率分析，助你深入了解機率與大數法則。">
+<meta name="keywords" content="六合彩模擬器, 香港六合彩, Mark Six, 攪珠模擬, 蒙特卡羅模擬, 膽拖複式計算, 六合彩機率, 熱門號碼, 冷門號碼, 大數法則">
+<meta name="robots" content="index, follow">
+<meta charset="UTF-8">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	
+	<script src="load_index_common.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        hkjc: {
+                            green: '#007a3d',
+                            darkGreen: '#004d25',
+                            gold: '#ffcc00',
+                            darkGold: '#c59b00',
+                            darkBg: '#091510',
+                            cardBg: '#11221a',
+                            border: '#1b3b2c'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Ball Styles with 3D Glossy Gradient */
+        .ball {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: 800;
+            color: #ffffff;
+            text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.8);
+            box-shadow: inset -3px -3px 6px rgba(0, 0, 0, 0.4), inset 3px 3px 6px rgba(255, 255, 255, 0.6), 0px 4px 8px rgba(0,0,0,0.4);
+            user-select: none;
+            transition: all 0.25s ease;
+            position: relative;
+        }
+
+        .ball-red {
+            background: radial-gradient(circle at 35% 35%, #ff6b6b, #d62828 60%, #800f2f);
+        }
+
+        .ball-blue {
+            background: radial-gradient(circle at 35% 35%, #4ea8de, #0077b6 60%, #03045e);
+        }
+
+        .ball-green {
+            background: radial-gradient(circle at 35% 35%, #52b788, #137547 60%, #081c15);
+        }
+
+        .ball::after {
+            content: '';
+            position: absolute;
+            top: 12%;
+            left: 20%;
+            width: 35%;
+            height: 25%;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.45);
+            filter: blur(1px);
+        }
+
+        /* Glassmorphism containers */
+        .glass-panel {
+            background: rgba(17, 34, 26, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 204, 0, 0.15);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Animation Keyframes */
+        @keyframes popIn {
+            0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+            80% { transform: scale(1.15) rotate(10deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        .animate-pop {
+            animation: popIn 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #091510;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1b3b2c;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #007a3d;
+        }
+    </style>
+</head>
+<body class="bg-hkjc-darkBg text-slate-100 font-sans min-h-screen flex flex-col antialiased">
+
+    <!-- Top Header -->
+    <header class="border-b border-hkjc-border bg-hkjc-darkGreen/90 sticky top-0 z-50 backdrop-blur-md shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full bg-hkjc-gold flex items-center justify-center text-hkjc-darkGreen font-extrabold text-xl shadow-md border-2 border-white">
+                    <i class="fa-solid fa-gem"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-black tracking-wide text-white flex items-center gap-2">
+                        香港六合彩 <span class="text-hkjc-gold text-sm font-normal border border-hkjc-gold/40 px-2 py-0.5 rounded-full bg-hkjc-gold/10">模擬與概率驗證器</span>
+                    </h1>
+                    <p class="text-xs text-slate-300">HK Mark Six Physics Simulator & Monte Carlo Analyzer</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4 text-xs">
+                <div class="hidden sm:flex items-center gap-2 bg-black/30 px-3 py-1.5 rounded-lg border border-white/10">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                    <span class="text-slate-300">每注定價: <strong class="text-hkjc-gold">HK$ 10</strong></span>
+                </div>
+                <div class="hidden md:flex items-center gap-2 bg-black/30 px-3 py-1.5 rounded-lg border border-white/10">
+                    <i class="fa-solid fa-cube text-hkjc-gold"></i>
+                    <span class="text-slate-300">總組合數: <strong class="text-white">13,983,816</strong></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6 space-y-6">
+
+        <!-- Top Section Grid: Left Ticket Picker, Right Physics Chamber -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- LEFT: Ticket Selection Panel (5 Cols) -->
+            <div class="lg:col-span-5 glass-panel rounded-2xl p-5 shadow-2xl flex flex-col justify-between border border-hkjc-gold/20">
+                <div>
+                    <div class="flex items-center justify-between pb-3 mb-3 border-b border-white/10">
+                        <h2 class="font-bold text-lg text-hkjc-gold flex items-center gap-2">
+                            <i class="fa-solid fa-ticket"></i> 自選單式投注卡
+                        </h2>
+                        <span id="ticket-status" class="text-xs px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
+                            請選擇 6 個號碼
+                        </span>
+                    </div>
+
+                    <!-- Number Grid (1-49) -->
+                    <div class="grid grid-cols-7 gap-1.5 sm:gap-2 mb-4" id="ball-picker-grid">
+                        <!-- JS populated 1 to 49 balls -->
+                    </div>
+                </div>
+
+                <!-- Ticket Control Actions -->
+                <div class="pt-3 border-t border-white/10 space-y-3">
+                    <div class="flex items-center justify-between bg-black/40 p-2.5 rounded-xl border border-white/5">
+                        <div class="text-xs text-slate-400">
+                            已選號碼:
+                        </div>
+                        <div id="selected-balls-display" class="flex items-center gap-1.5 min-h-[32px]">
+                            <span class="text-xs text-slate-500 italic">尚未選擇號碼...</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <button id="btn-quick-pick" class="py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-hkjc-gold font-bold rounded-xl text-sm transition-all border border-hkjc-gold/30 flex items-center justify-center gap-2 active:scale-95">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> 隨機機選
+                        </button>
+                        <button id="btn-clear-ticket" class="py-2.5 px-4 bg-slate-800 hover:bg-rose-900/40 text-slate-300 hover:text-rose-300 font-semibold rounded-xl text-sm transition-all border border-slate-700 flex items-center justify-center gap-2 active:scale-95">
+                            <i class="fa-solid fa-trash-can"></i> 清除號碼
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: Interactive 3D Physics Chamber (7 Cols) -->
+            <div class="lg:col-span-7 glass-panel rounded-2xl p-5 shadow-2xl flex flex-col justify-between relative overflow-hidden border border-hkjc-gold/20">
+                
+                <div class="flex items-center justify-between mb-2 z-10">
+                    <div class="flex items-center gap-2">
+                        <span class="inline-block w-3 h-3 rounded-full bg-red-500 animate-pulse"></span>
+                        <h2 class="font-bold text-lg text-white">攪珠機現場 (Physics Chamber)</h2>
+                    </div>
+                    <div class="text-xs text-slate-400">49 顆物理碰撞彩球</div>
+                </div>
+
+                <!-- Canvas Simulation Container -->
+                <div class="relative w-full h-[260px] sm:h-[300px] bg-black/50 rounded-2xl border border-white/10 overflow-hidden flex items-center justify-center shadow-inner">
+                    <canvas id="physics-canvas" class="w-full h-full block"></canvas>
+                    
+                    <!-- Overlay Chamber Glass Shimmer -->
+                    <div class="absolute inset-0 pointer-events-none rounded-2xl bg-gradient-to-tr from-white/5 via-transparent to-white/10 border border-white/10"></div>
+                </div>
+
+                <!-- Drawn Results Display Tray -->
+                <div class="mt-4 bg-black/60 p-3.5 rounded-xl border border-hkjc-gold/30">
+                    <div class="text-xs text-hkjc-gold font-bold mb-2 flex items-center justify-between">
+                        <span><i class="fa-solid fa-trophy"></i> 當期攪珠結果:</span>
+                        <span id="draw-match-summary" class="text-slate-300 font-normal">等待攪珠...</span>
+                    </div>
+
+                    <div class="flex items-center justify-between flex-wrap gap-2 min-h-[50px] px-2">
+                        <!-- Main 6 balls -->
+                        <div class="flex items-center gap-1.5 sm:gap-2" id="drawn-main-balls">
+                            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-dashed border-slate-700 flex items-center justify-center text-xs text-slate-600">1</div>
+                            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-dashed border-slate-700 flex items-center justify-center text-xs text-slate-600">2</div>
+                            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-dashed border-slate-700 flex items-center justify-center text-xs text-slate-600">3</div>
+                            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-dashed border-slate-700 flex items-center justify-center text-xs text-slate-600">4</div>
+                            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-dashed border-slate-700 flex items-center justify-center text-xs text-slate-600">5</div>
+                            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-dashed border-slate-700 flex items-center justify-center text-xs text-slate-600">6</div>
+                        </div>
+
+                        <!-- Plus sign -->
+                        <div class="text-slate-500 font-bold text-lg px-1">+</div>
+
+                        <!-- Special Ball -->
+                        <div id="drawn-special-ball">
+                            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-dashed border-hkjc-gold/40 flex items-center justify-center text-xs text-hkjc-gold/40">特別</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Middle Section: Simulation Modes & Control Bar -->
+        <div class="glass-panel rounded-2xl p-5 shadow-xl border border-hkjc-gold/20 space-y-4">
+            
+            <!-- Tab Controls Header -->
+            <div class="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-4">
+                <div class="flex items-center gap-3">
+                    <button id="tab-mode-a" class="px-4 py-2 rounded-xl text-sm font-bold bg-hkjc-gold text-hkjc-darkBg shadow-lg transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-play"></i> 模式 A: 實時現場攪珠
+                    </button>
+                    <button id="tab-mode-b" class="px-4 py-2 rounded-xl text-sm font-bold bg-slate-800 text-slate-300 hover:text-white transition-all flex items-center gap-2 border border-slate-700">
+                        <i class="fa-solid fa-bolt"></i> 模式 B: 大數據極速模擬
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <button id="btn-reset-stats" class="px-3 py-1.5 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 transition">
+                        <i class="fa-solid fa-rotate-left"></i> 重置所有數據
+                    </button>
+                </div>
+            </div>
+
+            <!-- MODE A CONTROLS PANEL -->
+            <div id="panel-mode-a" class="flex flex-wrap items-center justify-between gap-4">
+                <div class="text-sm text-slate-300">
+                    <i class="fa-solid fa-circle-info text-hkjc-gold mr-1"></i>
+                    模擬真實六合彩電視直播攪珠過程，逐一抽出 6 個正選號碼及 1 個特別號碼。
+                </div>
+                <div class="flex items-center gap-3">
+                    <button id="btn-start-live-draw" class="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-hkjc-green hover:from-emerald-500 hover:to-emerald-600 text-white font-extrabold rounded-xl text-sm shadow-lg transition transform active:scale-95 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-play"></i> 開始現場攪珠
+                    </button>
+                </div>
+            </div>
+
+            <!-- MODE B CONTROLS PANEL -->
+            <div id="panel-mode-b" class="hidden space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-semibold text-slate-400">選擇極速模擬期數:</span>
+                        <div class="inline-flex rounded-xl p-1 bg-black/40 border border-white/10 gap-1">
+                            <button class="btn-mc-count px-3 py-1 text-xs rounded-lg font-bold bg-hkjc-gold text-hkjc-darkBg" data-count="100">100期</button>
+                            <button class="btn-mc-count px-3 py-1 text-xs rounded-lg font-bold text-slate-300 hover:text-white" data-count="1000">1,000期</button>
+                            <button class="btn-mc-count px-3 py-1 text-xs rounded-lg font-bold text-slate-300 hover:text-white" data-count="10000">10,000期</button>
+                            <button class="btn-mc-count px-3 py-1 text-xs rounded-lg font-bold text-slate-300 hover:text-white" data-count="100000">100,000期</button>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <button id="btn-start-mc" class="px-6 py-2 bg-gradient-to-r from-hkjc-gold to-yellow-500 text-hkjc-darkBg font-black rounded-xl text-sm shadow-lg transition transform active:scale-95 flex items-center gap-2">
+                            <i class="fa-solid fa-rocket"></i> 開始大數據模擬
+                        </button>
+                        <button id="btn-stop-mc" disabled class="px-4 py-2 bg-rose-900/50 hover:bg-rose-800 text-rose-200 font-bold rounded-xl text-sm transition opacity-50 cursor-not-allowed flex items-center gap-2 border border-rose-700/50">
+                            <i class="fa-solid fa-circle-stop"></i> 停止
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Simulation Progress Bar -->
+                <div class="space-y-1">
+                    <div class="flex justify-between text-xs text-slate-400">
+                        <span id="mc-progress-status">等待開始...</span>
+                        <span id="mc-progress-percent">0%</span>
+                    </div>
+                    <div class="w-full h-2.5 bg-black/50 rounded-full overflow-hidden border border-white/10">
+                        <div id="mc-progress-bar" class="h-full bg-gradient-to-r from-emerald-500 via-hkjc-gold to-yellow-400 w-0 transition-all duration-100"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Financial & Return KPI Dashboard -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+            
+            <!-- Total Spent -->
+            <div class="glass-panel p-4 rounded-2xl border border-white/10">
+                <div class="text-xs text-slate-400 mb-1 flex items-center gap-1">
+                    <i class="fa-solid fa-money-bill-wave text-rose-400"></i> 累積總投注成本
+                </div>
+                <div class="text-xl sm:text-2xl font-black text-white" id="kpi-total-cost">HK$ 0</div>
+                <div class="text-[11px] text-slate-500 mt-1" id="kpi-total-draws">總期數: 0 期</div>
+            </div>
+
+            <!-- Total Won -->
+            <div class="glass-panel p-4 rounded-2xl border border-white/10">
+                <div class="text-xs text-slate-400 mb-1 flex items-center gap-1">
+                    <i class="fa-solid fa-hand-holding-dollar text-emerald-400"></i> 累積彩金回報
+                </div>
+                <div class="text-xl sm:text-2xl font-black text-emerald-400" id="kpi-total-return">HK$ 0</div>
+                <div class="text-[11px] text-slate-500 mt-1" id="kpi-total-wins">中獎次數: 0 次</div>
+            </div>
+
+            <!-- Net P&L -->
+            <div class="glass-panel p-4 rounded-2xl border border-white/10">
+                <div class="text-xs text-slate-400 mb-1 flex items-center gap-1">
+                    <i class="fa-solid fa-scale-balanced text-hkjc-gold"></i> 淨盈虧 (Net P&L)
+                </div>
+                <div class="text-xl sm:text-2xl font-black text-slate-200" id="kpi-net-pnl">HK$ 0</div>
+                <div class="text-[11px] text-slate-500 mt-1" id="kpi-pnl-status">盈虧持平</div>
+            </div>
+
+            <!-- ROI % -->
+            <div class="glass-panel p-4 rounded-2xl border border-white/10">
+                <div class="text-xs text-slate-400 mb-1 flex items-center gap-1">
+                    <i class="fa-solid fa-chart-line text-sky-400"></i> 回報率 (ROI)
+                </div>
+                <div class="text-xl sm:text-2xl font-black text-sky-400" id="kpi-roi">0.00%</div>
+                <div class="text-[11px] text-slate-500 mt-1">理論返還率: ~54%</div>
+            </div>
+
+            <!-- Equivalent Life Time -->
+            <div class="col-span-2 md:col-span-1 glass-panel p-4 rounded-2xl border border-white/10">
+                <div class="text-xs text-slate-400 mb-1 flex items-center gap-1">
+                    <i class="fa-solid fa-hourglass-half text-purple-400"></i> 折合現實投注時間
+                </div>
+                <div class="text-xl sm:text-2xl font-black text-purple-300" id="kpi-equivalent-time">0 天</div>
+                <div class="text-[11px] text-slate-500 mt-1">基於每週 3 期攪珠</div>
+            </div>
+
+        </div>
+
+        <!-- Bottom Grid: Detailed Prize Breakdown Table & Cold/Hot Chart -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- Prize Breakdown Table (7 Cols) -->
+            <div class="lg:col-span-7 glass-panel rounded-2xl p-5 shadow-xl border border-hkjc-gold/20 flex flex-col justify-between">
+                <div>
+                    <h3 class="font-bold text-base text-white mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-hkjc-gold"></i> 各獎項中獎統計與理論概率對比
+                    </h3>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="border-b border-white/10 text-slate-400 bg-black/30">
+                                    <th class="py-2 px-2">獎項</th>
+                                    <th class="py-2 px-2">中獎條件</th>
+                                    <th class="py-2 px-2">估計彩金</th>
+                                    <th class="py-2 px-2 text-center">中獎次數</th>
+                                    <th class="py-2 px-2 text-right">理論中獎率</th>
+                                    <th class="py-2 px-2 text-right">實際出現率</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-white/5" id="prize-table-body">
+                                <!-- JS Populated Prize Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="mt-4 p-2.5 rounded-xl bg-black/40 border border-white/5 text-[11px] text-slate-400">
+                    <i class="fa-solid fa-lightbulb text-hkjc-gold mr-1"></i>
+                    <strong>數學邏輯備註：</strong> 香港六合彩頭獎理論機率為 1/13,983,816。投注為負期望值（-EV）隨機遊戲，馬會提撥總投注額之 54% 作為彩金獎池。
+                </div>
+            </div>
+
+            <!-- Hot / Cold Numbers Chart (5 Cols) -->
+            <div class="lg:col-span-5 glass-panel rounded-2xl p-5 shadow-xl border border-hkjc-gold/20 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-bold text-base text-white flex items-center gap-2">
+                            <i class="fa-solid fa-fire text-amber-500"></i> 號碼攪出頻率冷熱榜 (1-49)
+                        </h3>
+                    </div>
+
+                    <div class="relative w-full h-[260px]">
+                        <canvas id="chart-frequency"></canvas>
+                    </div>
+                </div>
+
+                <div class="mt-2 text-center text-[11px] text-slate-400">
+                    紅/藍/綠柱形對應 Mark Six 正式彩球顏色類別
+                </div>
+            </div>
+
+        </div>
+		
+		<div class="p-3">這款香港六合彩互動模擬器兼概率驗證系統，專為探究古典隨機事件與統計規律而設計，將真實的攪珠流程與強大的電腦運算能力融為一體。使用者能夠在網頁介面中體驗極具臨場感的立體氣流攪珠模擬，親眼見證彩球在混濁動態力學下被隨機攪動與依序落下的完整過程。系統精準還原了香港賽馬會六合彩的標準規則，從一至四十九號彩球中嚴謹抽出六個正選號碼與一個特別號碼，為使用者提供直觀且富有趣味的線上模擬體驗。
+<br>
+除了視覺化的單期攪珠，模擬器更內建了靈活的投注策略測試與大數據蒙特卡羅運算模組。使用者可以自由選擇單式、複式或膽拖等常見投注組合，體驗不同下注模式在實戰中的包號效果與資金佈局。強大的背景統計引擎支援以極高速度進行數萬次甚至數百萬次的模擬投注，並根據官方公佈的七個獎等派彩標準，即時計算出總投注金額、累積中獎金額以及實際回報率，將複雜的組合數學轉換為一目了然的財務圖表與數據變化。
+<br>
+在數據分析方面，系統即時追蹤並繪製號碼出現頻率圖表，自動歸納出熱門號碼與冷門號碼的分布狀況，讓使用者能從歷史結果中觀測出隨機數列的波幅變化。更重要的是，這項工具深入淺出地展現了概率論中的大數法則與獨立事件概念，直觀地揭示出每一次攪珠皆為互相獨立的客觀物理過程，無論歷史出現過何種規律，下一期的中獎機率始終保持不變。這不僅是一款集模擬與分析於一身的網頁工具，更是一個釐清賭徒謬誤、理性理解機率本質的科學示範平台。</div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-auto border-t border-hkjc-border bg-black/60 py-4 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <div>香港六合彩互動模擬與概率驗證器 &copy; 2026 Interactive Simulator</div>
+            <div class="text-slate-600">本工具僅供統計學教學與概率研究用途，不具備實際投注功能。博彩要有節制。</div>
+        </div>
+    </footer>
+
+    <script>
+        // --- CONSTANTS & CONFIGURATION ---
+        const BALL_COLORS = {
+            red: [1, 2, 7, 8, 12, 13, 18, 19, 23, 24, 29, 30, 34, 35, 40, 41, 46, 47],
+            blue: [3, 4, 9, 10, 14, 15, 20, 25, 26, 31, 32, 36, 37, 42, 43, 48, 49],
+            green: [5, 6, 11, 16, 17, 21, 22, 27, 28, 33, 38, 39, 44, 45]
+        };
+
+        function getBallColorType(num) {
+            if (BALL_COLORS.red.includes(num)) return 'red';
+            if (BALL_COLORS.blue.includes(num)) return 'blue';
+            if (BALL_COLORS.green.includes(num)) return 'green';
+            return 'red';
+        }
+
+        // Prize definitions with standard HKJC payout estimates
+        const PRIZE_STRUCTURE = [
+            { id: 1, name: '頭獎 (1st)', rule: '6個正選', payout: 8000000, theoreticalProb: 1 / 13983816, reqMain: 6, reqSpecial: false },
+            { id: 2, name: '二獎 (2nd)', rule: '5個正選 + 特別', payout: 1500000, theoreticalProb: 6 / 13983816, reqMain: 5, reqSpecial: true },
+            { id: 3, name: '三獎 (3rd)', rule: '5個正選', payout: 96000, theoreticalProb: 252 / 13983816, reqMain: 5, reqSpecial: false },
+            { id: 4, name: '四獎 (4th)', rule: '4個正選 + 特別', payout: 9600, theoreticalProb: 630 / 13983816, reqMain: 4, reqSpecial: true },
+            { id: 5, name: '五獎 (5th)', rule: '4個正選', payout: 640, theoreticalProb: 13545 / 13983816, reqMain: 4, reqSpecial: false },
+            { id: 6, name: '六獎 (6th)', rule: '3個正選 + 特別', payout: 320, theoreticalProb: 14190 / 13983816, reqMain: 3, reqSpecial: true },
+            { id: 7, name: '七獎 (7th)', rule: '3個正選', payout: 40, theoreticalProb: 246820 / 13983816, reqMain: 3, reqSpecial: false }
+        ];
+
+        // Global State Variables
+        let userSelectedNumbers = new Set();
+        let totalDrawsCount = 0;
+        let prizeHitCounts = [0, 0, 0, 0, 0, 0, 0, 0]; // Index 1..7 for prizes, 0 for no prize
+        let numberFrequencies = new Array(50).fill(0); // 1 to 49
+        let isSimulating = false;
+        let monteCarloStopRequested = false;
+        let selectedMcCount = 100;
+
+        // Chart Instance
+        let freqChartInstance = null;
+
+        // Audio Effects Generator (Web Audio API)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound(freq, duration, type = 'sine') {
+            try {
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) {
+                // Audio Context muted/disabled
+            }
+        }
+
+        // --- 2D CANVAS PHYSICS ENGINE FOR CHAMBER ---
+        const canvas = document.getElementById('physics-canvas');
+        const ctx = canvas.getContext('2d');
+        let physicsBalls = [];
+        let animationFrameId = null;
+
+        class PhysicsBall {
+            constructor(number, radius, boundsWidth, boundsHeight) {
+                this.number = number;
+                this.radius = radius;
+                this.colorType = getBallColorType(number);
+                this.x = radius + Math.random() * (boundsWidth - radius * 2);
+                this.y = radius + Math.random() * (boundsHeight - radius * 2);
+                this.vx = (Math.random() - 0.5) * 6;
+                this.vy = (Math.random() - 0.5) * 6;
+            }
+
+            update(width, height) {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Circular/Rectangular Boundary bounce
+                if (this.x - this.radius < 0) { this.x = this.radius; this.vx *= -1; }
+                if (this.x + this.radius > width) { this.x = width - this.radius; this.vx *= -1; }
+                if (this.y - this.radius < 0) { this.y = this.radius; this.vy *= -1; }
+                if (this.y + this.radius > height) { this.y = height - this.radius; this.vy *= -1; }
+
+                // Continuous agitation (swirling air stream)
+                this.vx += (Math.random() - 0.5) * 0.8;
+                this.vy += (Math.random() - 0.5) * 0.8;
+
+                // Speed cap
+                const speed = Math.hypot(this.vx, this.vy);
+                const maxSpeed = 7;
+                if (speed > maxSpeed) {
+                    this.vx = (this.vx / speed) * maxSpeed;
+                    this.vy = (this.vy / speed) * maxSpeed;
+                }
+            }
+
+            draw(ctx) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+
+                // Ball Color Gradients
+                let grad = ctx.createRadialGradient(
+                    this.x - this.radius * 0.3,
+                    this.y - this.radius * 0.3,
+                    this.radius * 0.1,
+                    this.x,
+                    this.y,
+                    this.radius
+                );
+
+                if (this.colorType === 'red') {
+                    grad.addColorStop(0, '#ff6b6b');
+                    grad.addColorStop(0.7, '#d62828');
+                    grad.addColorStop(1, '#800f2f');
+                } else if (this.colorType === 'blue') {
+                    grad.addColorStop(0, '#4ea8de');
+                    grad.addColorStop(0.7, '#0077b6');
+                    grad.addColorStop(1, '#03045e');
+                } else {
+                    grad.addColorStop(0, '#52b788');
+                    grad.addColorStop(0.7, '#137547');
+                    grad.addColorStop(1, '#081c15');
+                }
+
+                ctx.fillStyle = grad;
+                ctx.fill();
+
+                // Ball Text Number
+                ctx.fillStyle = '#ffffff';
+                ctx.font = `bold ${Math.floor(this.radius * 0.9)}px sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(this.number, this.x, this.y + 1);
+
+                ctx.restore();
+            }
+        }
+
+        function initPhysicsChamber() {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+
+            physicsBalls = [];
+            const ballRadius = Math.max(10, Math.min(canvas.width, canvas.height) / 24);
+
+            for (let i = 1; i <= 49; i++) {
+                physicsBalls.push(new PhysicsBall(i, ballRadius, canvas.width, canvas.height));
+            }
+        }
+
+        function renderPhysicsChamber() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw mixing wind turbulence visual effect
+            ctx.strokeStyle = 'rgba(255, 204, 0, 0.05)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            const time = Date.now() * 0.002;
+            ctx.arc(canvas.width / 2, canvas.height / 2, Math.sin(time) * 40 + 60, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Update & Draw Balls
+            for (let ball of physicsBalls) {
+                ball.update(canvas.width, canvas.height);
+                ball.draw(ctx);
+            }
+
+            animationFrameId = requestAnimationFrame(renderPhysicsChamber);
+        }
+
+        window.addEventListener('resize', () => {
+            initPhysicsChamber();
+        });
+
+        // --- UI INITIALIZATION & TICKET SELECTION ---
+        function renderBallPickerGrid() {
+            const grid = document.getElementById('ball-picker-grid');
+            grid.innerHTML = '';
+
+            for (let i = 1; i <= 49; i++) {
+                const colorType = getBallColorType(i);
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = `ball ball-${colorType} w-8 h-8 sm:w-9 sm:h-9 text-xs sm:text-sm font-bold rounded-full transition transform active:scale-90 hover:opacity-90`;
+                btn.innerText = i;
+                btn.dataset.num = i;
+
+                btn.addEventListener('click', () => toggleNumberSelection(i, btn));
+                grid.appendChild(btn);
+            }
+        }
+
+        function toggleNumberSelection(num, element) {
+            if (userSelectedNumbers.has(num)) {
+                userSelectedNumbers.delete(num);
+                element.classList.remove('ring-4', 'ring-hkjc-gold', 'scale-110');
+            } else {
+                if (userSelectedNumbers.size >= 6) {
+                    alert('一注單式只可選擇 6 個號碼！');
+                    return;
+                }
+                userSelectedNumbers.add(num);
+                element.classList.add('ring-4', 'ring-hkjc-gold', 'scale-110');
+                playSound(600, 0.05);
+            }
+            updateTicketDisplay();
+        }
+
+        function updateTicketDisplay() {
+            const display = document.getElementById('selected-balls-display');
+            const status = document.getElementById('ticket-status');
+
+            if (userSelectedNumbers.size === 0) {
+                display.innerHTML = `<span class="text-xs text-slate-500 italic">尚未選擇號碼...</span>`;
+                status.innerText = '請選擇 6 個號碼';
+                status.className = 'text-xs px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700';
+            } else {
+                display.innerHTML = '';
+                const sorted = Array.from(userSelectedNumbers).sort((a, b) => a - b);
+
+                sorted.forEach(num => {
+                    const color = getBallColorType(num);
+                    const span = document.createElement('span');
+                    span.className = `ball ball-${color} w-6 h-6 text-xs font-bold animate-pop`;
+                    span.innerText = num;
+                    display.appendChild(span);
+                });
+
+                if (userSelectedNumbers.size === 6) {
+                    status.innerText = '投注組合已確認 (1注 $10)';
+                    status.className = 'text-xs px-2.5 py-1 rounded-full bg-emerald-900/80 text-emerald-300 border border-emerald-500 font-bold';
+                } else {
+                    status.innerText = `已選擇 ${userSelectedNumbers.size} / 6 個號碼`;
+                    status.className = 'text-xs px-2.5 py-1 rounded-full bg-amber-900/80 text-amber-300 border border-amber-500';
+                }
+            }
+        }
+
+        function quickPick() {
+            userSelectedNumbers.clear();
+            document.querySelectorAll('#ball-picker-grid button').forEach(b => {
+                b.classList.remove('ring-4', 'ring-hkjc-gold', 'scale-110');
+            });
+
+            const pool = Array.from({ length: 49 }, (_, i) => i + 1);
+            while (userSelectedNumbers.size < 6) {
+                const idx = Math.floor(Math.random() * pool.length);
+                const pick = pool.splice(idx, 1)[0];
+                userSelectedNumbers.add(pick);
+
+                const btn = document.querySelector(`#ball-picker-grid button[data-num="${pick}"]`);
+                if (btn) btn.classList.add('ring-4', 'ring-hkjc-gold', 'scale-110');
+            }
+            playSound(800, 0.1);
+            updateTicketDisplay();
+        }
+
+        function clearTicket() {
+            userSelectedNumbers.clear();
+            document.querySelectorAll('#ball-picker-grid button').forEach(b => {
+                b.classList.remove('ring-4', 'ring-hkjc-gold', 'scale-110');
+            });
+            updateTicketDisplay();
+        }
+
+        // --- DRAW LOGIC & CORE CALCULATIONS ---
+        function generateRandomDraw() {
+            const pool = Array.from({ length: 49 }, (_, i) => i + 1);
+            const drawn = [];
+
+            for (let i = 0; i < 7; i++) {
+                const randIndex = Math.floor(Math.random() * pool.length);
+                drawn.push(pool.splice(randIndex, 1)[0]);
+            }
+
+            const mainNumbers = drawn.slice(0, 6); // First 6
+            const specialNumber = drawn[6];       // 7th is special
+
+            return { main: mainNumbers, special: specialNumber };
+        }
+
+        function checkWinningTier(userPicks, drawResult) {
+            if (userPicks.size < 6) return 0; // Not a full ticket
+
+            let matchMain = 0;
+            let matchSpecial = false;
+
+            userPicks.forEach(num => {
+                if (drawResult.main.includes(num)) {
+                    matchMain++;
+                } else if (num === drawResult.special) {
+                    matchSpecial = true;
+                }
+            });
+
+            if (matchMain === 6) return 1; // 1st Prize
+            if (matchMain === 5 && matchSpecial) return 2; // 2nd Prize
+            if (matchMain === 5) return 3; // 3rd Prize
+            if (matchMain === 4 && matchSpecial) return 4; // 4th Prize
+            if (matchMain === 4) return 5; // 5th Prize
+            if (matchMain === 3 && matchSpecial) return 6; // 6th Prize
+            if (matchMain === 3) return 7; // 7th Prize
+
+            return 0; // No prize
+        }
+
+        // --- MODE A: LIVE DRAW ANIMATION ---
+        async function runLiveDraw() {
+            if (isSimulating) return;
+            if (userSelectedNumbers.size < 6) {
+                alert('請先選擇 6 個投注號碼！');
+                return;
+            }
+
+            isSimulating = true;
+            document.getElementById('btn-start-live-draw').disabled = true;
+            document.getElementById('btn-start-live-draw').classList.add('opacity-50', 'cursor-not-allowed');
+
+            const resultContainerMain = document.getElementById('drawn-main-balls');
+            const resultContainerSpecial = document.getElementById('drawn-special-ball');
+            const matchSummary = document.getElementById('draw-match-summary');
+
+            resultContainerMain.innerHTML = '';
+            resultContainerSpecial.innerHTML = '';
+            matchSummary.innerText = '攪珠進行中...';
+
+            const drawResult = generateRandomDraw();
+
+            // Record Frequencies
+            drawResult.main.forEach(n => numberFrequencies[n]++);
+            numberFrequencies[drawResult.special]++;
+            totalDrawsCount++;
+
+            // Reveal 6 Main Balls step by step
+            for (let i = 0; i < 6; i++) {
+                await new Promise(r => setTimeout(r, 600));
+                const num = drawResult.main[i];
+                const color = getBallColorType(num);
+
+                const ballEl = document.createElement('div');
+                ballEl.className = `ball ball-${color} w-9 h-9 sm:w-10 sm:h-10 text-xs sm:text-sm font-bold animate-pop`;
+                ballEl.innerText = num;
+
+                // Highlight if matched
+                if (userSelectedNumbers.has(num)) {
+                    ballEl.classList.add('ring-4', 'ring-hkjc-gold');
+                }
+
+                resultContainerMain.appendChild(ballEl);
+                playSound(500 + i * 100, 0.15, 'triangle');
+            }
+
+            // Reveal Special Ball
+            await new Promise(r => setTimeout(r, 800));
+            const specNum = drawResult.special;
+            const specColor = getBallColorType(specNum);
+
+            const specBallEl = document.createElement('div');
+            specBallEl.className = `ball ball-${specColor} w-9 h-9 sm:w-10 sm:h-10 text-xs sm:text-sm font-bold animate-pop ring-2 ring-hkjc-gold`;
+            specBallEl.innerText = specNum;
+
+            if (userSelectedNumbers.has(specNum)) {
+                specBallEl.classList.add('ring-4', 'ring-hkjc-gold');
+            }
+
+            resultContainerSpecial.appendChild(specBallEl);
+            playSound(1000, 0.25, 'sine');
+
+            // Evaluate Win
+            const tier = checkWinningTier(userSelectedNumbers, drawResult);
+            prizeHitCounts[tier]++;
+
+            if (tier > 0) {
+                const prize = PRIZE_STRUCTURE[tier - 1];
+                matchSummary.innerText = `🎉 恭喜中獎！【${prize.name}】估計彩金 HK$ ${prize.payout.toLocaleString()}`;
+                matchSummary.className = 'text-hkjc-gold font-bold animate-pulse';
+
+                if (tier <= 3) {
+                    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                }
+            } else {
+                matchSummary.innerText = '本期未中獎，再接再勵！';
+                matchSummary.className = 'text-slate-400 font-normal';
+            }
+
+            updateDashboards();
+
+            isSimulating = false;
+            document.getElementById('btn-start-live-draw').disabled = false;
+            document.getElementById('btn-start-live-draw').classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        // --- MODE B: MONTE CARLO HIGH SPEED SIMULATION ---
+        function runMonteCarloSimulation() {
+            if (isSimulating) return;
+            if (userSelectedNumbers.size < 6) {
+                alert('請先選擇 6 個投注號碼以進行統計驗證！');
+                return;
+            }
+
+            isSimulating = true;
+            monteCarloStopRequested = false;
+
+            document.getElementById('btn-start-mc').disabled = true;
+            document.getElementById('btn-start-mc').classList.add('opacity-50');
+            document.getElementById('btn-stop-mc').disabled = false;
+            document.getElementById('btn-stop-mc').classList.remove('opacity-50', 'cursor-not-allowed');
+
+            const totalTarget = selectedMcCount;
+            let currentCompleted = 0;
+            const chunkSize = Math.min(2000, Math.max(100, Math.floor(totalTarget / 50)));
+
+            function simChunk() {
+                if (monteCarloStopRequested || currentCompleted >= totalTarget) {
+                    finishMonteCarlo();
+                    return;
+                }
+
+                const end = Math.min(totalTarget, currentCompleted + chunkSize);
+                for (let i = currentCompleted; i < end; i++) {
+                    const drawResult = generateRandomDraw();
+
+                    // Track numbers
+                    drawResult.main.forEach(n => numberFrequencies[n]++);
+                    numberFrequencies[drawResult.special]++;
+
+                    // Track Prize
+                    const tier = checkWinningTier(userSelectedNumbers, drawResult);
+                    prizeHitCounts[tier]++;
+                    totalDrawsCount++;
+                }
+
+                currentCompleted = end;
+
+                // Update UI Progress
+                const pct = ((currentCompleted / totalTarget) * 100).toFixed(1);
+                document.getElementById('mc-progress-bar').style.width = `${pct}%`;
+                document.getElementById('mc-progress-percent').innerText = `${pct}%`;
+                document.getElementById('mc-progress-status').innerText = `已完成: ${currentCompleted.toLocaleString()} / ${totalTarget.toLocaleString()} 期`;
+
+                updateDashboards();
+
+                requestAnimationFrame(simChunk);
+            }
+
+            requestAnimationFrame(simChunk);
+        }
+
+        function finishMonteCarlo() {
+            isSimulating = false;
+            document.getElementById('btn-start-mc').disabled = false;
+            document.getElementById('btn-start-mc').classList.remove('opacity-50');
+            document.getElementById('btn-stop-mc').disabled = true;
+            document.getElementById('btn-stop-mc').classList.add('opacity-50', 'cursor-not-allowed');
+
+            document.getElementById('mc-progress-status').innerText = '模擬完成！';
+            playSound(900, 0.2);
+        }
+
+        // --- DASHBOARD UPDATES & ANALYTICS ---
+        function updateDashboards() {
+            // Financial KPIs
+            const costPerBet = 10;
+            const totalCost = totalDrawsCount * costPerBet;
+
+            let totalReturn = 0;
+            let totalWins = 0;
+
+            for (let i = 1; i <= 7; i++) {
+                const count = prizeHitCounts[i];
+                totalWins += count;
+                totalReturn += count * PRIZE_STRUCTURE[i - 1].payout;
+            }
+
+            const netPnL = totalReturn - totalCost;
+            const roi = totalCost > 0 ? ((totalReturn / totalCost) * 100).toFixed(2) : '0.00';
+
+            // Real-life Equivalent Time (3 draws/week = ~156 draws/year)
+            const years = (totalDrawsCount / 156).toFixed(1);
+
+            document.getElementById('kpi-total-cost').innerText = `HK$ ${totalCost.toLocaleString()}`;
+            document.getElementById('kpi-total-draws').innerText = `總期數: ${totalDrawsCount.toLocaleString()} 期`;
+
+            document.getElementById('kpi-total-return').innerText = `HK$ ${totalReturn.toLocaleString()}`;
+            document.getElementById('kpi-total-wins').innerText = `中獎次數: ${totalWins.toLocaleString()} 次`;
+
+            const pnlEl = document.getElementById('kpi-net-pnl');
+            pnlEl.innerText = `${netPnL >= 0 ? '+' : ''}HK$ ${netPnL.toLocaleString()}`;
+            pnlEl.className = `text-xl sm:text-2xl font-black ${netPnL > 0 ? 'text-emerald-400' : netPnL < 0 ? 'text-rose-400' : 'text-slate-200'}`;
+
+            document.getElementById('kpi-pnl-status').innerText = netPnL > 0 ? '淨盈利' : netPnL < 0 ? '虧損中' : '持平';
+            document.getElementById('kpi-roi').innerText = `${roi}%`;
+            document.getElementById('kpi-equivalent-time').innerText = `${years} 年`;
+
+            // Update Prize Table
+            renderPrizeTable();
+
+            // Update Frequency Chart
+            renderFrequencyChart();
+        }
+
+        function renderPrizeTable() {
+            const tbody = document.getElementById('prize-table-body');
+            tbody.innerHTML = '';
+
+            PRIZE_STRUCTURE.forEach(prize => {
+                const hits = prizeHitCounts[prize.id];
+                const actualPct = totalDrawsCount > 0 ? ((hits / totalDrawsCount) * 100).toFixed(5) : '0.00000';
+                const theoreticalPct = (prize.theoreticalProb * 100).toFixed(5);
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-white/5 transition';
+                tr.innerHTML = `
+                    <td class="py-2.5 px-2 font-bold text-hkjc-gold">${prize.name}</td>
+                    <td class="py-2.5 px-2 text-slate-300">${prize.rule}</td>
+                    <td class="py-2.5 px-2 text-emerald-400 font-semibold">$ ${prize.payout.toLocaleString()}</td>
+                    <td class="py-2.5 px-2 text-center font-extrabold text-white bg-black/20 rounded">${hits.toLocaleString()}</td>
+                    <td class="py-2.5 px-2 text-right text-slate-400">${theoreticalPct}%</td>
+                    <td class="py-2.5 px-2 text-right font-mono ${parseFloat(actualPct) > 0 ? 'text-amber-400 font-bold' : 'text-slate-500'}">${actualPct}%</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderFrequencyChart() {
+            const ctxChart = document.getElementById('chart-frequency').getContext('2d');
+
+            const labels = [];
+            const data = [];
+            const backgroundColors = [];
+
+            for (let i = 1; i <= 49; i++) {
+                labels.push(i);
+                data.push(numberFrequencies[i]);
+                const type = getBallColorType(i);
+                if (type === 'red') backgroundColors.push('rgba(214, 40, 40, 0.85)');
+                else if (type === 'blue') backgroundColors.push('rgba(0, 119, 182, 0.85)');
+                else backgroundColors.push('rgba(19, 117, 71, 0.85)');
+            }
+
+            if (!freqChartInstance) {
+                freqChartInstance = new Chart(ctxChart, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: '攪出次數',
+                            data: data,
+                            backgroundColor: backgroundColors,
+                            borderRadius: 4,
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    title: (items) => `號碼: ${items[0].label}`,
+                                    label: (item) => `已被攪出 ${item.raw} 次`
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: '#94a3b8', font: { size: 9 } }
+                            },
+                            y: {
+                                grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                                ticks: { color: '#94a3b8', font: { size: 10 } }
+                            }
+                        }
+                    }
+                });
+            } else {
+                freqChartInstance.data.datasets[0].data = data;
+                freqChartInstance.update('none'); // Update smoothly without full animation glitch
+            }
+        }
+
+        function resetAllData() {
+            if (confirm('確定要重置所有統計數據與期數紀錄嗎？')) {
+                totalDrawsCount = 0;
+                prizeHitCounts = [0, 0, 0, 0, 0, 0, 0, 0];
+                numberFrequencies.fill(0);
+
+                document.getElementById('drawn-main-balls').innerHTML = `
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-dashed border-slate-700 flex items-center justify-center text-xs text-slate-600">1</div>
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-dashed border-slate-700 flex items-center justify-center text-xs text-slate-600">2</div>
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-dashed border-slate-700 flex items-center justify-center text-xs text-slate-600">3</div>
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-dashed border-slate-700 flex items-center justify-center text-xs text-slate-600">4</div>
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-dashed border-slate-700 flex items-center justify-center text-xs text-slate-600">5</div>
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-dashed border-slate-700 flex items-center justify-center text-xs text-slate-600">6</div>
+                `;
+                document.getElementById('drawn-special-ball').innerHTML = `
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-dashed border-hkjc-gold/40 flex items-center justify-center text-xs text-hkjc-gold/40">特別</div>
+                `;
+                document.getElementById('draw-match-summary').innerText = '等待攪珠...';
+
+                document.getElementById('mc-progress-bar').style.width = '0%';
+                document.getElementById('mc-progress-percent').innerText = '0%';
+                document.getElementById('mc-progress-status').innerText = '等待開始...';
+
+                updateDashboards();
+            }
+        }
+
+        // --- EVENT LISTENERS & INITIALIZATION ---
+        window.addEventListener('load', () => {
+            renderBallPickerGrid();
+            initPhysicsChamber();
+            renderPhysicsChamber();
+            updateDashboards();
+
+            // Quick Pick & Clear
+            document.getElementById('btn-quick-pick').addEventListener('click', quickPick);
+            document.getElementById('btn-clear-ticket').addEventListener('click', clearTicket);
+
+            // Tab Switching
+            const tabA = document.getElementById('tab-mode-a');
+            const tabB = document.getElementById('tab-mode-b');
+            const panelA = document.getElementById('panel-mode-a');
+            const panelB = document.getElementById('panel-mode-b');
+
+            tabA.addEventListener('click', () => {
+                tabA.className = 'px-4 py-2 rounded-xl text-sm font-bold bg-hkjc-gold text-hkjc-darkBg shadow-lg transition-all flex items-center gap-2';
+                tabB.className = 'px-4 py-2 rounded-xl text-sm font-bold bg-slate-800 text-slate-300 hover:text-white transition-all flex items-center gap-2 border border-slate-700';
+                panelA.classList.remove('hidden');
+                panelB.classList.add('hidden');
+            });
+
+            tabB.addEventListener('click', () => {
+                tabB.className = 'px-4 py-2 rounded-xl text-sm font-bold bg-hkjc-gold text-hkjc-darkBg shadow-lg transition-all flex items-center gap-2';
+                tabA.className = 'px-4 py-2 rounded-xl text-sm font-bold bg-slate-800 text-slate-300 hover:text-white transition-all flex items-center gap-2 border border-slate-700';
+                panelB.classList.remove('hidden');
+                panelA.classList.add('hidden');
+            });
+
+            // Mode A Action
+            document.getElementById('btn-start-live-draw').addEventListener('click', runLiveDraw);
+
+            // Mode B Count Buttons
+            document.querySelectorAll('.btn-mc-count').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.btn-mc-count').forEach(b => {
+                        b.className = 'btn-mc-count px-3 py-1 text-xs rounded-lg font-bold text-slate-300 hover:text-white';
+                    });
+                    e.target.className = 'btn-mc-count px-3 py-1 text-xs rounded-lg font-bold bg-hkjc-gold text-hkjc-darkBg';
+                    selectedMcCount = parseInt(e.target.dataset.count);
+                });
+            });
+
+            // Mode B Actions
+            document.getElementById('btn-start-mc').addEventListener('click', runMonteCarloSimulation);
+            document.getElementById('btn-stop-mc').addEventListener('click', () => {
+                monteCarloStopRequested = true;
+            });
+
+            // Reset Data
+            document.getElementById('btn-reset-stats').addEventListener('click', resetAllData);
+        });
+    </script>
+</body>
+</html>

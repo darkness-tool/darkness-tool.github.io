@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="免費線上曼陀羅思考法（九宮格/81格）圖表產生器，協助您將核心目標拆解為64個具體行動方案。支援即時編輯、多款質感主題切換、視覺焦點高亮與自動儲存，並可一鍵導出高清圖片，是年度目標規劃、職涯決策與專案執行的最佳思考工具。">
+<meta name="keywords" content="曼陀羅思考法, 九宮格, 曼陀羅圖表, 目標拆解, 曼陀羅計畫表, 核心目標, 行動指南, 思維導圖, 思考工具, 大谷翔平九宮格, 目標設定, Mandala Chart">
+<meta name="robots" content="index, follow">
+<meta charset="UTF-8">
+  <title>曼陀羅九宮格思考法圖表產生器 (Mandala Chart 9x9)</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985',
+              900: '#0c4a6e',
+            }
+          },
+          boxShadow: {
+            'glow': '0 0 15px rgba(59, 130, 246, 0.3)',
+            'glow-gold': '0 0 20px rgba(234, 179, 8, 0.4)',
+          }
+        }
+      }
+    }
+  </script>
+    <script src="load_index_common.js"></script>
+
+  <!-- Vue 3 CDN -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  
+  <!-- Font Awesome Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- html2canvas for PNG export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap');
+    
+    body {
+      font-family: 'Noto Sans TC', 'Inter', sans-serif;
+    }
+
+    /* Print styling rules */
+    @media print {
+      .no-print { display: none !important; }
+      .print-only { display: block !important; }
+      body { background: white !important; color: black !important; padding: 0 !important; }
+      .print-page { 
+        width: 100% !important; 
+        max-width: 100% !important; 
+        box-shadow: none !important;
+        padding: 10px !important;
+      }
+      .grid-box { border-color: #94a3b8 !important; }
+    }
+
+    /* Custom scrollbars */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); }
+    ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.4); border-radius: 4px; }
+    .dark ::-webkit-scrollbar-thumb { background: rgba(75, 85, 99, 0.6); }
+
+    /* Tile transition effects */
+    .cell-transition {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen transition-colors duration-300 dark:bg-slate-950 light:bg-slate-50 light:text-slate-800">
+
+  <div id="app" class="min-h-screen flex flex-col">
+    <!-- Top Navbar -->
+    <header class="no-print bg-slate-800/90 dark:bg-slate-900/90 light:bg-white/90 backdrop-blur-md border-b border-slate-700/60 light:border-slate-200 sticky top-0 z-40 px-4 py-3 shadow-md">
+      <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
+        
+        <!-- Logo & Title -->
+        <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
+          <div class="flex items-center gap-2">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-glow font-bold text-lg">
+              <i class="fa-solid font-mono text-base">9x9</i>
+            </div>
+            <div>
+              <h1 class="font-bold text-lg leading-tight tracking-wide text-white light:text-slate-800 flex items-center gap-2">
+                曼陀羅思考法圖表
+                <span class="text-xs font-normal px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-400 border border-sky-500/30">九宮格神器</span>
+              </h1>
+              <p class="text-xs text-slate-400 light:text-slate-500">將終極大目標拆解為 64 個可執行的行動計畫</p>
+            </div>
+          </div>
+
+          <!-- Theme Toggle & Help Button (Mobile) -->
+          <div class="flex items-center gap-2 md:hidden">
+            <button @click="toggleDarkMode" class="p-2 rounded-lg bg-slate-700/50 light:bg-slate-100 hover:bg-slate-600 text-slate-300 light:text-slate-600 text-sm">
+              <i class="fa-solid" :class="isDark ? 'fa-sun text-amber-400' : 'fa-moon text-indigo-500'"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Progress Bar Summary Widget -->
+        <div class="w-full md:w-72 bg-slate-900/60 light:bg-slate-100 p-2.5 rounded-xl border border-slate-700/50 light:border-slate-200 flex flex-col gap-1.5">
+          <div class="flex justify-between items-center text-xs">
+            <span class="text-slate-400 font-medium flex items-center gap-1.5">
+              <i class="fa-solid fa-list-check text-sky-400"></i> 行動執行完成度
+            </span>
+            <span class="font-bold text-sky-400">{{ completedCount }} / 64 ({{ progressPercent }}%)</span>
+          </div>
+          <div class="w-full bg-slate-800 light:bg-slate-200 h-2 rounded-full overflow-hidden">
+            <div class="bg-gradient-to-r from-sky-500 to-emerald-400 h-full transition-all duration-500 rounded-full" :style="{ width: progressPercent + '%' }"></div>
+          </div>
+        </div>
+
+        <!-- Global Action Controls -->
+        <div class="flex items-center gap-2 flex-wrap justify-end w-full md:w-auto">
+          <!-- Template Selector Dropdown -->
+          <div class="relative">
+            <button @click="showTemplateMenu = !showTemplateMenu" class="px-3 py-1.5 rounded-lg bg-indigo-600/30 text-indigo-300 border border-indigo-500/40 hover:bg-indigo-600/40 text-xs font-semibold flex items-center gap-1.5 transition">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> 載入範本
+              <i class="fa-solid fa-chevron-down text-[10px]"></i>
+            </button>
+            <div v-if="showTemplateMenu" @click.outside="showTemplateMenu = false" class="absolute right-0 mt-2 w-56 rounded-xl bg-slate-800 light:bg-white border border-slate-700 light:border-slate-200 shadow-2xl z-50 py-1.5 text-xs">
+              <button @click="loadPreset('ohtani')" class="w-full text-left px-3 py-2 hover:bg-slate-700/60 light:hover:bg-slate-100 flex items-center gap-2 text-slate-200 light:text-slate-700">
+                <i class="fa-solid fa-baseball text-amber-400"></i>
+                <div>
+                  <div class="font-semibold">大谷翔平高中八大目標</div>
+                  <div class="text-[10px] text-slate-400">經典日本職棒 8球團第1指名</div>
+                </div>
+              </button>
+              <button @click="loadPreset('career')" class="w-full text-left px-3 py-2 hover:bg-slate-700/60 light:hover:bg-slate-100 flex items-center gap-2 text-slate-200 light:text-slate-700">
+                <i class="fa-solid fa-briefcase text-emerald-400"></i>
+                <div>
+                  <div class="font-semibold">個人職涯發展與突破</div>
+                  <div class="text-[10px] text-slate-400">全端工程師與團隊領袖目標</div>
+                </div>
+              </button>
+              <div class="border-t border-slate-700/50 light:border-slate-200 my-1"></div>
+              <button @click="clearAll" class="w-full text-left px-3 py-1.5 hover:bg-rose-500/20 text-rose-400 flex items-center gap-2">
+                <i class="fa-solid fa-trash-can"></i> 清空並重新開始
+              </button>
+            </div>
+          </div>
+
+          <!-- Export Dropdown -->
+          <button @click="exportJSON" title="匯出 JSON 檔案" class="px-2.5 py-1.5 rounded-lg bg-slate-700/60 light:bg-slate-200 hover:bg-slate-600 text-xs text-slate-200 light:text-slate-700 flex items-center gap-1">
+            <i class="fa-solid fa-download"></i> 匯出
+          </button>
+          
+          <label title="匯入 JSON 檔案" class="px-2.5 py-1.5 rounded-lg bg-slate-700/60 light:bg-slate-200 hover:bg-slate-600 text-xs text-slate-200 light:text-slate-700 flex items-center gap-1 cursor-pointer">
+            <i class="fa-solid fa-file-import"></i> 匯入
+            <input type="file" accept=".json" @change="importJSON" class="hidden">
+          </label>
+
+          <button @click="exportPNG" title="下載 PNG 圖檔" class="px-2.5 py-1.5 rounded-lg bg-sky-600/30 text-sky-300 border border-sky-500/40 hover:bg-sky-600/40 text-xs font-semibold flex items-center gap-1">
+            <i class="fa-solid fa-image"></i> 下載圖片
+          </button>
+
+          <button @click="triggerPrint" title="列印或另存 PDF" class="px-2.5 py-1.5 rounded-lg bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-600/40 text-xs font-semibold flex items-center gap-1">
+            <i class="fa-solid fa-print"></i> 列印/PDF
+          </button>
+
+          <button @click="toggleDarkMode" class="hidden md:flex p-2 rounded-lg bg-slate-700/60 light:bg-slate-200 hover:bg-slate-600 text-slate-300 light:text-slate-700 text-xs items-center justify-center">
+            <i class="fa-solid" :class="isDark ? 'fa-sun text-amber-400' : 'fa-moon text-indigo-600'"></i>
+          </button>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- Navigation Tabs & Core Goal Edit Bar -->
+    <div class="no-print bg-slate-850 dark:bg-slate-900 light:bg-slate-100 border-b border-slate-700/50 light:border-slate-200 px-4 py-2.5">
+      <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
+        
+        <!-- View Mode Switcher Buttons -->
+        <div class="flex items-center gap-1 bg-slate-800 light:bg-white p-1 rounded-xl border border-slate-700/60 light:border-slate-300 w-full md:w-auto justify-center">
+          <button @click="activeTab = 'master'" :class="activeTab === 'master' ? 'bg-sky-600 text-white shadow-md' : 'text-slate-400 light:text-slate-600 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5">
+            <i class="fa-solid fa-table-cells font-mono"></i> 全景 9x9 檢視
+          </button>
+          <button @click="activeTab = 'focus'" :class="activeTab === 'focus' ? 'bg-sky-600 text-white shadow-md' : 'text-slate-400 light:text-slate-600 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5">
+            <i class="fa-solid fa-expand text-xs"></i> 聚焦 3x3 編輯
+          </button>
+          <button @click="activeTab = 'list'" :class="activeTab === 'list' ? 'bg-sky-600 text-white shadow-md' : 'text-slate-400 light:text-slate-600 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5">
+            <i class="fa-solid fa-list-ul"></i> 清單清單模式
+          </button>
+        </div>
+
+        <!-- Editable Chart Header & Central Goal Editable Preview -->
+        <div class="flex items-center gap-3 w-full md:w-auto justify-center">
+          <div class="flex items-center gap-2 bg-slate-800/80 light:bg-white px-3 py-1.5 rounded-xl border border-slate-700 light:border-slate-300 w-full md:w-80">
+            <i class="fa-solid fa-pen-nib text-amber-400 text-xs"></i>
+            <input type="text" v-model="chartTitle" placeholder="請輸入圖表標題..." class="bg-transparent border-none focus:outline-none text-xs font-bold text-slate-100 light:text-slate-800 w-full">
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-1 p-3 md:p-6 overflow-x-auto max-w-7xl mx-auto w-full">
+
+      <!-- ========================================== -->
+      <!-- VIEW 1: FULL MASTER 9x9 GRID               -->
+      <!-- ========================================== -->
+      <div v-show="activeTab === 'master'" class="flex flex-col items-center">
+        
+        <!-- Legend & Quick Nav for directions -->
+        <div class="no-print mb-4 flex flex-wrap justify-center gap-2 text-xs">
+          <button v-for="dir in directions" :key="dir.key" @click="focusDirection(dir.key)" :class="dir.btnBg" class="px-2.5 py-1 rounded-md text-slate-200 font-medium flex items-center gap-1.5 border border-slate-700/50 hover:scale-105 transition">
+            <span class="w-2 h-2 rounded-full" :class="dir.dotBg"></span>
+            {{ dir.key }}. {{ subGoals[dir.key].title || dir.label }}
+          </button>
+        </div>
+
+        <!-- The Printable / Exportable Grid Wrapper -->
+        <div id="mandala-export-area" class="p-3 bg-slate-900 light:bg-white rounded-2xl border border-slate-800 light:border-slate-300 shadow-2xl max-w-full overflow-x-auto">
+          
+          <div class="text-center mb-3">
+            <h2 class="text-xl font-extrabold text-slate-100 light:text-slate-900 tracking-wide">{{ chartTitle }}</h2>
+            <p class="text-xs text-slate-400 light:text-slate-500 mt-0.5">核心願景：<span class="text-amber-400 font-bold">{{ coreGoal }}</span></p>
+          </div>
+
+          <!-- 3x3 Outer Grid of 3x3 Blocks (Making a 9x9 total matrix) -->
+          <div class="grid grid-cols-3 gap-2.5 md:gap-3.5 bg-slate-950 light:bg-slate-200 p-2.5 md:p-3 rounded-xl border border-slate-800 light:border-slate-300 min-w-[760px] md:min-w-[860px]">
+            
+            <!-- Loop through the 9 block positions (0,0 to 2,2) -->
+            <template v-for="(blockKey, index) in masterGridOrder" :key="index">
+              
+              <!-- CASE 1: SURROUNDING SUB-GOAL 3x3 BLOCK (A, B, C, D, E, F, G, H) -->
+              <div v-if="blockKey !== 'CENTER'" 
+                   class="grid grid-cols-3 gap-1 bg-slate-900/90 light:bg-white p-1.5 rounded-lg border shadow-sm relative cell-transition"
+                   :class="getDirectionConfig(blockKey).borderColor">
+                
+                <!-- Direction Badge Indicator -->
+                <div class="absolute -top-2 -left-2 no-print z-10">
+                  <span :class="getDirectionConfig(blockKey).tagBg" class="text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow-md">
+                    {{ blockKey }}
+                  </span>
+                </div>
+
+                <!-- 8 Surrounding Action Items inside outer 3x3 -->
+                <template v-for="(cellIdx) in 8" :key="cellIdx">
+                  
+                  <!-- Insert Center Tile at position 4 (index 4 in a 9-tile layout) -->
+                  <div v-if="cellIdx === 5" 
+                       @click="openEditModal(blockKey, 'subGoal')"
+                       class="p-1.5 rounded flex flex-col justify-between text-center cursor-pointer font-bold text-xs shadow-inner transition hover:brightness-110 min-h-[64px] border"
+                       :class="getDirectionConfig(blockKey).centerTileBg">
+                    <div class="text-[9px] opacity-75 font-mono uppercase">方向 {{ blockKey }}</div>
+                    <div class="line-clamp-2 my-auto px-0.5 leading-tight">{{ subGoals[blockKey].title || '點擊設定目標' }}</div>
+                    <div class="text-[9px] opacity-60"><i class="fa-solid fa-sync text-[8px] mr-0.5"></i>連動中心</div>
+                  </div>
+
+                  <!-- Action Item Cell -->
+                  <div @click="openEditModal(blockKey, getAdjustedActionIndex(cellIdx))"
+                       class="p-1 rounded bg-slate-800/80 light:bg-slate-50 hover:bg-slate-750 light:hover:bg-slate-100 border border-slate-700/50 light:border-slate-200 flex flex-col justify-between cursor-pointer transition min-h-[64px] relative group">
+                    
+                    <!-- Action Toggle Indicator -->
+                    <div class="flex items-center justify-between w-full">
+                      <span class="text-[9px] text-slate-500 font-mono">#{{ getAdjustedActionIndex(cellIdx) + 1 }}</span>
+                      <button @click.stop="toggleActionDone(blockKey, getAdjustedActionIndex(cellIdx))" 
+                              class="text-xs transition focus:outline-none"
+                              :class="subGoals[blockKey].actions[getAdjustedActionIndex(cellIdx)].done ? 'text-emerald-400' : 'text-slate-600 hover:text-slate-400'">
+                        <i class="fa-solid" :class="subGoals[blockKey].actions[getAdjustedActionIndex(cellIdx)].done ? 'fa-circle-check' : 'fa-circle'"></i>
+                      </button>
+                    </div>
+
+                    <p class="text-[11px] leading-snug line-clamp-2 text-slate-200 light:text-slate-700 my-auto"
+                       :class="{ 'line-through text-slate-500 light:text-slate-400 opacity-60': subGoals[blockKey].actions[getAdjustedActionIndex(cellIdx)].done }">
+                      {{ subGoals[blockKey].actions[getAdjustedActionIndex(cellIdx)].text || '點擊輸入行動' }}
+                    </p>
+                  </div>
+
+                </template>
+
+                <!-- Ensure last 8th element handles center correctly -->
+                <div @click="openEditModal(blockKey, 7)"
+                     class="p-1 rounded bg-slate-800/80 light:bg-slate-50 hover:bg-slate-750 light:hover:bg-slate-100 border border-slate-700/50 light:border-slate-200 flex flex-col justify-between cursor-pointer transition min-h-[64px]">
+                  <div class="flex items-center justify-between w-full">
+                    <span class="text-[9px] text-slate-500 font-mono">#8</span>
+                    <button @click.stop="toggleActionDone(blockKey, 7)" 
+                            class="text-xs transition focus:outline-none"
+                            :class="subGoals[blockKey].actions[7].done ? 'text-emerald-400' : 'text-slate-600 hover:text-slate-400'">
+                      <i class="fa-solid" :class="subGoals[blockKey].actions[7].done ? 'fa-circle-check' : 'fa-circle'"></i>
+                    </button>
+                  </div>
+                  <p class="text-[11px] leading-snug line-clamp-2 text-slate-200 light:text-slate-700 my-auto"
+                     :class="{ 'line-through text-slate-500 light:text-slate-400 opacity-60': subGoals[blockKey].actions[7].done }">
+                    {{ subGoals[blockKey].actions[7].text || '點擊輸入行動' }}
+                  </p>
+                </div>
+
+              </div>
+
+              <!-- CASE 2: THE CENTRAL 3x3 GOAL CONTROL GRID -->
+              <div v-else class="grid grid-cols-3 gap-1 bg-slate-900 light:bg-slate-100 p-1.5 rounded-lg border-2 border-amber-500/80 shadow-glow-gold relative">
+                
+                <div class="absolute -top-2.5 left-1/2 -translate-x-1/2 no-print z-10">
+                  <span class="bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black text-[10px] px-2 py-0.5 rounded-full shadow-md uppercase tracking-wider">
+                    <i class="fa-solid fa-star text-[9px] mr-1"></i>核心大目標區
+                  </span>
+                </div>
+
+                <!-- 8 Sub-goals + 1 Core Goal in center -->
+                <template v-for="(subKey, subIdx) in centerBlockSubOrder" :key="subIdx">
+                  
+                  <!-- CORE GOAL CELL IN THE VERY CENTER -->
+                  <div v-if="subKey === 'CORE'" 
+                       @click="openCoreGoalModal"
+                       class="p-2 rounded bg-gradient-to-br from-amber-500 to-amber-700 text-slate-950 flex flex-col justify-between text-center cursor-pointer font-black text-xs md:text-sm shadow-md hover:scale-105 transition min-h-[64px] border-2 border-amber-300">
+                    <div class="text-[9px] text-amber-950 font-extrabold uppercase">CORE VISION</div>
+                    <div class="line-clamp-2 my-auto leading-tight">{{ coreGoal || '點擊設定大目標' }}</div>
+                    <div class="text-[8px] text-amber-950/80 font-normal">九宮格核心</div>
+                  </div>
+
+                  <!-- SUB-GOAL CELL (A..H) -->
+                  <div v-else 
+                       @click="openEditModal(subKey, 'subGoal')"
+                       class="p-1.5 rounded flex flex-col justify-between text-center cursor-pointer font-bold text-xs shadow transition hover:scale-105 min-h-[64px] border relative"
+                       :class="getDirectionConfig(subKey).centerTileBg">
+                    <div class="flex items-center justify-between text-[9px] opacity-80 font-mono">
+                      <span>{{ subKey }}</span>
+                      <i class="fa-solid fa-arrows-rotate text-[8px]" title="同步中"></i>
+                    </div>
+                    <div class="line-clamp-2 my-auto px-0.5 leading-tight">{{ subGoals[subKey].title || '點擊編輯' }}</div>
+                    <div class="text-[9px] opacity-60">次要目標</div>
+                  </div>
+
+                </template>
+
+              </div>
+
+            </template>
+
+          </div>
+
+          <!-- Bottom Footer Info for Print / Export -->
+          <div class="mt-3 flex justify-between items-center text-[10px] text-slate-400 light:text-slate-500 px-1">
+            <div>曼陀羅思考法 9x9 圖表 (Mandala Chart) • 產出日期：{{ currentDate }}</div>
+            <div>完成率：{{ completedCount }}/64 ({{ progressPercent }}%)</div>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- ========================================== -->
+      <!-- VIEW 2: FOCUS / ZOOMED 3x3 EDIT MODE       -->
+      <!-- ========================================== -->
+      <div v-show="activeTab === 'focus'" class="max-w-3xl mx-auto flex flex-col items-center">
+        
+        <!-- Direction Switcher Bar -->
+        <div class="w-full bg-slate-800 light:bg-white p-3 rounded-2xl border border-slate-700 light:border-slate-300 shadow-md mb-6">
+          <label class="text-xs text-slate-400 light:text-slate-500 font-semibold mb-2 block text-center">選擇要聚焦深入思索的次要目標 (A-H):</label>
+          <div class="grid grid-cols-4 md:grid-cols-8 gap-2">
+            <button v-for="dir in directions" :key="dir.key" 
+                    @click="focusedDirectionKey = dir.key"
+                    :class="focusedDirectionKey === dir.key ? dir.tagBg + ' text-white ring-2 ring-sky-400 scale-105' : 'bg-slate-700/60 light:bg-slate-100 text-slate-300 light:text-slate-700 hover:bg-slate-600'"
+                    class="py-2 px-1 rounded-xl text-xs font-bold transition flex flex-col items-center justify-center gap-1">
+              <span class="text-[10px] opacity-80">{{ dir.key }}</span>
+              <span class="truncate w-full text-center px-1 text-[11px]">{{ subGoals[dir.key].title || dir.label }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Focused 3x3 Card View -->
+        <div class="w-full bg-slate-850 light:bg-white p-6 rounded-3xl border border-slate-700/80 light:border-slate-300 shadow-2xl relative">
+          
+          <!-- Direction Header -->
+          <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-700 light:border-slate-200">
+            <div class="flex items-center gap-3">
+              <div :class="currentFocusConfig.tagBg" class="w-10 h-10 rounded-2xl flex items-center justify-center text-white font-black text-lg shadow-lg">
+                {{ focusedDirectionKey }}
+              </div>
+              <div>
+                <span class="text-xs text-sky-400 font-bold uppercase tracking-wider">聚焦次要目標 {{ focusedDirectionKey }}</span>
+                <input type="text" v-model="subGoals[focusedDirectionKey].title" placeholder="輸入此次要目標標題..." class="text-xl font-black bg-transparent border-b border-dashed border-slate-600 focus:border-sky-400 focus:outline-none text-slate-100 light:text-slate-900 w-full mt-0.5">
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-xs text-slate-400">完成度</div>
+              <div class="text-lg font-bold text-emerald-400">{{ getSubGoalProgress(focusedDirectionKey) }} / 8</div>
+            </div>
+          </div>
+
+          <!-- The Big 3x3 Grid -->
+          <div class="grid grid-cols-3 gap-3 bg-slate-900 light:bg-slate-100 p-3 rounded-2xl border border-slate-700/60 light:border-slate-300">
+            
+            <template v-for="cIdx in 8" :key="cIdx">
+              
+              <!-- Center Tile -->
+              <div v-if="cIdx === 5" 
+                   class="p-4 rounded-xl flex flex-col justify-between text-center font-black text-sm shadow-md border-2"
+                   :class="currentFocusConfig.centerTileBg">
+                <span class="text-[10px] uppercase opacity-75">方向 {{ focusedDirectionKey }} (中心)</span>
+                <div class="my-auto">{{ subGoals[focusedDirectionKey].title || '無次要目標名稱' }}</div>
+                <span class="text-[10px] opacity-75">與中央九宮格同步</span>
+              </div>
+
+              <!-- Action Item -->
+              <div class="p-3 rounded-xl bg-slate-800 light:bg-white border border-slate-700 light:border-slate-200 flex flex-col justify-between min-h-[110px] shadow-sm hover:border-sky-500/50 transition group">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-mono font-bold text-slate-400">行動 #{{ getAdjustedActionIndex(cIdx) + 1 }}</span>
+                  <button @click="toggleActionDone(focusedDirectionKey, getAdjustedActionIndex(cIdx))" 
+                          class="text-sm transition focus:outline-none"
+                          :class="subGoals[focusedDirectionKey].actions[getAdjustedActionIndex(cIdx)].done ? 'text-emerald-400' : 'text-slate-500 hover:text-slate-300'">
+                    <i class="fa-solid" :class="subGoals[focusedDirectionKey].actions[getAdjustedActionIndex(cIdx)].done ? 'fa-circle-check text-base' : 'fa-circle'"></i>
+                  </button>
+                </div>
+
+                <textarea v-model="subGoals[focusedDirectionKey].actions[getAdjustedActionIndex(cIdx)].text"
+                          placeholder="填寫具體執行的 Action Item..."
+                          rows="2"
+                          class="w-full bg-transparent resize-none text-xs text-slate-200 light:text-slate-800 focus:outline-none my-1"
+                          :class="{ 'line-through text-slate-500 light:text-slate-400': subGoals[focusedDirectionKey].actions[getAdjustedActionIndex(cIdx)].done }">
+                </textarea>
+
+                <div class="text-[9px] text-slate-500 text-right">
+                  {{ subGoals[focusedDirectionKey].actions[getAdjustedActionIndex(cIdx)].text.length }} 字
+                </div>
+              </div>
+
+            </template>
+
+            <!-- Action Item 8 -->
+            <div class="p-3 rounded-xl bg-slate-800 light:bg-white border border-slate-700 light:border-slate-200 flex flex-col justify-between min-h-[110px] shadow-sm hover:border-sky-500/50 transition group">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-mono font-bold text-slate-400">行動 #8</span>
+                <button @click="toggleActionDone(focusedDirectionKey, 7)" 
+                        class="text-sm transition focus:outline-none"
+                        :class="subGoals[focusedDirectionKey].actions[7].done ? 'text-emerald-400' : 'text-slate-500 hover:text-slate-300'">
+                  <i class="fa-solid" :class="subGoals[focusedDirectionKey].actions[7].done ? 'fa-circle-check text-base' : 'fa-circle'"></i>
+                </button>
+              </div>
+
+              <textarea v-model="subGoals[focusedDirectionKey].actions[7].text"
+                        placeholder="填寫具體執行的 Action Item..."
+                        rows="2"
+                        class="w-full bg-transparent resize-none text-xs text-slate-200 light:text-slate-800 focus:outline-none my-1"
+                        :class="{ 'line-through text-slate-500 light:text-slate-400': subGoals[focusedDirectionKey].actions[7].done }">
+              </textarea>
+
+              <div class="text-[9px] text-slate-500 text-right">
+                {{ subGoals[focusedDirectionKey].actions[7].text.length }} 字
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bottom Prev / Next Nav -->
+          <div class="flex items-center justify-between mt-6 pt-4 border-t border-slate-700/60 light:border-slate-200">
+            <button @click="cycleDirection(-1)" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300 flex items-center gap-2">
+              <i class="fa-solid fa-arrow-left"></i> 上一個方位
+            </button>
+            <button @click="activeTab = 'master'" class="px-4 py-2 rounded-xl bg-sky-600/30 text-sky-300 hover:bg-sky-600/40 text-xs font-bold flex items-center gap-2">
+              <i class="fa-solid fa-table-cells"></i> 返回 9x9 全景
+            </button>
+            <button @click="cycleDirection(1)" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300 flex items-center gap-2">
+              下一個方位 <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- ========================================== -->
+      <!-- VIEW 3: LIST VIEW MODE                     -->
+      <!-- ========================================== -->
+      <div v-show="activeTab === 'list'" class="max-w-4xl mx-auto">
+        <div class="bg-slate-850 light:bg-white p-6 rounded-3xl border border-slate-700 light:border-slate-300 shadow-xl">
+          <div class="mb-6 pb-4 border-b border-slate-700 light:border-slate-200 flex items-center justify-between">
+            <div>
+              <h2 class="text-xl font-bold text-slate-100 light:text-slate-800">所有 64 個行動清單總覽</h2>
+              <p class="text-xs text-slate-400">依據 8 個關鍵次要目標分類</p>
+            </div>
+            <span class="text-sm font-bold text-sky-400 bg-sky-500/10 px-3 py-1 rounded-full border border-sky-500/20">
+              全圖完成率: {{ progressPercent }}%
+            </span>
+          </div>
+
+          <div class="space-y-6">
+            <div v-for="dir in directions" :key="dir.key" class="bg-slate-900 light:bg-slate-50 p-4 rounded-2xl border border-slate-800 light:border-slate-200">
+              <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-800 light:border-slate-200">
+                <div class="flex items-center gap-2">
+                  <span :class="dir.tagBg" class="w-6 h-6 rounded-lg text-white font-black text-xs flex items-center justify-center">
+                    {{ dir.key }}
+                  </span>
+                  <h3 class="font-bold text-sm text-slate-200 light:text-slate-800">
+                    {{ subGoals[dir.key].title || dir.label }}
+                  </h3>
+                </div>
+                <span class="text-xs text-slate-400 font-mono">
+                  {{ getSubGoalProgress(dir.key) }} / 8 完成
+                </span>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <div v-for="(act, aIdx) in subGoals[dir.key].actions" :key="aIdx"
+                     @click="toggleActionDone(dir.key, aIdx)"
+                     class="p-2.5 rounded-xl bg-slate-800/60 light:bg-white border border-slate-700/50 light:border-slate-200 flex items-center gap-3 cursor-pointer hover:bg-slate-750 transition">
+                  <i class="fa-solid" :class="act.done ? 'fa-circle-check text-emerald-400 text-base' : 'fa-circle text-slate-600'"></i>
+                  <span class="text-xs text-slate-200 light:text-slate-700 flex-1" :class="{ 'line-through text-slate-500 opacity-60': act.done }">
+                    {{ act.text || '未填寫行動方案' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- EDIT MODAL DIALOG -->
+    <div v-if="editModal.isOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+      <div class="bg-slate-850 light:bg-white border border-slate-700 light:border-slate-300 rounded-3xl p-6 w-full max-w-lg shadow-2xl animate-fade-in">
+        
+        <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-700 light:border-slate-200">
+          <div class="flex items-center gap-2">
+            <span v-if="editModal.targetType === 'subGoal'" :class="getDirectionConfig(editModal.dirKey).tagBg" class="w-7 h-7 rounded-xl text-white font-black text-xs flex items-center justify-center">
+              {{ editModal.dirKey }}
+            </span>
+            <span v-else class="w-7 h-7 rounded-xl bg-sky-500 text-white font-bold text-xs flex items-center justify-center">
+              #{{ editModal.actionIndex + 1 }}
+            </span>
+            <h3 class="font-bold text-base text-slate-100 light:text-slate-800">
+              {{ editModal.targetType === 'subGoal' ? '編輯次要目標 (方向 ' + editModal.dirKey + ')' : '編輯行動項目 (' + editModal.dirKey + ' - #' + (editModal.actionIndex + 1) + ')' }}
+            </h3>
+          </div>
+          <button @click="editModal.isOpen = false" class="text-slate-400 hover:text-white p-1">
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+
+        <!-- Form Controls -->
+        <div class="space-y-4">
+          <!-- Editing Sub Goal -->
+          <div v-if="editModal.targetType === 'subGoal'">
+            <label class="block text-xs font-semibold text-slate-400 mb-1">次要目標名稱（與中央九宮格連動）</label>
+            <input type="text" v-model="editModal.textValue" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 light:bg-slate-100 border border-slate-700 light:border-slate-300 text-slate-100 light:text-slate-800 focus:ring-2 focus:ring-sky-500 focus:outline-none font-bold text-sm">
+            <p class="text-[11px] text-slate-500 mt-1.5"><i class="fa-solid fa-circle-info mr-1"></i>此名稱將同步顯示於中央九宮格與該方位的中心區塊。</p>
+          </div>
+
+          <!-- Editing Action Item -->
+          <div v-else>
+            <label class="block text-xs font-semibold text-slate-400 mb-1">行動內容 (Action Item)</label>
+            <textarea v-model="editModal.textValue" rows="4" placeholder="輸入可執行的具體步驟或指標..." class="w-full px-4 py-2.5 rounded-xl bg-slate-900 light:bg-slate-100 border border-slate-700 light:border-slate-300 text-slate-100 light:text-slate-800 focus:ring-2 focus:ring-sky-500 focus:outline-none text-sm"></textarea>
+            
+            <div class="flex items-center justify-between mt-3 pt-3 border-t border-slate-700/60 light:border-slate-200">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" v-model="editModal.isDone" class="w-4 h-4 rounded text-sky-600 focus:ring-sky-500 bg-slate-800 border-slate-600">
+                <span class="text-xs font-bold text-slate-300 light:text-slate-700">標記此行動為已完成</span>
+              </label>
+              <span class="text-xs text-slate-500">{{ editModal.textValue.length }} 字</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Footer Actions -->
+        <div class="flex items-center justify-end gap-2 mt-6 pt-4 border-t border-slate-700 light:border-slate-200">
+          <button @click="editModal.isOpen = false" class="px-4 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-xs font-bold text-slate-300">
+            取消
+          </button>
+          <button @click="saveModalEdit" class="px-5 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-xs font-bold text-white shadow-lg">
+            儲存變更
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CORE GOAL EDIT MODAL -->
+    <div v-if="showCoreGoalModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+      <div class="bg-slate-850 light:bg-white border border-amber-500/50 rounded-3xl p-6 w-full max-w-lg shadow-glow-gold">
+        <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-700">
+          <div class="flex items-center gap-2 text-amber-400">
+            <i class="fa-solid fa-crown text-xl"></i>
+            <h3 class="font-bold text-lg text-slate-100 light:text-slate-800">設定核心大願景 (Core Vision)</h3>
+          </div>
+          <button @click="showCoreGoalModal = false" class="text-slate-400 hover:text-white">
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 mb-1">終極核心目標</label>
+            <textarea v-model="tempCoreGoal" rows="3" placeholder="例如：成為職棒第一指名、創立百萬營收公司..." class="w-full px-4 py-3 rounded-xl bg-slate-900 light:bg-slate-100 border border-amber-500/40 text-slate-100 light:text-slate-800 font-extrabold text-base focus:ring-2 focus:ring-amber-400 focus:outline-none"></textarea>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 mt-6 pt-4 border-t border-slate-700">
+          <button @click="showCoreGoalModal = false" class="px-4 py-2 rounded-xl bg-slate-700 text-xs font-bold text-slate-300">取消</button>
+          <button @click="saveCoreGoal" class="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs shadow-lg">確定設定</button>
+        </div>
+      </div>
+    </div>
+	
+	<div style="padding: 16px;">這個曼陀羅思考法線上圖表工具是一個專為目標拆解與思維整理設計的視覺化網頁應用程式，採用經典的九宮格與八十一格擴充結構，協助使用者將龐大抽象的目標化為具體可執行的行動步驟。介面直觀且富現代感，中央區域顯眼標示核心主題，周圍八個分區則相應延伸出八個次要面向，每個面向再各別細分出八個行動計畫，透過這種由內而外層層遞進的輻射狀結構，能夠有效開啟全面性與深度兼具的思考過程。
+<br>
+除了基本的文字輸入功能外，網頁特別針對使用者的視覺體驗與操作流暢度進行優化。系統提供多種質感配色主題，使用者可以依據個人喜好或思考情境隨心切換色彩，讓嚴謹的思維整理過程變得更具視覺樂趣。畫面上特別設計了動態聚焦機制，當滑鼠懸停在特定分區時，該分區會透過溫和的放大與高亮效果脫穎而出，幫助使用者專注於當前的細節思考，避免被龐大的全景圖表分散注意力。
+<br>
+在資料管理與靈活應用方面，該工具配備了完整的儲存與導出功能。所有輸入內容皆會在背景自動儲存至瀏覽器的本機快照中，即使不小心關閉頁面或重新整理，輸入的內容也不會丟失。當使用者完成思考圖表後，可以一鍵將整張八十一格曼陀羅圖表導出為高清圖片格式，方便儲存在手機、電腦中，或是列印貼在書桌前作為日常行動指南，亦可輕鬆分享給團隊成員進行溝通與討論。
+<br>
+這款工具極為適合用於個人職涯規劃、年度目標設定、專案開發策略構思、學習計畫制定以及各類創新發想。透過將單一宏大目標拆解成八個策略領域與六十四個實務行動，使用者能夠迅速擺脫無從下手的焦慮感，獲得一張結構清晰、導向明確且具備極高可行性的行動藍圖，是現代提升思考力與執行力的絕佳數位工具。</div>
+
+    <!-- Toast Notification Message -->
+    <div v-if="toast.show" class="fixed bottom-6 right-6 z-50 bg-slate-800 text-slate-100 border border-slate-700 px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 animate-bounce">
+      <i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+      <span class="text-xs font-bold">{{ toast.message }}</span>
+    </div>
+
+  </div>
+
+  <script>
+    const { createApp, ref, reactive, computed, watch, onMounted } = Vue;
+
+    createApp({
+      setup() {
+        // Active view tab state: 'master' | 'focus' | 'list'
+        const activeTab = ref('master');
+        const isDark = ref(true);
+        const showTemplateMenu = ref(false);
+        const showCoreGoalModal = ref(false);
+        const tempCoreGoal = ref('');
+
+        // Focused direction for 3x3 view ('A'..'H')
+        const focusedDirectionKey = ref('A');
+
+        // Main Chart Data
+        const chartTitle = ref('我的 9x9 曼陀羅思考圖');
+        const coreGoal = ref('成為領域頂尖專家');
+
+        // Toast message system
+        const toast = reactive({ show: false, message: '' });
+        const triggerToast = (msg) => {
+          toast.message = msg;
+          toast.show = true;
+          setTimeout(() => toast.show = false, 2500);
+        };
+
+        // 8 Direction configuration with unique colors & labels
+        const directions = [
+          { key: 'A', label: '左上目標', tagBg: 'bg-rose-500', btnBg: 'bg-rose-950/60 hover:bg-rose-900', dotBg: 'bg-rose-400', borderColor: 'border-rose-500/40', centerTileBg: 'bg-rose-500/20 text-rose-200 border-rose-500/40' },
+          { key: 'B', label: '正上目標', tagBg: 'bg-orange-500', btnBg: 'bg-orange-950/60 hover:bg-orange-900', dotBg: 'bg-orange-400', borderColor: 'border-orange-500/40', centerTileBg: 'bg-orange-500/20 text-orange-200 border-orange-500/40' },
+          { key: 'C', label: '右上目標', tagBg: 'bg-amber-500', btnBg: 'bg-amber-950/60 hover:bg-amber-900', dotBg: 'bg-amber-400', borderColor: 'border-amber-500/40', centerTileBg: 'bg-amber-500/20 text-amber-200 border-amber-500/40' },
+          { key: 'D', label: '正左目標', tagBg: 'bg-indigo-500', btnBg: 'bg-indigo-950/60 hover:bg-indigo-900', dotBg: 'bg-indigo-400', borderColor: 'border-indigo-500/40', centerTileBg: 'bg-indigo-500/20 text-indigo-200 border-indigo-500/40' },
+          { key: 'E', label: '正右目標', tagBg: 'bg-emerald-500', btnBg: 'bg-emerald-950/60 hover:bg-emerald-900', dotBg: 'bg-emerald-400', borderColor: 'border-emerald-500/40', centerTileBg: 'bg-emerald-500/20 text-emerald-200 border-emerald-500/40' },
+          { key: 'F', label: '左下目標', tagBg: 'bg-cyan-500', btnBg: 'bg-cyan-950/60 hover:bg-cyan-900', dotBg: 'bg-cyan-400', borderColor: 'border-cyan-500/40', centerTileBg: 'bg-cyan-500/20 text-cyan-200 border-cyan-500/40' },
+          { key: 'G', label: '正下目標', tagBg: 'bg-purple-500', btnBg: 'bg-purple-950/60 hover:bg-purple-900', dotBg: 'bg-purple-400', borderColor: 'border-purple-500/40', centerTileBg: 'bg-purple-500/20 text-purple-200 border-purple-500/40' },
+          { key: 'H', label: '右下目標', tagBg: 'bg-teal-500', btnBg: 'bg-teal-950/60 hover:bg-teal-900', dotBg: 'bg-teal-400', borderColor: 'border-teal-500/40', centerTileBg: 'bg-teal-500/20 text-teal-200 border-teal-500/40' },
+        ];
+
+        // Master 9x9 Layout Grid Mapping
+        const masterGridOrder = ['A', 'B', 'C', 'D', 'CENTER', 'E', 'F', 'G', 'H'];
+        const centerBlockSubOrder = ['A', 'B', 'C', 'D', 'CORE', 'E', 'F', 'G', 'H'];
+
+        // Helper to map index around 3x3 center
+        const getAdjustedActionIndex = (idx) => {
+          return idx > 4 ? idx - 1 : idx - 1;
+        };
+
+        // 64 Actions State Storage
+        const createEmptySubGoal = (title = '') => ({
+          title: title,
+          actions: Array.from({ length: 8 }, (_, i) => ({ text: `行動方案 ${i + 1}`, done: false }))
+        });
+
+        const subGoals = reactive({
+          A: createEmptySubGoal('體能與健康'),
+          B: createEmptySubGoal('專業技能'),
+          C: createEmptySubGoal('心智思維'),
+          D: createEmptySubGoal('財務管理'),
+          E: createEmptySubGoal('人脈社群'),
+          F: createEmptySubGoal('個人品牌'),
+          G: createEmptySubGoal('工作效率'),
+          H: createEmptySubGoal('生活平衡'),
+        });
+
+        // Edit Modal State
+        const editModal = reactive({
+          isOpen: false,
+          dirKey: 'A',
+          targetType: 'subGoal', // 'subGoal' | 'action'
+          actionIndex: 0,
+          textValue: '',
+          isDone: false
+        });
+
+        const openEditModal = (dirKey, targetTypeOrIndex) => {
+          editModal.dirKey = dirKey;
+          if (targetTypeOrIndex === 'subGoal') {
+            editModal.targetType = 'subGoal';
+            editModal.textValue = subGoals[dirKey].title;
+          } else {
+            editModal.targetType = 'action';
+            editModal.actionIndex = targetTypeOrIndex;
+            editModal.textValue = subGoals[dirKey].actions[targetTypeOrIndex].text;
+            editModal.isDone = subGoals[dirKey].actions[targetTypeOrIndex].done;
+          }
+          editModal.isOpen = true;
+        };
+
+        const saveModalEdit = () => {
+          if (editModal.targetType === 'subGoal') {
+            subGoals[editModal.dirKey].title = editModal.textValue;
+          } else {
+            subGoals[editModal.dirKey].actions[editModal.actionIndex].text = editModal.textValue;
+            subGoals[editModal.dirKey].actions[editModal.actionIndex].done = editModal.isDone;
+          }
+          editModal.isOpen = false;
+          saveToLocalStorage();
+          triggerToast('設定已更新！');
+        };
+
+        const openCoreGoalModal = () => {
+          tempCoreGoal.value = coreGoal.value;
+          showCoreGoalModal.value = true;
+        };
+
+        const saveCoreGoal = () => {
+          coreGoal.value = tempCoreGoal.value;
+          showCoreGoalModal.value = false;
+          saveToLocalStorage();
+          triggerToast('核心大目標已更新！');
+        };
+
+        const toggleActionDone = (dirKey, actionIdx) => {
+          subGoals[dirKey].actions[actionIdx].done = !subGoals[dirKey].actions[actionIdx].done;
+          saveToLocalStorage();
+        };
+
+        // Computed Progress Metrics
+        const completedCount = computed(() => {
+          let count = 0;
+          Object.keys(subGoals).forEach(key => {
+            subGoals[key].actions.forEach(act => {
+              if (act.done) count++;
+            });
+          });
+          return count;
+        });
+
+        const progressPercent = computed(() => Math.round((completedCount.value / 64) * 100));
+
+        const getSubGoalProgress = (dirKey) => {
+          return subGoals[dirKey].actions.filter(a => a.done).length;
+        };
+
+        const currentFocusConfig = computed(() => {
+          return directions.find(d => d.key === focusedDirectionKey.value) || directions[0];
+        });
+
+        const getDirectionConfig = (key) => {
+          return directions.find(d => d.key === key) || directions[0];
+        };
+
+        const focusDirection = (key) => {
+          focusedDirectionKey.value = key;
+          activeTab.value = 'focus';
+        };
+
+        const cycleDirection = (step) => {
+          const keys = ['A','B','C','D','E','F','G','H'];
+          const currIdx = keys.indexOf(focusedDirectionKey.value);
+          const nextIdx = (currIdx + step + keys.length) % keys.length;
+          focusedDirectionKey.value = keys[nextIdx];
+        };
+
+        // Presets Loading Logic
+        const loadPreset = (presetType) => {
+          showTemplateMenu.value = false;
+          if (presetType === 'ohtani') {
+            chartTitle.value = '大谷翔平高中八大目標曼陀羅圖';
+            coreGoal.value = '8 球團第 1 指名';
+            
+            const ohtaniData = {
+              A: { title: '體格打造', actions: ['RS3次/週', '晚發性肌肉發展', '柔軟度提升', '飲水量控制', '營養補充劑', '深層筋膜放鬆', '9小時睡眠', '保持健康無傷'] },
+              B: { title: '控球', actions: ['軸心腳穩定', '體軸不晃動', '減少躁進情緒', '釋放力道控制', '意象訓練', '下半身強化', '抓球感知練習', '改善投球姿勢'] },
+              C: { title: '球速 160km/h', actions: ['軸心轉動爆發', '下半身主導', '體幹核心強化', '增加傾斜度', '肩關節柔軟', '投球力道傳導', '爆發力訓練', '動態伸展運動'] },
+              D: { title: '變化球', actions: ['縱向滑球銳利度', '指叉球進壘點', '手指力量鍛鍊', '摸索最適握法', '持續重複練習', '甩臂速度一致', '不畏懼打者', '配球策略'] },
+              E: { title: '運氣', actions: ['撿垃圾', '擦拭休息室', '對裁判態度尊重', '閱讀書籍', '愛護照顧道具', '審視自我', '保持感謝之心', '積極樂觀思維'] },
+              F: { title: '人間性 (品德)', actions: ['對人有禮貌', '關懷與體恤', '被團隊信任的人', '言語的力量', '保持謙虛態度', '同理心養成', '遵守約定', '感謝父母師長'] },
+              G: { title: '心理素質', actions: ['不波及個人情緒', '明確清晰目標', '夥伴愛與團隊', '無畏恐懼', '一球勝負執著', '勝利的強烈渴望', '自信心建立', '頭腦冷靜運作'] },
+              H: { title: '球隊戰術', actions: ['讀懂對手意圖', '了解投手特性', '分析比賽數據', '球路視覺配置', '數據工具運用', '捕手溝通策略', '比賽心理學', '戰術靈活執行'] },
+            };
+
+            Object.keys(ohtaniData).forEach(k => {
+              subGoals[k].title = ohtaniData[k].title;
+              subGoals[k].actions = ohtaniData[k].actions.map((txt, i) => ({ text: txt, done: i % 3 === 0 }));
+            });
+            triggerToast('已成功載入「大谷翔平八大目標範本」！');
+          } else if (presetType === 'career') {
+            chartTitle.value = '全端架構師與職涯成長計畫';
+            coreGoal.value = '成為頂尖全端架構師';
+
+            const careerData = {
+              A: { title: '技術硬實力', actions: ['精通 React/Vue', 'TypeScript 深入', 'System Design 研讀', 'Web Performance', 'Cloud (AWS/GCP)', 'CI/CD 自動化', '資料庫優化', '演算法練習'] },
+              B: { title: '專案管理', actions: ['Agile/Scrum 流程', '風險控管評估', '時程合理預估', '跨部門溝通', '需求範疇釐清', 'KPI 與 OKR 訂定', '文件撰寫規範', '復盤與迭代'] },
+              C: { title: '領導與溝通', actions: ['Code Review 反饋', '導師指導 Junior', '同理心傾聽', '簡報發表能力', '衝突協調處理', '激勵團隊士氣', '向上管理溝通', '清晰口條表達'] },
+              D: { title: '商業思維', actions: ['了解產品 unit economics', '用戶痛點分析', '競品趨勢調研', '數據驅動決策', 'MVP 快速驗證', 'ROI 效益評估', '產業動態關注', '商業模式理解'] },
+              E: { title: '個人品牌', actions: ['每月寫2篇技術文章', 'GitHub 開源貢獻', '技術研討會分享', 'LinkedIn 檔案優化', '經營技術 Blog', '社群 Networking', 'Podcast/訪談交流', '電子報訂閱'] },
+              F: { title: '外語能力', actions: ['每日聽 20 分鐘英文', '閱讀英文技術文件', '英文口說練習', '多益/雅思目標分數', '參加全英文會議', '英文履歷更新', '國外社群交流', '專業術語熟練'] },
+              G: { title: '財務投資', actions: ['建立緊急預備金', '每月定額投資 ETF', '記帳並控管支出', '多方管道副業發展', '閱讀財經書籍', '稅務規劃學習', '資產配置優化', '退休金規劃'] },
+              H: { title: '身心健康', actions: ['每週健身3次', '每日睡眠7.5小時', '人體工學椅子設備', '定時伸展保護眼睛', '正念冥想習慣', '定期健康檢查', '週末戶外踏青', '保持水分補充'] }
+            };
+
+            Object.keys(careerData).forEach(k => {
+              subGoals[k].title = careerData[k].title;
+              subGoals[k].actions = careerData[k].actions.map((txt, i) => ({ text: txt, done: false }));
+            });
+            triggerToast('已成功載入「職涯突破範本」！');
+          }
+          saveToLocalStorage();
+        };
+
+        const clearAll = () => {
+          if (confirm('確定要清空所有資料重新開始嗎？')) {
+            showTemplateMenu.value = false;
+            chartTitle.value = '我的 9x9 曼陀羅思考圖';
+            coreGoal.value = '';
+            Object.keys(subGoals).forEach(k => {
+              subGoals[k].title = '';
+              subGoals[k].actions = Array.from({ length: 8 }, (_, i) => ({ text: '', done: false }));
+            });
+            saveToLocalStorage();
+            triggerToast('已重置清空圖表');
+          }
+        };
+
+        // Export / Import JSON & Images
+        const exportJSON = () => {
+          const dataPayload = {
+            chartTitle: chartTitle.value,
+            coreGoal: coreGoal.value,
+            subGoals: subGoals,
+            updatedAt: new Date().toISOString()
+          };
+          const blob = new Blob([JSON.stringify(dataPayload, null, 2)], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `${chartTitle.value || '曼陀羅思考圖'}_9x9.json`;
+          a.click();
+          URL.revokeObjectURL(url);
+          triggerToast('已下載 JSON 備份檔');
+        };
+
+        const importJSON = (event) => {
+          const file = event.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            try {
+              const parsed = JSON.parse(e.target.result);
+              if (parsed.subGoals) {
+                chartTitle.value = parsed.chartTitle || '匯入的曼陀羅圖表';
+                coreGoal.value = parsed.coreGoal || '';
+                Object.assign(subGoals, parsed.subGoals);
+                saveToLocalStorage();
+                triggerToast('備份匯入成功！');
+              }
+            } catch (err) {
+              alert('JSON 格式不正確！');
+            }
+          };
+          reader.readAsText(file);
+        };
+
+        const exportPNG = () => {
+          triggerToast('正在生成高解析度 PNG 圖檔...');
+          const area = document.getElementById('mandala-export-area');
+          html2canvas(area, {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: isDark.value ? '#0f172a' : '#ffffff'
+          }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = `${chartTitle.value || '曼陀羅思考圖'}_9x9.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            triggerToast('圖片下載完成！');
+          });
+        };
+
+        const triggerPrint = () => {
+          window.print();
+        };
+
+        // LocalStorage & Dark Mode
+        const saveToLocalStorage = () => {
+          const payload = {
+            chartTitle: chartTitle.value,
+            coreGoal: coreGoal.value,
+            subGoals: subGoals
+          };
+          localStorage.setItem('mandala_chart_9x9_data', JSON.stringify(payload));
+        };
+
+        const loadFromLocalStorage = () => {
+          const saved = localStorage.getItem('mandala_chart_9x9_data');
+          if (saved) {
+            try {
+              const parsed = JSON.parse(saved);
+              chartTitle.value = parsed.chartTitle || chartTitle.value;
+              coreGoal.value = parsed.coreGoal || coreGoal.value;
+              if (parsed.subGoals) Object.assign(subGoals, parsed.subGoals);
+            } catch (e) {
+              console.error('LocalStorage load failed', e);
+            }
+          }
+        };
+
+        const toggleDarkMode = () => {
+          isDark.value = !isDark.value;
+          if (isDark.value) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('light');
+          } else {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.classList.add('light');
+          }
+        };
+
+        const currentDate = computed(() => {
+          const d = new Date();
+          return `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()}`;
+        });
+
+        onMounted(() => {
+          loadFromLocalStorage();
+        });
+
+        return {
+          activeTab,
+          isDark,
+          showTemplateMenu,
+          showCoreGoalModal,
+          tempCoreGoal,
+          focusedDirectionKey,
+          chartTitle,
+          coreGoal,
+          directions,
+          masterGridOrder,
+          centerBlockSubOrder,
+          subGoals,
+          editModal,
+          toast,
+          completedCount,
+          progressPercent,
+          currentFocusConfig,
+          currentDate,
+          getAdjustedActionIndex,
+          openEditModal,
+          saveModalEdit,
+          openCoreGoalModal,
+          saveCoreGoal,
+          toggleActionDone,
+          getSubGoalProgress,
+          getDirectionConfig,
+          focusDirection,
+          cycleDirection,
+          loadPreset,
+          clearAll,
+          exportJSON,
+          importJSON,
+          exportPNG,
+          triggerPrint,
+          toggleDarkMode
+        };
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>
